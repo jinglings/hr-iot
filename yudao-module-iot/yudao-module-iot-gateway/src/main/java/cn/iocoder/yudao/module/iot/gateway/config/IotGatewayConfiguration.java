@@ -13,6 +13,9 @@ import cn.iocoder.yudao.module.iot.gateway.protocol.mqtt.router.IotMqttDownstrea
 import cn.iocoder.yudao.module.iot.gateway.protocol.tcp.IotTcpDownstreamSubscriber;
 import cn.iocoder.yudao.module.iot.gateway.protocol.tcp.IotTcpUpstreamProtocol;
 import cn.iocoder.yudao.module.iot.gateway.protocol.tcp.manager.IotTcpConnectionManager;
+import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.IotModbusDownstreamSubscriber;
+import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.IotModbusMasterProtocol;
+import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.manager.IotModbusConnectionManager;
 import cn.iocoder.yudao.module.iot.gateway.service.device.IotDeviceService;
 import cn.iocoder.yudao.module.iot.gateway.service.device.message.IotDeviceMessageService;
 import io.vertx.core.Vertx;
@@ -147,6 +150,40 @@ public class IotGatewayConfiguration {
                                                                        IotMqttDownstreamHandler downstreamHandler,
                                                                        IotMessageBus messageBus) {
             return new IotMqttDownstreamSubscriber(mqttUpstreamProtocol, downstreamHandler, messageBus);
+        }
+
+    }
+
+    /**
+     * IoT 网关 Modbus 协议配置类
+     */
+    @Configuration
+    @ConditionalOnProperty(prefix = "yudao.iot.gateway.protocol.modbus", name = "enabled", havingValue = "true")
+    @Slf4j
+    public static class ModbusProtocolConfiguration {
+
+        @Bean
+        public IotModbusConnectionManager iotModbusConnectionManager(IotGatewayProperties gatewayProperties) {
+            return new IotModbusConnectionManager(gatewayProperties.getProtocol().getModbus());
+        }
+
+        @Bean
+        public IotModbusMasterProtocol iotModbusMasterProtocol(IotGatewayProperties gatewayProperties,
+                                                               IotDeviceService deviceService,
+                                                               IotDeviceMessageService messageService,
+                                                               IotModbusConnectionManager connectionManager) {
+            return new IotModbusMasterProtocol(gatewayProperties.getProtocol().getModbus(),
+                    deviceService, messageService, connectionManager);
+        }
+
+        @Bean
+        public IotModbusDownstreamSubscriber iotModbusDownstreamSubscriber(IotModbusMasterProtocol modbusProtocol,
+                                                                           IotDeviceService deviceService,
+                                                                           IotModbusConnectionManager connectionManager,
+                                                                           IotGatewayProperties gatewayProperties,
+                                                                           IotMessageBus messageBus) {
+            return new IotModbusDownstreamSubscriber(modbusProtocol, deviceService, connectionManager,
+                    gatewayProperties.getProtocol().getModbus(), messageBus);
         }
 
     }

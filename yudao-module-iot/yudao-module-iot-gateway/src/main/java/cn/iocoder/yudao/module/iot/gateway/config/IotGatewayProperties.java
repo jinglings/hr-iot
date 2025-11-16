@@ -88,6 +88,11 @@ public class IotGatewayProperties {
          */
         private MqttProperties mqtt;
 
+        /**
+         * Modbus 组件配置
+         */
+        private ModbusProperties modbus;
+
     }
 
     @Data
@@ -397,6 +402,174 @@ public class IotGatewayProperties {
              * 信任存储密码
              */
             private String trustStorePassword;
+
+        }
+
+    }
+
+    @Data
+    public static class ModbusProperties {
+
+        /**
+         * 是否开启
+         */
+        @NotNull(message = "是否开启不能为空")
+        private Boolean enabled;
+
+        /**
+         * Modbus 协议类型：TCP 或 RTU
+         */
+        private String type = "TCP";
+
+        /**
+         * Modbus TCP 主机地址（TCP 模式）
+         */
+        private String host = "localhost";
+
+        /**
+         * Modbus TCP 端口（TCP 模式，默认 502）
+         */
+        private Integer port = 502;
+
+        /**
+         * 串口名称（RTU 模式，如 COM1, /dev/ttyUSB0）
+         */
+        private String serialPort;
+
+        /**
+         * 波特率（RTU 模式，默认 9600）
+         */
+        private Integer baudRate = 9600;
+
+        /**
+         * 数据位（RTU 模式，默认 8）
+         */
+        private Integer dataBits = 8;
+
+        /**
+         * 停止位（RTU 模式，默认 1）
+         */
+        private Integer stopBits = 1;
+
+        /**
+         * 奇偶校验（RTU 模式：NONE, ODD, EVEN）
+         */
+        private String parity = "NONE";
+
+        /**
+         * 连接超时时间（毫秒）
+         */
+        private Integer connectTimeoutMs = 3000;
+
+        /**
+         * 读取超时时间（毫秒）
+         */
+        private Integer readTimeoutMs = 3000;
+
+        /**
+         * 重连延迟时间（毫秒）
+         */
+        private Long reconnectDelayMs = 5000L;
+
+        /**
+         * 最大重试次数
+         */
+        private Integer maxRetries = 3;
+
+        /**
+         * 是否启用主站轮询（主动读取设备数据）
+         */
+        private Boolean pollingEnabled = true;
+
+        /**
+         * 轮询间隔（毫秒）
+         */
+        private Long pollingIntervalMs = 1000L;
+
+        /**
+         * 从站设备列表
+         */
+        private List<ModbusSlaveDevice> slaves;
+
+        /**
+         * Modbus 从站设备配置
+         */
+        @Data
+        public static class ModbusSlaveDevice {
+
+            /**
+             * 设备 ID（关联 IoT 平台设备 ID）
+             */
+            private Long deviceId;
+
+            /**
+             * 从站地址（1-247）
+             */
+            private Integer slaveId;
+
+            /**
+             * 设备名称
+             */
+            private String deviceName;
+
+            /**
+             * 产品 Key
+             */
+            private String productKey;
+
+            /**
+             * 主机地址（TCP 模式，可覆盖全局配置）
+             */
+            private String host;
+
+            /**
+             * 端口（TCP 模式，可覆盖全局配置）
+             */
+            private Integer port;
+
+            /**
+             * 轮询配置列表
+             */
+            private List<ModbusPollingConfig> pollingConfigs;
+
+        }
+
+        /**
+         * Modbus 轮询配置
+         */
+        @Data
+        public static class ModbusPollingConfig {
+
+            /**
+             * 功能码：READ_COILS(1), READ_DISCRETE_INPUTS(2),
+             * READ_HOLDING_REGISTERS(3), READ_INPUT_REGISTERS(4)
+             */
+            private String functionCode = "READ_HOLDING_REGISTERS";
+
+            /**
+             * 起始地址
+             */
+            private Integer startAddress;
+
+            /**
+             * 读取数量
+             */
+            private Integer quantity;
+
+            /**
+             * 数据类型：INT16, UINT16, INT32, UINT32, INT64, FLOAT, DOUBLE, BOOL, STRING
+             */
+            private String dataType = "INT16";
+
+            /**
+             * 属性标识符（对应物模型属性）
+             */
+            private String identifier;
+
+            /**
+             * 字节序：BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN_SWAP, LITTLE_ENDIAN_SWAP
+             */
+            private String byteOrder = "BIG_ENDIAN";
 
         }
 
