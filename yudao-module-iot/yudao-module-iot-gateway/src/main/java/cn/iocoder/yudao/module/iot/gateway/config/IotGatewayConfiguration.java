@@ -13,6 +13,7 @@ import cn.iocoder.yudao.module.iot.gateway.protocol.mqtt.router.IotMqttDownstrea
 import cn.iocoder.yudao.module.iot.gateway.protocol.tcp.IotTcpDownstreamSubscriber;
 import cn.iocoder.yudao.module.iot.gateway.protocol.tcp.IotTcpUpstreamProtocol;
 import cn.iocoder.yudao.module.iot.gateway.protocol.tcp.manager.IotTcpConnectionManager;
+import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.tcp.IotModbusTcpUpstreamProtocol;
 import cn.iocoder.yudao.module.iot.gateway.service.device.IotDeviceService;
 import cn.iocoder.yudao.module.iot.gateway.service.device.message.IotDeviceMessageService;
 import io.vertx.core.Vertx;
@@ -147,6 +148,35 @@ public class IotGatewayConfiguration {
                                                                        IotMqttDownstreamHandler downstreamHandler,
                                                                        IotMessageBus messageBus) {
             return new IotMqttDownstreamSubscriber(mqttUpstreamProtocol, downstreamHandler, messageBus);
+        }
+
+    }
+
+    /**
+     * IoT 网关 Modbus TCP 协议配置类
+     */
+    @Configuration
+    @ConditionalOnProperty(prefix = "yudao.iot.gateway.protocol.modbus-tcp", name = "enabled", havingValue = "true")
+    @Slf4j
+    public static class ModbusTcpProtocolConfiguration {
+
+        @Bean(destroyMethod = "close")
+        public Vertx modbusTcpVertx() {
+            return Vertx.vertx();
+        }
+
+        @Bean
+        public IotModbusTcpUpstreamProtocol iotModbusTcpUpstreamProtocol(
+                IotGatewayProperties gatewayProperties,
+                IotDeviceService deviceService,
+                IotDeviceMessageService messageService,
+                Vertx modbusTcpVertx) {
+            log.info("[iotModbusTcpUpstreamProtocol][初始化 Modbus TCP 协议处理器]");
+            return new IotModbusTcpUpstreamProtocol(
+                    gatewayProperties.getProtocol().getModbusTcp(),
+                    deviceService,
+                    messageService,
+                    modbusTcpVertx);
         }
 
     }

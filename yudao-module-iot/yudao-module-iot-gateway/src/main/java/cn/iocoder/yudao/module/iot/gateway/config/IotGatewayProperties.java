@@ -88,6 +88,16 @@ public class IotGatewayProperties {
          */
         private MqttProperties mqtt;
 
+        /**
+         * Modbus TCP 组件配置
+         */
+        private ModbusTcpProperties modbusTcp;
+
+        /**
+         * Modbus RTU 组件配置
+         */
+        private ModbusRtuProperties modbusRtu;
+
     }
 
     @Data
@@ -399,6 +409,79 @@ public class IotGatewayProperties {
             private String trustStorePassword;
 
         }
+
+    }
+
+    @Data
+    public static class ModbusTcpProperties {
+
+        /**
+         * 是否开启
+         */
+        @NotNull(message = "是否开启不能为空")
+        private Boolean enabled;
+
+        /**
+         * 服务器端口
+         */
+        private Integer port = 502; // Modbus TCP 默认端口
+
+        /**
+         * 最大连接数
+         */
+        private Integer maxConnections = 100;
+
+        /**
+         * 连接超时时间（秒）
+         */
+        private Integer connectTimeoutSeconds = 30;
+
+    }
+
+    @Data
+    public static class ModbusRtuProperties {
+
+        /**
+         * 是否开启
+         */
+        @NotNull(message = "是否开启不能为空")
+        private Boolean enabled;
+
+        /**
+         * 串口名称（例如：COM1, /dev/ttyUSB0）
+         */
+        @NotEmpty(message = "串口名称不能为空")
+        private String portName;
+
+        /**
+         * 波特率
+         */
+        private Integer baudRate = 9600;
+
+        /**
+         * 数据位
+         */
+        private Integer dataBits = 8;
+
+        /**
+         * 停止位（1 = 1位，2 = 2位）
+         */
+        private Integer stopBits = 1;
+
+        /**
+         * 校验位（0 = 无，1 = 奇校验，2 = 偶校验）
+         */
+        private Integer parity = 0;
+
+        /**
+         * 读取超时时间（毫秒）
+         */
+        private Integer readTimeoutMs = 1000;
+
+        /**
+         * 写入超时时间（毫秒）
+         */
+        private Integer writeTimeoutMs = 1000;
 
     }
 
