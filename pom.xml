@@ -170,6 +170,24 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
+
+        <!-- InfiniteAutomation repository for bacnet4j and other IoT libraries -->
+        <repository>
+            <id>ias-releases</id>
+            <name>Infinite Automation Releases</name>
+            <url>https://maven.mangoautomation.net/repository/ias-release/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ias-snapshots</id>
+            <name>Infinite Automation Snapshots</name>
+            <url>https://maven.mangoautomation.net/repository/ias-snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
     </repositories>
 
 </project>
