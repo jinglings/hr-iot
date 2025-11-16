@@ -1,0 +1,22 @@
+# BACnet 协议配置示例
+yudao:
+  iot:
+    bacnet:
+      # 是否启用 BACnet 协议
+      enabled: false
+      # BACnet 设备 ID（必须唯一）
+      device-id: 1234
+      # BACnet 本地设备名称
+      local-device-name: YudaoIoT-BACnet-Device
+      # BACnet 监听端口（默认 47808）
+      port: 47808
+      # 本地绑定地址
+      local-bind-address: 0.0.0.0
+      # 广播地址
+      broadcast-address: 255.255.255.255
+      # 设备发现超时时间（毫秒）
+      discovery-timeout: 5000
+      # 设备通信超时时间（毫秒）
+      communication-timeout: 3000
+      # 最大并发请求数
+      max-concurrent-requests: 10

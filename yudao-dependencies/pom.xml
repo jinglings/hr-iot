@@ -69,6 +69,7 @@
         <bizlog-sdk.version>3.0.6</bizlog-sdk.version>
         <netty.version>4.2.4.Final</netty.version>
         <mqtt.version>1.2.5</mqtt.version>
+        <bacnet4j.version>6.0.2</bacnet4j.version>
         <pf4j-spring.version>0.9.0</pf4j-spring.version>
         <vertx.version>4.5.13</vertx.version>
         <!-- 三方云服务相关 -->
@@ -670,6 +671,13 @@
                 <groupId>org.eclipse.paho</groupId>
                 <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
                 <version>${mqtt.version}</version>
+            </dependency>
+
+            <!-- BACnet -->
+            <dependency>
+                <groupId>com.infiniteautomation</groupId>
+                <artifactId>bacnet4j</artifactId>
+                <version>${bacnet4j.version}</version>
             </dependency>
 
             <!-- 专属于 JDK8 安全漏洞升级 -->
