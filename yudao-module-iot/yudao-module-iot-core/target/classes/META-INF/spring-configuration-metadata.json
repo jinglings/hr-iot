@@ -1,0 +1,18 @@
+{
+  "groups": [
+    {
+      "name": "yudao.iot.message-bus",
+      "type": "cn.iocoder.yudao.module.iot.core.messagebus.config.IotMessageBusProperties",
+      "sourceType": "cn.iocoder.yudao.module.iot.core.messagebus.config.IotMessageBusProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "yudao.iot.message-bus.type",
+      "type": "java.lang.String",
+      "description": "消息总线类型 可选值：local、redis、rocketmq、rabbitmq",
+      "sourceType": "cn.iocoder.yudao.module.iot.core.messagebus.config.IotMessageBusProperties"
+    }
+  ],
+  "hints": []
+}
