@@ -1,1 +1,2 @@
 cn.iocoder.yudao.module.iot.core.messagebus.config.IotMessageBusAutoConfiguration
+cn.iocoder.yudao.module.iot.core.protocol.bacnet.config.BACnetAutoConfiguration

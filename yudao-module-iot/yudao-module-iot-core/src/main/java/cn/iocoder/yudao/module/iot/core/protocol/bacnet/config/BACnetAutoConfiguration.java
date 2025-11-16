@@ -16,10 +16,14 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(BACnetProperties.class)
-@ConditionalOnProperty(prefix = "yudao.iot.bacnet", name = "enabled", havingValue = "true")
 public class BACnetAutoConfiguration {
 
+    /**
+     * BACnet 设备管理器
+     * 只有当 yudao.iot.bacnet.enabled=true 时才创建
+     */
     @Bean
+    @ConditionalOnProperty(prefix = "yudao.iot.bacnet", name = "enabled", havingValue = "true")
     public BACnetDeviceManager bacnetDeviceManager(BACnetProperties properties) {
         log.info("创建 BACnet 设备管理器 Bean");
         return new BACnetDeviceManager(properties);

@@ -6,7 +6,7 @@ import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-16T09:59:25+0800",
+    date = "2025-11-16T20:32:57+0800",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.2 (Oracle Corporation)"
 )
 public class IotThingModelConvertImpl implements IotThingModelConvert {

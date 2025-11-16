@@ -6,7 +6,6 @@ import cn.iocoder.yudao.module.iot.core.protocol.bacnet.dto.BACnetObjectInfo;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -20,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author yudao
  */
 @Slf4j
-@Component
 public class BACnetDeviceManager {
 
     private final BACnetProperties properties;
