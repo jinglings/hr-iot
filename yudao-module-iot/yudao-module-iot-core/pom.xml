@@ -61,6 +61,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- BACnet 协议支持 -->
+        <dependency>
+            <groupId>com.infiniteautomation</groupId>
+            <artifactId>bacnet4j</artifactId>
+        </dependency>
+
         <!-- 测试依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
