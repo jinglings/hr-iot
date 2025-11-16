@@ -1,0 +1,176 @@
+yudao:
+  iot:
+    gateway:
+      protocol:
+        # Modbus 协议配置示例
+        modbus:
+          # 是否启用 Modbus 协议
+          enabled: true
+
+          # Modbus 协议类型：TCP 或 RTU
+          type: TCP
+
+          # Modbus TCP 配置
+          host: 192.168.1.100
+          port: 502
+
+          # Modbus RTU 配置（仅在 type=RTU 时使用）
+          # serial-port: /dev/ttyUSB0
+          # baud-rate: 9600
+          # data-bits: 8
+          # stop-bits: 1
+          # parity: NONE
+
+          # 连接配置
+          connect-timeout-ms: 3000
+          read-timeout-ms: 3000
+          reconnect-delay-ms: 5000
+          max-retries: 3
+
+          # 主站轮询配置
+          polling-enabled: true
+          polling-interval-ms: 1000
+
+          # 从站设备列表
+          slaves:
+            # 从站设备 1：温湿度传感器
+            - device-id: 1001
+              slave-id: 1
+              device-name: temp-sensor-01
+              product-key: temp-sensor
+              # 可选：覆盖全局 host 和 port
+              # host: 192.168.1.101
+              # port: 502
+
+              # 轮询配置列表
+              polling-configs:
+                # 读取温度（浮点数）
+                - identifier: temperature
+                  function-code: READ_HOLDING_REGISTERS
+                  start-address: 0
+                  quantity: 2
+                  data-type: FLOAT
+                  byte-order: BIG_ENDIAN
+
+                # 读取湿度（浮点数）
+                - identifier: humidity
+                  function-code: READ_HOLDING_REGISTERS
+                  start-address: 2
+                  quantity: 2
+                  data-type: FLOAT
+                  byte-order: BIG_ENDIAN
+
+                # 读取设备状态（整数）
+                - identifier: status
+                  function-code: READ_HOLDING_REGISTERS
+                  start-address: 4
+                  quantity: 1
+                  data-type: INT16
+                  byte-order: BIG_ENDIAN
+
+            # 从站设备 2：电能表
+            - device-id: 1002
+              slave-id: 2
+              device-name: power-meter-01
+              product-key: power-meter
+
+              polling-configs:
+                # 读取电压（浮点数）
+                - identifier: voltage
+                  function-code: READ_INPUT_REGISTERS
+                  start-address: 0
+                  quantity: 2
+                  data-type: FLOAT
+                  byte-order: BIG_ENDIAN
+
+                # 读取电流（浮点数）
+                - identifier: current
+                  function-code: READ_INPUT_REGISTERS
+                  start-address: 2
+                  quantity: 2
+                  data-type: FLOAT
+                  byte-order: BIG_ENDIAN
+
+                # 读取功率（32位整数）
+                - identifier: power
+                  function-code: READ_INPUT_REGISTERS
+                  start-address: 4
+                  quantity: 2
+                  data-type: INT32
+                  byte-order: BIG_ENDIAN
+
+                # 读取累计电量（64位整数）
+                - identifier: total-energy
+                  function-code: READ_INPUT_REGISTERS
+                  start-address: 6
+                  quantity: 4
+                  data-type: INT64
+                  byte-order: BIG_ENDIAN
+
+            # 从站设备 3：PLC 控制器
+            - device-id: 1003
+              slave-id: 3
+              device-name: plc-controller-01
+              product-key: plc-controller
+
+              polling-configs:
+                # 读取运行状态（布尔值）
+                - identifier: running
+                  function-code: READ_COILS
+                  start-address: 0
+                  quantity: 1
+                  data-type: BOOL
+                  byte-order: BIG_ENDIAN
+
+                # 读取报警状态（布尔值）
+                - identifier: alarm
+                  function-code: READ_DISCRETE_INPUTS
+                  start-address: 0
+                  quantity: 1
+                  data-type: BOOL
+                  byte-order: BIG_ENDIAN
+
+                # 读取计数器值（无符号32位整数）
+                - identifier: counter
+                  function-code: READ_HOLDING_REGISTERS
+                  start-address: 0
+                  quantity: 2
+                  data-type: UINT32
+                  byte-order: BIG_ENDIAN
+
+# 数据类型说明：
+# - INT16: 有符号 16 位整数（1 个寄存器，范围：-32768 ~ 32767）
+# - UINT16: 无符号 16 位整数（1 个寄存器，范围：0 ~ 65535）
+# - INT32: 有符号 32 位整数（2 个寄存器，范围：-2147483648 ~ 2147483647）
+# - UINT32: 无符号 32 位整数（2 个寄存器，范围：0 ~ 4294967295）
+# - INT64: 有符号 64 位整数（4 个寄存器）
+# - UINT64: 无符号 64 位整数（4 个寄存器）
+# - FLOAT: 32 位浮点数（2 个寄存器，IEEE 754 标准）
+# - DOUBLE: 64 位浮点数（4 个寄存器，IEEE 754 标准）
+# - BOOL: 布尔值（1 个寄存器或线圈，0=false, 非0=true）
+# - STRING: 字符串（多个寄存器，每个寄存器 2 个字符）
+
+# 功能码说明：
+# - READ_COILS: 读取线圈（功能码 01）
+# - READ_DISCRETE_INPUTS: 读取离散输入（功能码 02）
+# - READ_HOLDING_REGISTERS: 读取保持寄存器（功能码 03）
+# - READ_INPUT_REGISTERS: 读取输入寄存器（功能码 04）
+
+# 字节序说明：
+# - BIG_ENDIAN: ABCD（大端序，高字节在前）
+# - LITTLE_ENDIAN: DCBA（小端序，低字节在前）
+# - BIG_ENDIAN_SWAP: BADC（大端字节交换）
+# - LITTLE_ENDIAN_SWAP: CDAB（小端字节交换）
+
+# 下行命令示例（通过消息总线发送）：
+# 1. 设置属性：
+#    method: thing.property.set
+#    params: { "temperature": 25.5, "humidity": 60.0 }
+#
+# 2. 写单个寄存器：
+#    method: modbus.write.register
+#    params: { "address": 0, "value": 1234, "dataType": "INT16", "byteOrder": "BIG_ENDIAN" }
+#
+# 3. 写单个线圈：
+#    method: modbus.write.coil
+#    params: { "address": 0, "value": true }

@@ -48,6 +48,13 @@
             <artifactId>vertx-mqtt</artifactId>
         </dependency>
 
+        <!-- Modbus 相关 -->
+        <dependency>
+            <groupId>com.ghgande</groupId>
+            <artifactId>j2mod</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+
         <!-- 测试相关 -->
         <dependency>
             <groupId>cn.iocoder.boot</groupId>
