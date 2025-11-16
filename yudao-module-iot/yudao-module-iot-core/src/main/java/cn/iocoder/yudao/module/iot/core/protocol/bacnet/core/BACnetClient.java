@@ -8,11 +8,10 @@ import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.event.DeviceEventAdapter;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
-import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyAck;
 import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
+import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
-import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
@@ -52,12 +51,24 @@ public class BACnetClient {
         }
 
         try {
-            // 创建 IP 网络
-            IpNetwork network = new IpNetworkBuilder()
-                    .localBindAddress(properties.getLocalBindAddress())
-                    .port(properties.getPort())
-                    .broadcastIp(properties.getBroadcastAddress())
-                    .build();
+            // 创建 IP 网络 - 使用 bacnet4j 6.x API
+            IpNetworkBuilder builder = new IpNetworkBuilder();
+
+            // 设置本地绑定地址和端口
+            if (properties.getLocalBindAddress() != null && !properties.getLocalBindAddress().isEmpty()) {
+                // 绑定到指定地址
+                builder.withLocalBindAddress(properties.getLocalBindAddress());
+            }
+
+            // 设置端口
+            builder.withPort(properties.getPort());
+
+            // 设置广播地址
+            if (properties.getBroadcastAddress() != null && !properties.getBroadcastAddress().isEmpty()) {
+                builder.withBroadcast(properties.getBroadcastAddress(), 0xFFFF);
+            }
+
+            IpNetwork network = builder.build();
 
             // 创建本地设备
             DefaultTransport transport = new DefaultTransport(network);
@@ -88,7 +99,7 @@ public class BACnetClient {
         try {
             // 执行设备发现
             log.info("开始发现 BACnet 设备...");
-            localDevice.sendGlobalBroadcast(new DiscoveryUtils.WhoIsRequest());
+            localDevice.sendGlobalBroadcast(new WhoIsRequest());
 
             // 等待设备响应
             TimeUnit.MILLISECONDS.sleep(properties.getDiscoveryTimeout());
@@ -197,13 +208,32 @@ public class BACnetClient {
     private BACnetDeviceInfo convertToDeviceInfo(RemoteDevice device) {
         BACnetDeviceInfo info = new BACnetDeviceInfo();
         info.setInstanceNumber(device.getInstanceNumber());
-        info.setDeviceName(device.getName());
-        info.setIpAddress(device.getAddress().toString());
-        info.setVendorId(device.getVendorId());
-        info.setVendorName(device.getVendorName());
-        info.setModelName(device.getModelName());
-        info.setOnline(true);
-        info.setLastCommunicationTime(System.currentTimeMillis());
+
+        // 安全获取设备信息，某些信息可能需要先读取设备属性才能获得
+        try {
+            info.setDeviceName(device.getName() != null ? device.getName() : "Unknown");
+            info.setIpAddress(device.getAddress() != null ? device.getAddress().toString() : "Unknown");
+
+            // 在 bacnet4j 6.x 中，这些属性可能需要通过读取设备对象获取
+            // 如果直接访问失败，设置默认值
+            try {
+                info.setVendorName(device.getVendorName() != null ? device.getVendorName() : "Unknown");
+            } catch (Exception e) {
+                info.setVendorName("Unknown");
+            }
+
+            try {
+                info.setModelName(device.getModelName() != null ? device.getModelName() : "Unknown");
+            } catch (Exception e) {
+                info.setModelName("Unknown");
+            }
+
+            info.setOnline(true);
+            info.setLastCommunicationTime(System.currentTimeMillis());
+        } catch (Exception e) {
+            log.warn("获取设备信息部分失败: {}", e.getMessage());
+        }
+
         return info;
     }
 
