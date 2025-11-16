@@ -6,6 +6,7 @@ import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster;
 import com.ghgande.j2mod.modbus.facade.ModbusSerialMaster;
 import com.ghgande.j2mod.modbus.procimg.InputRegister;
 import com.ghgande.j2mod.modbus.procimg.Register;
+import com.ghgande.j2mod.modbus.procimg.SimpleRegister;
 import com.ghgande.j2mod.modbus.util.BitVector;
 import com.ghgande.j2mod.modbus.util.SerialParameters;
 import lombok.extern.slf4j.Slf4j;
@@ -177,6 +178,8 @@ public class IotModbusConnectionManager {
         }
     }
 
+
+
     /**
      * 写单个寄存器（功能码 06）
      */
@@ -186,7 +189,8 @@ public class IotModbusConnectionManager {
             throw new ModbusException("Modbus TCP 连接失败");
         }
         try {
-            master.writeSingleRegister(slaveId, address, value);
+            // 需要将 int 值包装成 Register 类型
+            master.writeSingleRegister(slaveId, address, new SimpleRegister(value));
             log.debug("[writeSingleRegister][写单个寄存器成功，地址: {}:{}, 从站: {}, 地址: {}, 值: {}]",
                     host, port, slaveId, address, value);
         } catch (ModbusException e) {
