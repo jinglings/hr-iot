@@ -79,4 +79,29 @@ public interface ErrorCodeConstants {
     // ========== IoT 告警记录 1-050-014-000 ==========
     ErrorCode ALERT_RECORD_NOT_EXISTS = new ErrorCode(1_050_014_000, "IoT 告警记录不存在");
 
+    // ========== 能源管理 - 建筑 1-050-020-000 ==========
+    ErrorCode ENERGY_BUILDING_NOT_EXISTS = new ErrorCode(1_050_020_000, "能源建筑不存在");
+    ErrorCode ENERGY_BUILDING_CODE_EXISTS = new ErrorCode(1_050_020_001, "建筑编码已存在");
+    ErrorCode ENERGY_BUILDING_DELETE_FAIL_HAS_AREA = new ErrorCode(1_050_020_002, "建筑下存在区域，不允许删除");
+
+    // ========== 能源管理 - 区域 1-050-021-000 ==========
+    ErrorCode ENERGY_AREA_NOT_EXISTS = new ErrorCode(1_050_021_000, "能源区域不存在");
+    ErrorCode ENERGY_AREA_CODE_EXISTS = new ErrorCode(1_050_021_001, "区域编码已存在");
+
+    // ========== 能源管理 - 楼层 1-050-022-000 ==========
+    ErrorCode ENERGY_FLOOR_NOT_EXISTS = new ErrorCode(1_050_022_000, "能源楼层不存在");
+    ErrorCode ENERGY_FLOOR_CODE_EXISTS = new ErrorCode(1_050_022_001, "楼层编码已存在");
+
+    // ========== 能源管理 - 房间 1-050-023-000 ==========
+    ErrorCode ENERGY_ROOM_NOT_EXISTS = new ErrorCode(1_050_023_000, "能源房间不存在");
+    ErrorCode ENERGY_ROOM_CODE_EXISTS = new ErrorCode(1_050_023_001, "房间编码已存在");
+
+    // ========== 能源管理 - 能源类型 1-050-024-000 ==========
+    ErrorCode ENERGY_TYPE_NOT_EXISTS = new ErrorCode(1_050_024_000, "能源类型不存在");
+    ErrorCode ENERGY_TYPE_CODE_EXISTS = new ErrorCode(1_050_024_001, "能源类型编码已存在");
+
+    // ========== 能源管理 - 计量点 1-050-025-000 ==========
+    ErrorCode ENERGY_METER_NOT_EXISTS = new ErrorCode(1_050_025_000, "能源计量点不存在");
+    ErrorCode ENERGY_METER_CODE_EXISTS = new ErrorCode(1_050_025_001, "计量点编码已存在");
+
 }
