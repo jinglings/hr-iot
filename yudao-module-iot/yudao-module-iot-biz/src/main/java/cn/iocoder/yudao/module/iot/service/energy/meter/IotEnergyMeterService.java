@@ -86,4 +86,14 @@ public interface IotEnergyMeterService {
      */
     List<IotEnergyMeterDO> getMeterListByStatus(Integer status);
 
+    /**
+     * 获得计量点总数
+     */
+    Integer getTotalMeterCount();
+
+    /**
+     * 获得在线计量点数量
+     */
+    Integer getOnlineMeterCount();
+
 }

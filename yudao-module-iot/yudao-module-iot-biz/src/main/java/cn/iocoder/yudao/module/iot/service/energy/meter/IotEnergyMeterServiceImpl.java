@@ -272,4 +272,16 @@ public class IotEnergyMeterServiceImpl implements IotEnergyMeterService {
         return meterMapper.selectListByStatus(status);
     }
 
+    @Override
+    public Integer getTotalMeterCount() {
+        return meterMapper.selectCount(null).intValue();
+    }
+
+    @Override
+    public Integer getOnlineMeterCount() {
+        // 状态为1表示在线
+        List<IotEnergyMeterDO> onlineMeters = meterMapper.selectListByStatus(1);
+        return onlineMeters != null ? onlineMeters.size() : 0;
+    }
+
 }

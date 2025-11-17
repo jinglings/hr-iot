@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.iot.service.energy.statistics;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.iot.controller.admin.energy.statistics.vo.IotEnergyStatisticsPageReqVO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyMeterDO;
@@ -9,6 +10,7 @@ import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyStatisticsDO;
 import cn.iocoder.yudao.module.iot.dal.mysql.energy.IotEnergyStatisticsMapper;
 import cn.iocoder.yudao.module.iot.dal.tdengine.IotEnergyRealtimeDataMapper;
 import cn.iocoder.yudao.module.iot.service.energy.meter.IotEnergyMeterService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -258,6 +260,27 @@ public class IotEnergyStatisticsServiceImpl implements IotEnergyStatisticsServic
     @Transactional(rollbackFor = Exception.class)
     public int deleteStatisticsByTimeBefore(LocalDateTime statTime) {
         return statisticsMapper.deleteByStatTimeBefore(statTime);
+    }
+
+    @Override
+    public List<IotEnergyStatisticsDO> getStatisticsByTimeRange(LocalDateTime startTime, LocalDateTime endTime,
+                                                                 String statPeriod, Long buildingId, Long energyTypeId) {
+        // 构建查询条件
+        LambdaQueryWrapper<IotEnergyStatisticsDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.between(IotEnergyStatisticsDO::getStatTime, startTime, endTime);
+
+        if (StrUtil.isNotBlank(statPeriod)) {
+            wrapper.eq(IotEnergyStatisticsDO::getStatPeriod, statPeriod);
+        }
+        if (buildingId != null) {
+            wrapper.eq(IotEnergyStatisticsDO::getBuildingId, buildingId);
+        }
+        if (energyTypeId != null) {
+            wrapper.eq(IotEnergyStatisticsDO::getEnergyTypeId, energyTypeId);
+        }
+
+        wrapper.orderByAsc(IotEnergyStatisticsDO::getStatTime);
+        return statisticsMapper.selectList(wrapper);
     }
 
 }

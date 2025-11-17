@@ -112,4 +112,17 @@ public interface IotEnergyStatisticsService {
      */
     int deleteStatisticsByTimeBefore(LocalDateTime statTime);
 
+    /**
+     * 按时间范围查询统计数据
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param statPeriod 统计周期（可选）
+     * @param buildingId 建筑ID（可选）
+     * @param energyTypeId 能源类型ID（可选）
+     * @return 统计数据列表
+     */
+    List<IotEnergyStatisticsDO> getStatisticsByTimeRange(LocalDateTime startTime, LocalDateTime endTime,
+                                                          String statPeriod, Long buildingId, Long energyTypeId);
+
 }
