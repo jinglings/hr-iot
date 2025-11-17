@@ -196,6 +196,8 @@ export interface EditorState {
   showRuler: boolean // 是否显示标尺
   history: HistoryRecord[] // 历史记录
   historyIndex: number // 历史记录索引
+  globalVariables: Map<string, any> // 全局变量
+  eventListeners: Map<string, Array<(data: any) => void>> // 事件监听器
 }
 
 /**

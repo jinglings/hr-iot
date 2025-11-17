@@ -411,6 +411,200 @@ export const componentLibrary: ComponentLibraryItem[] = [
         backgroundColor: 'rgba(0, 0, 0, 0.3)'
       }
     }
+  },
+
+  // ==================== 表格组件 ====================
+  {
+    type: 'DataTable',
+    name: '数据表格',
+    icon: 'ep:grid',
+    category: ComponentCategory.TABLE,
+    defaultConfig: {
+      type: 'DataTable',
+      name: '数据表格',
+      icon: 'ep:grid',
+      category: ComponentCategory.TABLE,
+      position: {
+        x: 0,
+        y: 0,
+        w: 600,
+        h: 400,
+        rotate: 0,
+        zIndex: 1
+      },
+      style: {
+        backgroundColor: 'rgba(13, 25, 43, 0.8)',
+        borderRadius: 4,
+        color: '#e5e7eb'
+      },
+      data: {
+        type: DataSourceType.STATIC,
+        static: [
+          { id: 1, name: '张三', age: 28, dept: '技术部', status: '在职' },
+          { id: 2, name: '李四', age: 32, dept: '销售部', status: '在职' },
+          { id: 3, name: '王五', age: 25, dept: '市场部', status: '在职' }
+        ],
+        refresh: 0
+      },
+      options: {
+        title: '员工列表',
+        columns: [
+          { prop: 'id', label: 'ID', width: '80px', align: 'center' },
+          { prop: 'name', label: '姓名', align: 'left' },
+          { prop: 'age', label: '年龄', width: '100px', align: 'center' },
+          { prop: 'dept', label: '部门', align: 'left' },
+          { prop: 'status', label: '状态', width: '100px', align: 'center' }
+        ],
+        pagination: true,
+        fontSize: '14px',
+        headerBgColor: 'rgba(59, 130, 246, 0.2)',
+        headerColor: '#60a5fa',
+        borderColor: 'rgba(59, 130, 246, 0.3)'
+      }
+    }
+  },
+
+  // ==================== 统计组件 ====================
+  {
+    type: 'StatCard',
+    name: '统计卡片',
+    icon: 'ep:data-board',
+    category: ComponentCategory.TEXT,
+    defaultConfig: {
+      type: 'StatCard',
+      name: '统计卡片',
+      icon: 'ep:data-board',
+      category: ComponentCategory.TEXT,
+      position: {
+        x: 0,
+        y: 0,
+        w: 280,
+        h: 120,
+        rotate: 0,
+        zIndex: 1
+      },
+      style: {
+        backgroundColor: 'rgba(13, 25, 43, 0.8)',
+        borderRadius: 8
+      },
+      data: {
+        type: DataSourceType.STATIC,
+        static: {
+          value: 12345,
+          trend: {
+            direction: 'up',
+            value: 12.5,
+            unit: '%',
+            label: '较昨日'
+          }
+        },
+        refresh: 0
+      },
+      options: {
+        title: '总销售额',
+        unit: '元',
+        icon: 'ep:trend-charts',
+        iconSize: 48,
+        iconColor: '#60a5fa',
+        iconBgColor: 'rgba(59, 130, 246, 0.2)',
+        animated: true,
+        showTrend: true,
+        separator: true,
+        decimals: 0,
+        valueSize: '32px',
+        valueColor: '#fff',
+        titleSize: '14px',
+        titleColor: '#9ca3af'
+      }
+    }
+  },
+  {
+    type: 'ProgressBar',
+    name: '进度条',
+    icon: 'ep:data-line',
+    category: ComponentCategory.TEXT,
+    defaultConfig: {
+      type: 'ProgressBar',
+      name: '进度条',
+      icon: 'ep:data-line',
+      category: ComponentCategory.TEXT,
+      position: {
+        x: 0,
+        y: 0,
+        w: 400,
+        h: 120,
+        rotate: 0,
+        zIndex: 1
+      },
+      style: {
+        backgroundColor: 'transparent',
+        borderRadius: 4
+      },
+      data: {
+        type: DataSourceType.STATIC,
+        static: {
+          value: 75,
+          max: 100
+        },
+        refresh: 0
+      },
+      options: {
+        type: 'line', // line, circle, dashboard
+        title: '完成进度',
+        showText: true,
+        animated: true,
+        striped: false,
+        format: 'percent',
+        height: 20,
+        barColor: '#3b82f6',
+        trackColor: 'rgba(59, 130, 246, 0.1)',
+        textColor: '#fff',
+        titleColor: '#9ca3af'
+      }
+    }
+  },
+  {
+    type: 'LiquidFill',
+    name: '水位图',
+    icon: 'ep:water-cup',
+    category: ComponentCategory.CHART,
+    defaultConfig: {
+      type: 'LiquidFill',
+      name: '水位图',
+      icon: 'ep:water-cup',
+      category: ComponentCategory.CHART,
+      position: {
+        x: 0,
+        y: 0,
+        w: 300,
+        h: 300,
+        rotate: 0,
+        zIndex: 1
+      },
+      style: {
+        backgroundColor: 'transparent',
+        borderRadius: 4
+      },
+      data: {
+        type: DataSourceType.STATIC,
+        static: {
+          value: 65,
+          max: 100
+        },
+        refresh: 0
+      },
+      options: {
+        title: '水位',
+        shape: 'circle', // circle, rect, diamond
+        waveCount: 2,
+        waveHeight: 0.05,
+        waveSpeed: 0.02,
+        waveColors: ['rgba(59, 130, 246, 0.6)', 'rgba(37, 99, 235, 0.4)'],
+        borderColor: 'rgba(59, 130, 246, 0.5)',
+        borderWidth: 3,
+        format: 'percent'
+      }
+    }
   }
 ]
 

@@ -37,7 +37,11 @@ export const useDashboardStore = defineStore('dashboard', {
     showGrid: true,
     showRuler: true,
     history: [],
-    historyIndex: -1
+    historyIndex: -1,
+    // 新增：全局变量
+    globalVariables: new Map<string, any>(),
+    // 新增：组件事件监听器
+    eventListeners: new Map<string, Array<(data: any) => void>>()
   }),
 
   getters: {
@@ -333,6 +337,84 @@ export const useDashboardStore = defineStore('dashboard', {
      */
     reset() {
       this.$reset()
+    },
+
+    /**
+     * 设置全局变量
+     */
+    setGlobalVariable(key: string, value: any) {
+      this.globalVariables.set(key, value)
+      // 触发变量变更事件
+      this.emitEvent(`variable:${key}`, value)
+    },
+
+    /**
+     * 获取全局变量
+     */
+    getGlobalVariable(key: string): any {
+      return this.globalVariables.get(key)
+    },
+
+    /**
+     * 删除全局变量
+     */
+    deleteGlobalVariable(key: string) {
+      this.globalVariables.delete(key)
+    },
+
+    /**
+     * 监听组件事件
+     */
+    addEventListener(eventName: string, callback: (data: any) => void) {
+      if (!this.eventListeners.has(eventName)) {
+        this.eventListeners.set(eventName, [])
+      }
+      this.eventListeners.get(eventName)!.push(callback)
+
+      // 返回取消监听的函数
+      return () => {
+        const listeners = this.eventListeners.get(eventName)
+        if (listeners) {
+          const index = listeners.indexOf(callback)
+          if (index > -1) {
+            listeners.splice(index, 1)
+          }
+        }
+      }
+    },
+
+    /**
+     * 触发组件事件
+     */
+    emitEvent(eventName: string, data: any) {
+      const listeners = this.eventListeners.get(eventName)
+      if (listeners) {
+        listeners.forEach((callback) => {
+          try {
+            callback(data)
+          } catch (error) {
+            console.error(`事件监听器执行失败 (${eventName}):`, error)
+          }
+        })
+      }
+    },
+
+    /**
+     * 移除事件监听器
+     */
+    removeEventListener(eventName: string, callback?: (data: any) => void) {
+      if (callback) {
+        const listeners = this.eventListeners.get(eventName)
+        if (listeners) {
+          const index = listeners.indexOf(callback)
+          if (index > -1) {
+            listeners.splice(index, 1)
+          }
+        }
+      } else {
+        // 移除所有监听器
+        this.eventListeners.delete(eventName)
+      }
     }
   },
 
