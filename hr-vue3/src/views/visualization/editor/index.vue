@@ -8,6 +8,9 @@
       <!-- 左侧:组件库 -->
       <ComponentLibrary />
 
+      <!-- 图层管理器 -->
+      <LayerManager />
+
       <!-- 中间:画布 -->
       <Canvas />
 
@@ -36,6 +39,7 @@ import { useDashboardStore } from '@/store/modules/dashboard'
 import { ElMessage } from 'element-plus'
 import Toolbar from './components/Toolbar.vue'
 import ComponentLibrary from './components/ComponentLibrary.vue'
+import LayerManager from './components/LayerManager.vue'
 import Canvas from './components/Canvas.vue'
 import PropertyPanel from './components/PropertyPanel.vue'
 import Preview from '../preview/index.vue'
