@@ -24,6 +24,7 @@
 <script lang="ts" setup>
 import type { CanvasConfig, DashboardComponent } from '@/types/dashboard'
 import { useScreenAdapter } from '@/utils/dashboard/screenAdapter'
+import { getComponent, hasComponent } from '@/components/DashboardComponents'
 
 interface Props {
   canvas: CanvasConfig
@@ -87,8 +88,10 @@ const getComponentStyle = (component: DashboardComponent) => {
 
 // 获取组件类型
 const getComponentType = (type: string) => {
-  // 这里返回对应的组件
-  // 暂时返回 div
+  if (hasComponent(type)) {
+    return getComponent(type)
+  }
+  console.warn(`组件类型 "${type}" 未注册`)
   return 'div'
 }
 </script>

@@ -47,6 +47,7 @@
 <script lang="ts" setup>
 import type { DashboardComponent } from '@/types/dashboard'
 import { snapToGrid } from '@/utils/dashboard'
+import { getComponent, hasComponent } from '@/components/DashboardComponents'
 
 // Props
 interface Props {
@@ -71,9 +72,16 @@ const componentRef = ref<HTMLElement>()
 
 // 组件类型(动态组件名称)
 const componentType = computed(() => {
-  // 这里根据组件类型返回对应的组件
-  // 实际使用时需要导入真实的组件
-  return 'div' // 临时返回div,后续替换为真实组件
+  const type = props.component.type
+
+  // 检查组件是否存在
+  if (hasComponent(type)) {
+    return getComponent(type)
+  }
+
+  // 组件不存在时返回一个错误提示组件
+  console.warn(`组件类型 "${type}" 未注册`)
+  return 'div'
 })
 
 // 组件样式
