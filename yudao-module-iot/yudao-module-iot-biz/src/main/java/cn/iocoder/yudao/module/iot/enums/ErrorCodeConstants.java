@@ -99,9 +99,15 @@ public interface ErrorCodeConstants {
     // ========== 能源管理 - 能源类型 1-050-024-000 ==========
     ErrorCode ENERGY_TYPE_NOT_EXISTS = new ErrorCode(1_050_024_000, "能源类型不存在");
     ErrorCode ENERGY_TYPE_CODE_EXISTS = new ErrorCode(1_050_024_001, "能源类型编码已存在");
+    ErrorCode ENERGY_TYPE_PARENT_ERROR = new ErrorCode(1_050_024_002, "父级能源类型不合法");
+    ErrorCode ENERGY_TYPE_EXITS_CHILDREN = new ErrorCode(1_050_024_003, "能源类型存在子类型，不允许删除");
 
     // ========== 能源管理 - 计量点 1-050-025-000 ==========
     ErrorCode ENERGY_METER_NOT_EXISTS = new ErrorCode(1_050_025_000, "能源计量点不存在");
     ErrorCode ENERGY_METER_CODE_EXISTS = new ErrorCode(1_050_025_001, "计量点编码已存在");
+    ErrorCode ENERGY_METER_VIRTUAL_FORMULA_REQUIRED = new ErrorCode(1_050_025_002, "虚拟表必须填写计算公式");
+    ErrorCode ENERGY_METER_DEVICE_REQUIRED = new ErrorCode(1_050_025_003, "非虚拟表必须绑定设备");
+    ErrorCode ENERGY_METER_PARENT_ERROR = new ErrorCode(1_050_025_004, "父级计量点不合法");
+    ErrorCode ENERGY_METER_EXITS_CHILDREN = new ErrorCode(1_050_025_005, "计量点存在子计量点，不允许删除");
 
 }
