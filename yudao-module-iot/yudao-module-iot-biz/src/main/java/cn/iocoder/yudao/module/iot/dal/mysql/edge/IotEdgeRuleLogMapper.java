@@ -40,4 +40,9 @@ public interface IotEdgeRuleLogMapper extends BaseMapperX<IotEdgeRuleLogDO> {
                 .eq(IotEdgeRuleLogDO::getExecuteResult, executeResult));
     }
 
+    default void deleteByRuleId(Long ruleId) {
+        delete(new LambdaQueryWrapperX<IotEdgeRuleLogDO>()
+                .eq(IotEdgeRuleLogDO::getRuleId, ruleId));
+    }
+
 }
