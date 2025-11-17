@@ -415,6 +415,35 @@ export const useDashboardStore = defineStore('dashboard', {
         // 移除所有监听器
         this.eventListeners.delete(eventName)
       }
+    },
+
+    /**
+     * 应用模板
+     */
+    applyTemplate(template: any) {
+      // 从模板配置创建新的画布配置
+      const newCanvas = cloneDeep(template.config)
+
+      // 生成新的组件ID (避免ID冲突)
+      newCanvas.components = newCanvas.components.map((component: DashboardComponent) => ({
+        ...component,
+        id: `${component.type.toLowerCase()}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      }))
+
+      // 应用画布配置
+      this.canvas = {
+        ...this.canvas,
+        ...newCanvas,
+        id: this.canvas.id, // 保留原画布ID
+        createTime: this.canvas.createTime, // 保留创建时间
+        updateTime: new Date().toISOString() // 更新修改时间
+      }
+
+      // 清除选中
+      this.selectedComponentId = null
+
+      // 保存历史记录
+      this.saveHistory(`应用模板: ${template.name}`)
     }
   },
 

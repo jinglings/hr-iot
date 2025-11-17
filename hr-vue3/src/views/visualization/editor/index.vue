@@ -1,7 +1,12 @@
 <template>
   <div class="dashboard-editor">
     <!-- 工具栏 -->
-    <Toolbar @preview="handlePreview" @save="handleSave" @export="handleExport" />
+    <Toolbar
+      @preview="handlePreview"
+      @save="handleSave"
+      @export="handleExport"
+      @template="templateLibraryVisible = true"
+    />
 
     <!-- 主内容区 -->
     <div class="editor-main">
@@ -34,6 +39,9 @@
     <!-- 快捷键帮助面板 -->
     <ShortcutsHelp v-model="shortcutsHelpVisible" :shortcut-groups="shortcutGroups" />
 
+    <!-- 模板库 -->
+    <TemplateLibrary v-model="templateLibraryVisible" />
+
     <!-- 快捷键按钮 -->
     <el-button
       class="shortcuts-trigger"
@@ -59,6 +67,7 @@ import Canvas from './components/Canvas.vue'
 import PropertyPanel from './components/PropertyPanel.vue'
 import Preview from '../preview/index.vue'
 import ShortcutsHelp from './components/ShortcutsHelp.vue'
+import TemplateLibrary from './components/TemplateLibrary.vue'
 
 defineOptions({ name: 'DashboardEditor' })
 
@@ -75,6 +84,9 @@ const previewVisible = ref(false)
 
 // 快捷键帮助面板
 const shortcutsHelpVisible = ref(false)
+
+// 模板库
+const templateLibraryVisible = ref(false)
 
 // 启用键盘快捷键
 const { shortcutGroups } = useDashboardShortcuts()
