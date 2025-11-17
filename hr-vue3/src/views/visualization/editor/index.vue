@@ -30,6 +30,19 @@
         <Preview :canvas="canvas" />
       </div>
     </el-dialog>
+
+    <!-- 快捷键帮助面板 -->
+    <ShortcutsHelp v-model="shortcutsHelpVisible" :shortcut-groups="shortcutGroups" />
+
+    <!-- 快捷键按钮 -->
+    <el-button
+      class="shortcuts-trigger"
+      circle
+      size="large"
+      @click="shortcutsHelpVisible = true"
+    >
+      <Icon icon="ep:question-filled" :size="20" />
+    </el-button>
   </div>
 </template>
 
@@ -38,13 +51,14 @@ import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/store/modules/dashboard'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { exportToImage, copyToClipboard } from '@/utils/dashboard/export'
-import { useDashboardShortcuts } from '@/composables/useKeyboardShortcuts'
+import { useDashboardShortcuts, useKeyboardShortcuts } from '@/composables/useKeyboardShortcuts'
 import Toolbar from './components/Toolbar.vue'
 import ComponentLibrary from './components/ComponentLibrary.vue'
 import LayerManager from './components/LayerManager.vue'
 import Canvas from './components/Canvas.vue'
 import PropertyPanel from './components/PropertyPanel.vue'
 import Preview from '../preview/index.vue'
+import ShortcutsHelp from './components/ShortcutsHelp.vue'
 
 defineOptions({ name: 'DashboardEditor' })
 
@@ -59,8 +73,30 @@ const canvasRef = ref<InstanceType<typeof Canvas>>()
 // 预览对话框
 const previewVisible = ref(false)
 
+// 快捷键帮助面板
+const shortcutsHelpVisible = ref(false)
+
 // 启用键盘快捷键
-useDashboardShortcuts()
+const { shortcutGroups } = useDashboardShortcuts()
+
+// 添加打开快捷键帮助的快捷键
+useKeyboardShortcuts([
+  {
+    key: '/',
+    ctrl: true,
+    description: '打开快捷键帮助',
+    handler: () => {
+      shortcutsHelpVisible.value = true
+    }
+  },
+  {
+    key: '?',
+    description: '打开快捷键帮助',
+    handler: () => {
+      shortcutsHelpVisible.value = true
+    }
+  }
+])
 
 // 加载大屏配置
 const loadDashboard = async () => {
@@ -152,6 +188,7 @@ onBeforeRouteLeave((to, from, next) => {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  position: relative;
 
   .editor-main {
     display: flex;
@@ -166,6 +203,20 @@ onBeforeRouteLeave((to, from, next) => {
     align-items: center;
     justify-content: center;
     background-color: #000;
+  }
+
+  .shortcuts-trigger {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s;
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
   }
 }
 </style>

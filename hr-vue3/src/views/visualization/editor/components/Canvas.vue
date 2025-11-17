@@ -23,6 +23,16 @@
             @select="handleSelectComponent"
             @update="handleUpdateComponent"
             @delete="handleDeleteComponent"
+            @dragging="handleComponentDragging"
+            @drag-end="handleComponentDragEnd"
+          />
+
+          <!-- 对齐辅助线 -->
+          <AlignmentGuides
+            v-if="alignmentLines.length > 0"
+            :lines="alignmentLines"
+            :canvas-width="canvas.width"
+            :canvas-height="canvas.height"
           />
         </div>
       </div>
@@ -35,13 +45,20 @@ import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/store/modules/dashboard'
 import { cloneDeep } from 'lodash-es'
 import type { DashboardComponent } from '@/types/dashboard'
+import type { AlignmentLine } from '@/composables/useAlignmentGuides'
+import { useAlignmentGuides } from '@/composables/useAlignmentGuides'
 import CanvasComponent from './CanvasComponent.vue'
+import AlignmentGuides from './AlignmentGuides.vue'
 
 const dashboardStore = useDashboardStore()
 const { canvas, selectedComponentId, sortedComponents, showGrid, zoom } =
   storeToRefs(dashboardStore)
 
 const canvasRef = ref<HTMLElement>()
+
+// 对齐辅助线
+const alignmentLines = ref<AlignmentLine[]>([])
+const { calculateAlignment } = useAlignmentGuides()
 
 // 画布容器样式
 const canvasWrapperStyle = computed(() => ({
@@ -137,6 +154,38 @@ const handleUpdateComponent = (componentId: string, updates: Partial<DashboardCo
 // 删除组件
 const handleDeleteComponent = (componentId: string) => {
   dashboardStore.deleteComponent(componentId)
+}
+
+// 处理组件拖拽中
+const handleComponentDragging = (componentId: string, position: { x: number; y: number }) => {
+  const component = sortedComponents.value.find((c) => c.id === componentId)
+  if (!component) return
+
+  // 计算对齐
+  const result = calculateAlignment(
+    component,
+    position,
+    sortedComponents.value.filter((c) => c.id !== componentId),
+    canvas.value
+  )
+
+  // 更新对齐线
+  alignmentLines.value = result.lines
+
+  // 更新组件位置(应用对齐调整)
+  dashboardStore.updateComponent(componentId, {
+    position: {
+      ...component.position,
+      x: result.position.x,
+      y: result.position.y
+    }
+  })
+}
+
+// 处理组件拖拽结束
+const handleComponentDragEnd = () => {
+  // 清除对齐线
+  alignmentLines.value = []
 }
 </script>
 
