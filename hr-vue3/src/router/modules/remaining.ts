@@ -705,6 +705,47 @@ const remainingRouter: AppRouteRecordRaw[] = [
     }
   },
   {
+    path: '/visualization',
+    component: Layout,
+    name: 'Visualization',
+    meta: {},
+    children: [
+      {
+        path: 'dashboard',
+        name: 'VisualizationDashboard',
+        component: () => import('@/views/visualization/dashboard/index.vue'),
+        meta: {
+          title: '大屏管理',
+          icon: 'ep:data-analysis',
+          noCache: false
+        }
+      },
+      {
+        path: 'editor',
+        name: 'VisualizationDashboardEditor',
+        component: () => import('@/views/visualization/editor/index.vue'),
+        meta: {
+          title: '大屏编辑器',
+          noCache: true,
+          hidden: true,
+          activeMenu: '/visualization/dashboard'
+        }
+      },
+      {
+        path: 'preview/:id',
+        name: 'VisualizationDashboardPreview',
+        component: () => import('@/views/visualization/preview/index.vue'),
+        meta: {
+          title: '大屏预览',
+          noCache: true,
+          hidden: true,
+          noTagsView: true,
+          activeMenu: '/visualization/dashboard'
+        }
+      }
+    ]
+  },
+  {
     path: '/iot',
     component: Layout,
     name: 'IOT',
