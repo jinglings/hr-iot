@@ -55,40 +55,40 @@ export interface IotEnergySpaceTreeVO {
 
 // 查询 IoT 能源建筑分页
 export const getIotEnergyBuildingPage = (params: IotEnergyBuildingPageReqVO) => {
-  return request.get({ url: '/iot/energy-building/page', params })
+  return request.get({ url: '/iot/energy/building/page', params })
 }
 
 // 查询 IoT 能源建筑详情
 export const getIotEnergyBuilding = (id: number) => {
-  return request.get({ url: `/iot/energy-building/get?id=${id}` })
+  return request.get({ url: `/iot/energy/building/get?id=${id}` })
 }
 
 // 新增 IoT 能源建筑
 export const createIotEnergyBuilding = (data: IotEnergyBuildingVO) => {
-  return request.post({ url: '/iot/energy-building/create', data })
+  return request.post({ url: '/iot/energy/building/create', data })
 }
 
 // 修改 IoT 能源建筑
 export const updateIotEnergyBuilding = (data: IotEnergyBuildingVO) => {
-  return request.put({ url: '/iot/energy-building/update', data })
+  return request.put({ url: '/iot/energy/building/update', data })
 }
 
 // 删除 IoT 能源建筑
 export const deleteIotEnergyBuilding = (id: number) => {
-  return request.delete({ url: `/iot/energy-building/delete?id=${id}` })
+  return request.delete({ url: `/iot/energy/building/delete?id=${id}` })
 }
 
 // 导出 IoT 能源建筑 Excel
 export const exportIotEnergyBuilding = (params: IotEnergyBuildingExportReqVO) => {
-  return request.download({ url: '/iot/energy-building/export-excel', params })
+  return request.download({ url: '/iot/energy/building/export-excel', params })
 }
 
 // 获取启用的建筑简化列表
 export const getIotEnergyBuildingSimpleList = () => {
-  return request.get({ url: '/iot/energy-building/simple-list' })
+  return request.get({ url: '/iot/energy/building/simple-list' })
 }
 
 // 获取空间层级树形结构
 export const getIotEnergySpaceTree = () => {
-  return request.get({ url: '/iot/energy-building/space-tree' })
+  return request.get({ url: '/iot/energy/building/space-tree' })
 }

@@ -59,20 +59,20 @@ export interface IotEnergyStatsByTypeReqVO {
 
 // 查询 IoT 能源统计数据分页
 export const getIotEnergyStatisticsPage = (params: IotEnergyStatisticsPageReqVO) => {
-  return request.get({ url: '/iot/energy-statistics/page', params })
+  return request.get({ url: '/iot/energy/statistics/page', params })
 }
 
 // 按计量点和周期查询统计数据
 export const getIotEnergyStatsByMeter = (params: IotEnergyStatsByMeterReqVO) => {
-  return request.get({ url: '/iot/energy-statistics/by-meter', params })
+  return request.get({ url: '/iot/energy/statistics/by-meter', params })
 }
 
 // 按建筑和周期查询统计数据
 export const getIotEnergyStatsByBuilding = (params: IotEnergyStatsByBuildingReqVO) => {
-  return request.get({ url: '/iot/energy-statistics/by-building', params })
+  return request.get({ url: '/iot/energy/statistics/by-building', params })
 }
 
 // 按能源类型和周期查询统计数据
 export const getIotEnergyStatsByType = (params: IotEnergyStatsByTypeReqVO) => {
-  return request.get({ url: '/iot/energy-statistics/by-type', params })
+  return request.get({ url: '/iot/energy/statistics/by-type', params })
 }

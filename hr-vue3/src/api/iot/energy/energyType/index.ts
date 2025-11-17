@@ -40,40 +40,40 @@ export interface IotEnergyTypeSimpleVO {
 
 // 查询 IoT 能源类型分页
 export const getIotEnergyTypePage = (params: IotEnergyTypePageReqVO) => {
-  return request.get({ url: '/iot/energy-type/page', params })
+  return request.get({ url: '/iot/energy/type/page', params })
 }
 
 // 查询 IoT 能源类型详情
 export const getIotEnergyType = (id: number) => {
-  return request.get({ url: `/iot/energy-type/get?id=${id}` })
+  return request.get({ url: `/iot/energy/type/get?id=${id}` })
 }
 
 // 新增 IoT 能源类型
 export const createIotEnergyType = (data: IotEnergyTypeVO) => {
-  return request.post({ url: '/iot/energy-type/create', data })
+  return request.post({ url: '/iot/energy/type/create', data })
 }
 
 // 修改 IoT 能源类型
 export const updateIotEnergyType = (data: IotEnergyTypeVO) => {
-  return request.put({ url: '/iot/energy-type/update', data })
+  return request.put({ url: '/iot/energy/type/update', data })
 }
 
 // 删除 IoT 能源类型
 export const deleteIotEnergyType = (id: number) => {
-  return request.delete({ url: `/iot/energy-type/delete?id=${id}` })
+  return request.delete({ url: `/iot/energy/type/delete?id=${id}` })
 }
 
 // 查询能源类型树形结构
 export const getIotEnergyTypeTree = () => {
-  return request.get({ url: '/iot/energy-type/tree' })
+  return request.get({ url: '/iot/energy/type/tree' })
 }
 
 // 根据父级ID查询能源类型列表
 export const getIotEnergyTypeListByParentId = (parentId: number) => {
-  return request.get({ url: `/iot/energy-type/list-by-parent-id?parentId=${parentId}` })
+  return request.get({ url: `/iot/energy/type/list-by-parent-id?parentId=${parentId}` })
 }
 
 // 获取启用的能源类型简化列表
 export const getIotEnergyTypeSimpleList = () => {
-  return request.get({ url: '/iot/energy-type/simple-list' })
+  return request.get({ url: '/iot/energy/type/simple-list' })
 }

@@ -58,65 +58,65 @@ export interface IotEnergyMeterSimpleVO {
 
 // 查询 IoT 能源计量点分页
 export const getIotEnergyMeterPage = (params: IotEnergyMeterPageReqVO) => {
-  return request.get({ url: '/iot/energy-meter/page', params })
+  return request.get({ url: '/iot/energy/meter/page', params })
 }
 
 // 查询 IoT 能源计量点详情
 export const getIotEnergyMeter = (id: number) => {
-  return request.get({ url: `/iot/energy-meter/get?id=${id}` })
+  return request.get({ url: `/iot/energy/meter/get?id=${id}` })
 }
 
 // 新增 IoT 能源计量点
 export const createIotEnergyMeter = (data: IotEnergyMeterVO) => {
-  return request.post({ url: '/iot/energy-meter/create', data })
+  return request.post({ url: '/iot/energy/meter/create', data })
 }
 
 // 修改 IoT 能源计量点
 export const updateIotEnergyMeter = (data: IotEnergyMeterVO) => {
-  return request.put({ url: '/iot/energy-meter/update', data })
+  return request.put({ url: '/iot/energy/meter/update', data })
 }
 
 // 删除 IoT 能源计量点
 export const deleteIotEnergyMeter = (id: number) => {
-  return request.delete({ url: `/iot/energy-meter/delete?id=${id}` })
+  return request.delete({ url: `/iot/energy/meter/delete?id=${id}` })
 }
 
 // 根据能源类型ID获取计量点列表
 export const getIotEnergyMeterListByEnergyTypeId = (energyTypeId: number) => {
-  return request.get({ url: `/iot/energy-meter/list-by-energy-type-id?energyTypeId=${energyTypeId}` })
+  return request.get({ url: `/iot/energy/meter/list-by-energy-type-id?energyTypeId=${energyTypeId}` })
 }
 
 // 根据设备ID获取计量点列表
 export const getIotEnergyMeterListByDeviceId = (deviceId: number) => {
-  return request.get({ url: `/iot/energy-meter/list-by-device-id?deviceId=${deviceId}` })
+  return request.get({ url: `/iot/energy/meter/list-by-device-id?deviceId=${deviceId}` })
 }
 
 // 根据建筑ID获取计量点列表
 export const getIotEnergyMeterListByBuildingId = (buildingId: number) => {
-  return request.get({ url: `/iot/energy-meter/list-by-building-id?buildingId=${buildingId}` })
+  return request.get({ url: `/iot/energy/meter/list-by-building-id?buildingId=${buildingId}` })
 }
 
 // 根据区域ID获取计量点列表
 export const getIotEnergyMeterListByAreaId = (areaId: number) => {
-  return request.get({ url: `/iot/energy-meter/list-by-area-id?areaId=${areaId}` })
+  return request.get({ url: `/iot/energy/meter/list-by-area-id?areaId=${areaId}` })
 }
 
 // 根据楼层ID获取计量点列表
 export const getIotEnergyMeterListByFloorId = (floorId: number) => {
-  return request.get({ url: `/iot/energy-meter/list-by-floor-id?floorId=${floorId}` })
+  return request.get({ url: `/iot/energy/meter/list-by-floor-id?floorId=${floorId}` })
 }
 
 // 根据房间ID获取计量点列表
 export const getIotEnergyMeterListByRoomId = (roomId: number) => {
-  return request.get({ url: `/iot/energy-meter/list-by-room-id?roomId=${roomId}` })
+  return request.get({ url: `/iot/energy/meter/list-by-room-id?roomId=${roomId}` })
 }
 
 // 根据父级计量点ID获取子计量点列表
 export const getIotEnergyMeterListByParentId = (parentId: number) => {
-  return request.get({ url: `/iot/energy-meter/list-by-parent-id?parentId=${parentId}` })
+  return request.get({ url: `/iot/energy/meter/list-by-parent-id?parentId=${parentId}` })
 }
 
 // 获取启用的计量点简化列表
 export const getIotEnergyMeterSimpleList = () => {
-  return request.get({ url: '/iot/energy-meter/simple-list' })
+  return request.get({ url: '/iot/energy/meter/simple-list' })
 }

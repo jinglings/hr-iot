@@ -42,35 +42,35 @@ export interface IotEnergyRoomSimpleVO {
 
 // 查询 IoT 能源房间分页
 export const getIotEnergyRoomPage = (params: IotEnergyRoomPageReqVO) => {
-  return request.get({ url: '/iot/energy-room/page', params })
+  return request.get({ url: '/iot/energy/room/page', params })
 }
 
 // 查询 IoT 能源房间详情
 export const getIotEnergyRoom = (id: number) => {
-  return request.get({ url: `/iot/energy-room/get?id=${id}` })
+  return request.get({ url: `/iot/energy/room/get?id=${id}` })
 }
 
 // 新增 IoT 能源房间
 export const createIotEnergyRoom = (data: IotEnergyRoomVO) => {
-  return request.post({ url: '/iot/energy-room/create', data })
+  return request.post({ url: '/iot/energy/room/create', data })
 }
 
 // 修改 IoT 能源房间
 export const updateIotEnergyRoom = (data: IotEnergyRoomVO) => {
-  return request.put({ url: '/iot/energy-room/update', data })
+  return request.put({ url: '/iot/energy/room/update', data })
 }
 
 // 删除 IoT 能源房间
 export const deleteIotEnergyRoom = (id: number) => {
-  return request.delete({ url: `/iot/energy-room/delete?id=${id}` })
+  return request.delete({ url: `/iot/energy/room/delete?id=${id}` })
 }
 
 // 根据楼层ID获取房间列表
 export const getIotEnergyRoomListByFloorId = (floorId: number) => {
-  return request.get({ url: `/iot/energy-room/list-by-floor-id?floorId=${floorId}` })
+  return request.get({ url: `/iot/energy/room/list-by-floor-id?floorId=${floorId}` })
 }
 
 // 获取启用的房间简化列表
 export const getIotEnergyRoomSimpleList = () => {
-  return request.get({ url: '/iot/energy-room/simple-list' })
+  return request.get({ url: '/iot/energy/room/simple-list' })
 }

@@ -43,30 +43,30 @@ export interface IotEnergyReportGenerateReqVO {
 
 // 查询 IoT 能源报表记录分页
 export const getIotEnergyReportRecordPage = (params: IotEnergyReportRecordPageReqVO) => {
-  return request.get({ url: '/iot/energy-report-record/page', params })
+  return request.get({ url: '/iot/energy/report/record/page', params })
 }
 
 // 查询 IoT 能源报表记录详情
 export const getIotEnergyReportRecord = (id: number) => {
-  return request.get({ url: `/iot/energy-report-record/get?id=${id}` })
+  return request.get({ url: `/iot/energy/report/record/get?id=${id}` })
 }
 
 // 生成能源报表
 export const generateIotEnergyReport = (data: IotEnergyReportGenerateReqVO) => {
-  return request.post({ url: '/iot/energy-report-record/generate', data })
+  return request.post({ url: '/iot/energy/report/record/generate', data })
 }
 
 // 删除 IoT 能源报表记录
 export const deleteIotEnergyReportRecord = (id: number) => {
-  return request.delete({ url: `/iot/energy-report-record/delete?id=${id}` })
+  return request.delete({ url: `/iot/energy/report/record/delete?id=${id}` })
 }
 
 // 导出报表为 Excel
 export const exportIotEnergyReportExcel = (id: number) => {
-  return request.download({ url: `/iot/energy-report-record/export-excel?id=${id}` })
+  return request.download({ url: `/iot/energy/report/record/export-excel?id=${id}` })
 }
 
 // 导出报表为 PDF
 export const exportIotEnergyReportPdf = (id: number) => {
-  return request.download({ url: `/iot/energy-report-record/export-pdf?id=${id}` })
+  return request.download({ url: `/iot/energy/report/record/export-pdf?id=${id}` })
 }

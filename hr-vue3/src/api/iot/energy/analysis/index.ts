@@ -60,15 +60,15 @@ export interface IotEnergyAnalysisCarbonReqVO {
 
 // 获取同比环比分析数据
 export const getIotEnergyAnalysisComparison = (params: IotEnergyAnalysisComparisonReqVO) => {
-  return request.get({ url: '/iot/energy-analysis/comparison', params })
+  return request.get({ url: '/iot/energy/analysis/comparison', params })
 }
 
 // 获取能效指标评估数据
 export const getIotEnergyAnalysisIndicator = (params: IotEnergyAnalysisIndicatorReqVO) => {
-  return request.get({ url: '/iot/energy-analysis/indicator', params })
+  return request.get({ url: '/iot/energy/analysis/indicator', params })
 }
 
 // 获取碳排放计算数据
 export const getIotEnergyAnalysisCarbon = (params: IotEnergyAnalysisCarbonReqVO) => {
-  return request.get({ url: '/iot/energy-analysis/carbon', params })
+  return request.get({ url: '/iot/energy/analysis/carbon', params })
 }

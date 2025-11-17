@@ -33,35 +33,35 @@ export interface IotEnergyAreaSimpleVO {
 
 // 查询 IoT 能源区域分页
 export const getIotEnergyAreaPage = (params: IotEnergyAreaPageReqVO) => {
-  return request.get({ url: '/iot/energy-area/page', params })
+  return request.get({ url: '/iot/energy/area/page', params })
 }
 
 // 查询 IoT 能源区域详情
 export const getIotEnergyArea = (id: number) => {
-  return request.get({ url: `/iot/energy-area/get?id=${id}` })
+  return request.get({ url: `/iot/energy/area/get?id=${id}` })
 }
 
 // 新增 IoT 能源区域
 export const createIotEnergyArea = (data: IotEnergyAreaVO) => {
-  return request.post({ url: '/iot/energy-area/create', data })
+  return request.post({ url: '/iot/energy/area/create', data })
 }
 
 // 修改 IoT 能源区域
 export const updateIotEnergyArea = (data: IotEnergyAreaVO) => {
-  return request.put({ url: '/iot/energy-area/update', data })
+  return request.put({ url: '/iot/energy/area/update', data })
 }
 
 // 删除 IoT 能源区域
 export const deleteIotEnergyArea = (id: number) => {
-  return request.delete({ url: `/iot/energy-area/delete?id=${id}` })
+  return request.delete({ url: `/iot/energy/area/delete?id=${id}` })
 }
 
 // 根据建筑ID获取区域列表
 export const getIotEnergyAreaListByBuildingId = (buildingId: number) => {
-  return request.get({ url: `/iot/energy-area/list-by-building-id?buildingId=${buildingId}` })
+  return request.get({ url: `/iot/energy/area/list-by-building-id?buildingId=${buildingId}` })
 }
 
 // 获取启用的区域简化列表
 export const getIotEnergyAreaSimpleList = () => {
-  return request.get({ url: '/iot/energy-area/simple-list' })
+  return request.get({ url: '/iot/energy/area/simple-list' })
 }

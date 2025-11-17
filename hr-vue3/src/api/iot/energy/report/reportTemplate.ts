@@ -32,30 +32,30 @@ export interface IotEnergyReportTemplateSimpleVO {
 
 // 查询 IoT 能源报表模板分页
 export const getIotEnergyReportTemplatePage = (params: IotEnergyReportTemplatePageReqVO) => {
-  return request.get({ url: '/iot/energy-report-template/page', params })
+  return request.get({ url: '/iot/energy/report/template/page', params })
 }
 
 // 查询 IoT 能源报表模板详情
 export const getIotEnergyReportTemplate = (id: number) => {
-  return request.get({ url: `/iot/energy-report-template/get?id=${id}` })
+  return request.get({ url: `/iot/energy/report/template/get?id=${id}` })
 }
 
 // 新增 IoT 能源报表模板
 export const createIotEnergyReportTemplate = (data: IotEnergyReportTemplateVO) => {
-  return request.post({ url: '/iot/energy-report-template/create', data })
+  return request.post({ url: '/iot/energy/report/template/create', data })
 }
 
 // 修改 IoT 能源报表模板
 export const updateIotEnergyReportTemplate = (data: IotEnergyReportTemplateVO) => {
-  return request.put({ url: '/iot/energy-report-template/update', data })
+  return request.put({ url: '/iot/energy/report/template/update', data })
 }
 
 // 删除 IoT 能源报表模板
 export const deleteIotEnergyReportTemplate = (id: number) => {
-  return request.delete({ url: `/iot/energy-report-template/delete?id=${id}` })
+  return request.delete({ url: `/iot/energy/report/template/delete?id=${id}` })
 }
 
 // 获取启用的报表模板简化列表
 export const getIotEnergyReportTemplateSimpleList = () => {
-  return request.get({ url: '/iot/energy-report-template/simple-list' })
+  return request.get({ url: '/iot/energy/report/template/simple-list' })
 }

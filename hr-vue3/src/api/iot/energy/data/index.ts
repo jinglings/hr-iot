@@ -82,30 +82,30 @@ export interface IotEnergyTypeStatsVO {
 
 // 查询 IoT 能源实时数据分页
 export const getIotEnergyDataPage = (params: IotEnergyDataPageReqVO) => {
-  return request.get({ url: '/iot/energy-data/page', params })
+  return request.get({ url: '/iot/energy/data/page', params })
 }
 
 // 获取计量点最新数据
 export const getIotEnergyMeterLatestData = (meterId: number) => {
-  return request.get({ url: `/iot/energy-data/latest?meterId=${meterId}` })
+  return request.get({ url: `/iot/energy/data/latest?meterId=${meterId}` })
 }
 
 // 查询时间范围内的能源数据
 export const getIotEnergyDataByRange = (params: IotEnergyDataRangeReqVO) => {
-  return request.get({ url: '/iot/energy-data/range', params })
+  return request.get({ url: '/iot/energy/data/range', params })
 }
 
 // 查询聚合数据（按时间间隔统计）
 export const getIotEnergyDataAggregate = (params: IotEnergyDataAggregateReqVO) => {
-  return request.get({ url: '/iot/energy-data/aggregate', params })
+  return request.get({ url: '/iot/energy/data/aggregate', params })
 }
 
 // 按建筑统计能耗
 export const getIotEnergyStatsByBuilding = (params: { startTime: Date, endTime: Date }) => {
-  return request.get({ url: '/iot/energy-data/stats-by-building', params })
+  return request.get({ url: '/iot/energy/data/stats-by-building', params })
 }
 
 // 按能源类型统计能耗
 export const getIotEnergyStatsByType = (params: { startTime: Date, endTime: Date }) => {
-  return request.get({ url: '/iot/energy-data/stats-by-type', params })
+  return request.get({ url: '/iot/energy/data/stats-by-type', params })
 }

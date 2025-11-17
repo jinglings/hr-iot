@@ -74,20 +74,20 @@ export interface IotEnergyDashboardItemReqVO {
 
 // 获取能耗总览数据
 export const getIotEnergyDashboardOverview = () => {
-  return request.get({ url: '/iot/energy-dashboard/overview' })
+  return request.get({ url: '/iot/energy/dashboard/overview' })
 }
 
 // 获取能耗排名数据
 export const getIotEnergyDashboardRanking = (params: IotEnergyDashboardRankingReqVO) => {
-  return request.get({ url: '/iot/energy-dashboard/ranking', params })
+  return request.get({ url: '/iot/energy/dashboard/ranking', params })
 }
 
 // 获取能耗趋势数据
 export const getIotEnergyDashboardTrend = (params: IotEnergyDashboardTrendReqVO) => {
-  return request.get({ url: '/iot/energy-dashboard/trend', params })
+  return request.get({ url: '/iot/energy/dashboard/trend', params })
 }
 
 // 获取分项能耗数据
 export const getIotEnergyDashboardItem = (params: IotEnergyDashboardItemReqVO) => {
-  return request.get({ url: '/iot/energy-dashboard/item', params })
+  return request.get({ url: '/iot/energy/dashboard/item', params })
 }
