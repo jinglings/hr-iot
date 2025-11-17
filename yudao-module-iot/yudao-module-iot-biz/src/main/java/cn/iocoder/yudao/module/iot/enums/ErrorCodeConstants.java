@@ -110,4 +110,10 @@ public interface ErrorCodeConstants {
     ErrorCode ENERGY_METER_PARENT_ERROR = new ErrorCode(1_050_025_004, "父级计量点不合法");
     ErrorCode ENERGY_METER_EXITS_CHILDREN = new ErrorCode(1_050_025_005, "计量点存在子计量点，不允许删除");
 
+    // ========== 能源管理 - 报表模板 1-050-026-000 ==========
+    ErrorCode ENERGY_REPORT_TEMPLATE_NOT_EXISTS = new ErrorCode(1_050_026_000, "能源报表模板不存在");
+
+    // ========== 能源管理 - 报表记录 1-050-027-000 ==========
+    ErrorCode ENERGY_REPORT_RECORD_NOT_EXISTS = new ErrorCode(1_050_027_000, "能源报表记录不存在");
+
 }
