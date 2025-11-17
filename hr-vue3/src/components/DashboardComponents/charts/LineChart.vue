@@ -6,6 +6,7 @@
 import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
 import type { DashboardComponent } from '@/types/dashboard'
+import { dataSourceManager } from '@/utils/dashboard/dataSource'
 
 interface Props {
   component: DashboardComponent
@@ -18,6 +19,9 @@ const props = defineProps<Props>()
 const chartRef = ref<HTMLElement>()
 let chartInstance: echarts.ECharts | null = null
 
+// 动态数据
+const dynamicData = ref<any>(null)
+
 // 图表样式
 const chartStyle = computed(() => ({
   width: '100%',
@@ -26,6 +30,14 @@ const chartStyle = computed(() => ({
 
 // 处理数据
 const processData = () => {
+  // 优先使用动态获取的数据
+  if (dynamicData.value) {
+    return {
+      xAxis: dynamicData.value.xAxis || [],
+      series: dynamicData.value.series || []
+    }
+  }
+
   const staticData = props.data?.static || props.component.data?.static
 
   if (staticData) {
@@ -46,6 +58,34 @@ const processData = () => {
   return {
     xAxis: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
     series: [{ name: '温度', data: [22, 24, 26, 25, 23, 22, 24] }]
+  }
+}
+
+// 加载数据
+const loadData = async () => {
+  const dataConfig = props.component.data
+  if (dataConfig.type === 'static') {
+    dynamicData.value = null
+    return
+  }
+  try {
+    const data = await dataSourceManager.fetchData(dataConfig, props.component.id)
+    dynamicData.value = data
+    updateChart()
+  } catch (error) {
+    console.error('加载数据失败:', error)
+  }
+}
+
+// 启动数据轮询
+const startDataPolling = () => {
+  const dataConfig = props.component.data
+  dataSourceManager.stopPolling(props.component.id)
+  if (dataConfig.refresh && dataConfig.refresh > 0 && dataConfig.type !== 'static') {
+    dataSourceManager.startPolling(dataConfig, props.component.id, (data) => {
+      dynamicData.value = data
+      updateChart()
+    })
   }
 }
 
@@ -200,6 +240,16 @@ watch(
   { deep: true }
 )
 
+// 监听数据配置变化
+watch(
+  () => props.component.data,
+  () => {
+    loadData()
+    startDataPolling()
+  },
+  { deep: true }
+)
+
 // 监听窗口大小变化
 const handleResize = () => {
   chartInstance?.resize()
@@ -208,11 +258,15 @@ const handleResize = () => {
 // 生命周期
 onMounted(() => {
   initChart()
+  loadData()
+  startDataPolling()
   window.addEventListener('resize', handleResize)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
+  dataSourceManager.stopPolling(props.component.id)
+  dataSourceManager.closeWebSocket(`ws_${props.component.id}`)
   if (chartInstance) {
     chartInstance.dispose()
     chartInstance = null

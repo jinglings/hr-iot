@@ -104,25 +104,10 @@
 
         <!-- 数据配置 -->
         <el-collapse-item title="数据配置" name="data">
-          <el-form label-width="80px" size="small">
-            <el-form-item label="数据源">
-              <el-select v-model="selectedComponent.data.type" class="w-full">
-                <el-option label="静态数据" value="static" />
-                <el-option label="API接口" value="api" />
-                <el-option label="数据库" value="database" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="刷新间隔">
-              <el-input-number
-                v-model="selectedComponent.data.refresh"
-                :min="0"
-                :step="5"
-                controls-position="right"
-                class="w-full"
-              />
-              <span class="text-xs text-gray-400">秒(0表示不刷新)</span>
-            </el-form-item>
-          </el-form>
+          <DataSourceConfig
+            v-model="selectedComponent.data"
+            :component-type="selectedComponent.type"
+          />
         </el-collapse-item>
       </el-collapse>
     </el-scrollbar>
@@ -136,6 +121,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/store/modules/dashboard'
+import DataSourceConfig from './DataSourceConfig.vue'
 
 const dashboardStore = useDashboardStore()
 const { selectedComponent } = storeToRefs(dashboardStore)
