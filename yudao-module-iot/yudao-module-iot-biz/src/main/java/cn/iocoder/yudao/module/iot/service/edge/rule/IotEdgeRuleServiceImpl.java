@@ -5,6 +5,8 @@ import cn.iocoder.yudao.module.iot.controller.admin.edge.vo.rule.IotEdgeRuleCrea
 import cn.iocoder.yudao.module.iot.controller.admin.edge.vo.rule.IotEdgeRulePageReqVO;
 import cn.iocoder.yudao.module.iot.controller.admin.edge.vo.rule.IotEdgeRuleUpdateReqVO;
 import cn.iocoder.yudao.module.iot.convert.edge.IotEdgeRuleConvert;
+import cn.iocoder.yudao.module.iot.core.edge.dto.EdgeRuleDeployDTO;
+import cn.iocoder.yudao.module.iot.core.edge.producer.EdgeMessageProducer;
 import cn.iocoder.yudao.module.iot.dal.dataobject.edge.IotEdgeGatewayDO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.edge.IotEdgeRuleDO;
 import cn.iocoder.yudao.module.iot.dal.mysql.edge.IotEdgeGatewayMapper;
@@ -36,6 +38,8 @@ public class IotEdgeRuleServiceImpl implements IotEdgeRuleService {
     private IotEdgeRuleMapper edgeRuleMapper;
     @Resource
     private IotEdgeGatewayMapper edgeGatewayMapper;
+    @Resource
+    private EdgeMessageProducer edgeMessageProducer;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -101,12 +105,53 @@ public class IotEdgeRuleServiceImpl implements IotEdgeRuleService {
         // 3. 更新部署状态
         IotEdgeRuleDO updateObj = new IotEdgeRuleDO();
         updateObj.setId(id);
-        updateObj.setDeployStatus(IotEdgeRuleDeployStatusEnum.DEPLOYED.getStatus());
+        updateObj.setDeployStatus(IotEdgeRuleDeployStatusEnum.DEPLOYING.getStatus());
         updateObj.setDeployTime(LocalDateTime.now());
         edgeRuleMapper.updateById(updateObj);
 
-        // TODO: 发送规则到边缘网关 (通过MQTT或其他方式)
-        log.info("部署规则到边缘网关: ruleId={}, gatewayId={}", id, rule.getGatewayId());
+        // 4. 发送规则到边缘网关
+        EdgeRuleDeployDTO deployDTO = EdgeRuleDeployDTO.builder()
+                .action("deploy")
+                .ruleId(rule.getId())
+                .ruleName(rule.getName())
+                .gatewayKey(gateway.getGatewayKey())
+                .ruleType(rule.getRuleType())
+                .ruleConfig(rule.getRuleConfig())
+                .status(rule.getStatus())
+                .build();
+        edgeMessageProducer.sendRuleDeployMessage(deployDTO);
+
+        log.info("[deployRule][规则部署消息已发送: ruleId={}, gatewayId={}]", id, rule.getGatewayId());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void undeployRule(Long id) {
+        // 1. 校验规则存在
+        IotEdgeRuleDO rule = validateRuleExists(id);
+
+        // 2. 获取网关信息
+        IotEdgeGatewayDO gateway = edgeGatewayMapper.selectById(rule.getGatewayId());
+        if (gateway == null) {
+            throw exception(EDGE_GATEWAY_NOT_EXISTS);
+        }
+
+        // 3. 更新部署状态
+        IotEdgeRuleDO updateObj = new IotEdgeRuleDO();
+        updateObj.setId(id);
+        updateObj.setDeployStatus(IotEdgeRuleDeployStatusEnum.NOT_DEPLOYED.getStatus());
+        edgeRuleMapper.updateById(updateObj);
+
+        // 4. 发送取消部署消息到边缘网关
+        EdgeRuleDeployDTO deployDTO = EdgeRuleDeployDTO.builder()
+                .action("delete")
+                .ruleId(rule.getId())
+                .ruleName(rule.getName())
+                .gatewayKey(gateway.getGatewayKey())
+                .build();
+        edgeMessageProducer.sendRuleDeployMessage(deployDTO);
+
+        log.info("[undeployRule][规则取消部署消息已发送: ruleId={}, gatewayId={}]", id, rule.getGatewayId());
     }
 
     @Override
