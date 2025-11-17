@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iocoder.yudao.module.iot.dal.tdengine.IotEnergyRealtimeDataMapper">
+
+    <update id="createSTable">
+        CREATE STABLE IF NOT EXISTS energy_realtime_data (
+            ts TIMESTAMP,
+            meter_id BIGINT,
+            instant_power DOUBLE,
+            cumulative_value DOUBLE,
+            voltage DOUBLE,
+            current DOUBLE,
+            power_factor DOUBLE,
+            data_quality TINYINT
+        ) TAGS (
+            energy_type_id BIGINT,
+            building_id BIGINT,
+            area_id BIGINT,
+            floor_id BIGINT,
+            room_id BIGINT,
+            tenant_id BIGINT
+        )
+    </update>
+
+    <select id="showSTable" resultType="String">
+        SHOW STABLES LIKE 'energy_realtime_data'
+    </select>
+
+    <insert id="insert">
+        INSERT INTO energy_realtime_data_${meterId} (
+            ts, meter_id, instant_power, cumulative_value,
+            voltage, current, power_factor, data_quality
+        )
+        USING energy_realtime_data
+        TAGS (#{energyTypeId}, #{buildingId}, #{areaId}, #{floorId}, #{roomId}, #{tenantId})
+        VALUES (
+            NOW, #{meterId}, #{instantPower}, #{cumulativeValue},
+            #{voltage}, #{current}, #{powerFactor}, #{dataQuality}
+        )
+    </insert>
+
+    <insert id="insertBatch">
+        INSERT INTO energy_realtime_data_${list[0].meterId}
+        USING energy_realtime_data
+        TAGS (#{list[0].energyTypeId}, #{list[0].buildingId}, #{list[0].areaId},
+              #{list[0].floorId}, #{list[0].roomId}, #{list[0].tenantId})
+        VALUES
+        <foreach collection="list" item="item" separator=" ">
+            (NOW, #{item.meterId}, #{item.instantPower}, #{item.cumulativeValue},
+             #{item.voltage}, #{item.current}, #{item.powerFactor}, #{item.dataQuality})
+        </foreach>
+    </insert>
+
+    <select id="selectPage" resultType="cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyRealtimeDataDO">
+        SELECT ts, meter_id, instant_power, cumulative_value,
+               voltage, current, power_factor, data_quality
+        FROM energy_realtime_data_${reqVO.meterId}
+        <where>
+            <if test="reqVO.startTime != null">
+                AND ts >= #{reqVO.startTime}
+            </if>
+            <if test="reqVO.endTime != null">
+                AND ts &lt;= #{reqVO.endTime}
+            </if>
+            <if test="reqVO.dataQuality != null">
+                AND data_quality = #{reqVO.dataQuality}
+            </if>
+        </where>
+        ORDER BY ts DESC
+    </select>
+
+    <select id="selectLatestByMeterId" resultType="cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyRealtimeDataDO">
+        SELECT ts, meter_id, instant_power, cumulative_value,
+               voltage, current, power_factor, data_quality
+        FROM energy_realtime_data_${meterId}
+        ORDER BY ts DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectListByMeterIdAndTimeRange" resultType="cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyRealtimeDataDO">
+        SELECT ts, meter_id, instant_power, cumulative_value,
+               voltage, current, power_factor, data_quality
+        FROM energy_realtime_data_${meterId}
+        <where>
+            <if test="startTime != null">
+                AND ts >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND ts &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY ts ASC
+    </select>
+
+    <select id="selectAggregateDataByTimeRange" resultType="java.util.Map">
+        SELECT
+            TIMETRUNCATE(ts, ${interval}) AS time,
+            AVG(instant_power) AS avg_power,
+            MAX(instant_power) AS max_power,
+            MIN(instant_power) AS min_power,
+            MAX(cumulative_value) - MIN(cumulative_value) AS consumption
+        FROM energy_realtime_data_${meterId}
+        <where>
+            <if test="startTime != null">
+                AND ts >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND ts &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY TIMETRUNCATE(ts, ${interval})
+        ORDER BY time ASC
+    </select>
+
+    <select id="selectEnergyStatsByBuilding" resultType="java.util.Map">
+        SELECT
+            SUM(instant_power) AS total_power,
+            AVG(instant_power) AS avg_power,
+            COUNT(*) AS data_count
+        FROM energy_realtime_data
+        WHERE building_id = #{buildingId}
+        <if test="startTime != null">
+            AND ts >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND ts &lt;= #{endTime}
+        </if>
+    </select>
+
+    <select id="selectEnergyStatsByType" resultType="java.util.Map">
+        SELECT
+            TIMETRUNCATE(ts, 1h) AS time,
+            SUM(instant_power) AS total_power,
+            AVG(instant_power) AS avg_power
+        FROM energy_realtime_data
+        WHERE energy_type_id = #{energyTypeId}
+        <if test="startTime != null">
+            AND ts >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND ts &lt;= #{endTime}
+        </if>
+        GROUP BY TIMETRUNCATE(ts, 1h)
+        ORDER BY time ASC
+    </select>
+
+</mapper>
