@@ -28,11 +28,29 @@
             <Icon icon="ep:upload" />
           </el-button>
         </el-tooltip>
-        <el-tooltip content="导出">
-          <el-button @click="handleExport">
+        <el-dropdown @command="handleExportCommand">
+          <el-button>
             <Icon icon="ep:download" />
+            导出
+            <Icon icon="ep:arrow-down" class="ml-5px" />
           </el-button>
-        </el-tooltip>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="json">
+                <Icon icon="ep:document" />
+                导出为JSON
+              </el-dropdown-item>
+              <el-dropdown-item command="image">
+                <Icon icon="ep:picture" />
+                导出为图片
+              </el-dropdown-item>
+              <el-dropdown-item command="copy">
+                <Icon icon="ep:document-copy" />
+                复制到剪贴板
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </el-button-group>
     </div>
 
@@ -98,10 +116,14 @@ import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/store/modules/dashboard'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { downloadJSON, readJSONFile } from '@/utils/dashboard'
+import { exportToJSON, exportToImage, copyToClipboard } from '@/utils/dashboard/export'
 import type { CanvasConfig } from '@/types/dashboard'
 
 const dashboardStore = useDashboardStore()
 const { canvas, zoom, canUndo, canRedo } = storeToRefs(dashboardStore)
+
+// Emit事件
+const emit = defineEmits(['preview', 'save', 'export'])
 
 // 画布名称
 const canvasName = ref(canvas.value.name)
@@ -159,11 +181,30 @@ const handleImport = () => {
   input.click()
 }
 
-// 导出
-const handleExport = () => {
-  const filename = `${canvas.value.name || '大屏配置'}_${Date.now()}.json`
-  downloadJSON(canvas.value, filename)
-  ElMessage.success('导出成功')
+// 导出命令处理
+const handleExportCommand = async (command: string) => {
+  const filename = `${canvas.value.name || '大屏'}_${Date.now()}`
+
+  try {
+    switch (command) {
+      case 'json':
+        exportToJSON(canvas.value, filename)
+        ElMessage.success('导出JSON成功')
+        break
+
+      case 'image':
+        // 通过emit让父组件提供canvas元素
+        emit('export', 'image')
+        break
+
+      case 'copy':
+        // 通过emit让父组件提供canvas元素
+        emit('export', 'copy')
+        break
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || '导出失败')
+  }
 }
 
 // 放大
@@ -192,8 +233,6 @@ const handleScaleModeChange = (mode: string) => {
 }
 
 // 预览
-const emit = defineEmits(['preview', 'save'])
-
 const handlePreview = () => {
   emit('preview')
 }
