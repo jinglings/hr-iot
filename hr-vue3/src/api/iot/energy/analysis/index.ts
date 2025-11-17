@@ -47,15 +47,15 @@ export interface IotEnergyAnalysisComparisonReqVO {
 export interface IotEnergyAnalysisIndicatorReqVO {
   buildingId?: number // 建筑 ID（可选）
   indicatorType: string // 指标类型：area-单位面积能耗，capita-人均能耗，output-单位产值能耗
-  startTime: Date // 开始时间
-  endTime: Date // 结束时间
+  startTime: string // 开始时间
+  endTime: string // 结束时间
 }
 
 // IoT 能源分析 碳排放查询请求 VO
 export interface IotEnergyAnalysisCarbonReqVO {
   buildingId?: number // 建筑 ID（可选）
-  startTime: Date // 开始时间
-  endTime: Date // 结束时间
+  startTime: string // 开始时间
+  endTime: string // 结束时间
 }
 
 // 获取同比环比分析数据

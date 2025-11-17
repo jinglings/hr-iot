@@ -29,7 +29,7 @@ export interface IotEnergyRoomPageReqVO extends PageParam {
   code?: string // 房间编码
   type?: string // 房间类型
   status?: number // 房间状态
-  createTime?: Date[] // 创建时间
+  createTime?: string[] // 创建时间
 }
 
 // IoT 能源房间 简化 VO（用于下拉选择）

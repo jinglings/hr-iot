@@ -27,17 +27,17 @@ export interface IotEnergyReportRecordPageReqVO extends PageParam {
   type?: string // 报表类型
   buildingId?: number // 建筑 ID
   status?: number // 报表状态
-  startTime?: Date[] // 统计开始时间范围
-  endTime?: Date[] // 统计结束时间范围
-  createTime?: Date[] // 创建时间
+  startTime?: string[] // 统计开始时间范围
+  endTime?: string[] // 统计结束时间范围
+  createTime?: string[] // 创建时间
 }
 
 // IoT 能源报表生成请求 VO
 export interface IotEnergyReportGenerateReqVO {
   templateId: number // 报表模板 ID
   name: string // 报表名称
-  startTime: Date // 统计开始时间
-  endTime: Date // 统计结束时间
+  startTime: string // 统计开始时间
+  endTime: string // 统计结束时间
   buildingId?: number // 建筑 ID（可选）
 }
 

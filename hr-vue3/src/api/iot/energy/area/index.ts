@@ -20,7 +20,7 @@ export interface IotEnergyAreaPageReqVO extends PageParam {
   name?: string // 区域名称
   code?: string // 区域编码
   status?: number // 区域状态
-  createTime?: Date[] // 创建时间
+  createTime?: string[] // 创建时间
 }
 
 // IoT 能源区域 简化 VO（用于下拉选择）

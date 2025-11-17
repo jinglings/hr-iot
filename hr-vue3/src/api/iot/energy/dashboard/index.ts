@@ -51,8 +51,8 @@ export interface IotEnergyDashboardItemVO {
 export interface IotEnergyDashboardRankingReqVO {
   type: string // 排名类型：building-建筑，meter-计量点
   energyTypeId?: number // 能源类型 ID
-  startTime: Date // 开始时间
-  endTime: Date // 结束时间
+  startTime: string // 开始时间
+  endTime: string // 结束时间
   topN: number // 前N名（默认10）
 }
 
@@ -61,15 +61,15 @@ export interface IotEnergyDashboardTrendReqVO {
   buildingId?: number // 建筑 ID（可选）
   energyTypeId?: number // 能源类型 ID（可选）
   period: string // 时间段：24h-最近24小时，7d-最近7天，30d-最近30天，custom-自定义
-  startTime?: Date // 开始时间（自定义时使用）
-  endTime?: Date // 结束时间（自定义时使用）
+  startTime?: string // 开始时间（自定义时使用）
+  endTime?: string // 结束时间（自定义时使用）
 }
 
 // IoT 能源仪表板 分项能耗查询请求 VO
 export interface IotEnergyDashboardItemReqVO {
   buildingId?: number // 建筑 ID（可选）
-  startTime: Date // 开始时间
-  endTime: Date // 结束时间
+  startTime: string // 开始时间
+  endTime: string // 结束时间
 }
 
 // 获取能耗总览数据

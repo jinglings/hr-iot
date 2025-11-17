@@ -19,7 +19,7 @@ export interface IotEnergyReportTemplatePageReqVO extends PageParam {
   code?: string // 模板编码
   type?: string // 报表类型
   status?: number // 模板状态
-  createTime?: Date[] // 创建时间
+  createTime?: string[] // 创建时间
 }
 
 // IoT 能源报表模板 简化 VO（用于下拉选择）

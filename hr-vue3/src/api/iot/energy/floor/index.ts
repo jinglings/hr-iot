@@ -25,7 +25,7 @@ export interface IotEnergyFloorPageReqVO extends PageParam {
   name?: string // 楼层名称
   code?: string // 楼层编码
   status?: number // 楼层状态
-  createTime?: Date[] // 创建时间
+  createTime?: string[] // 创建时间
 }
 
 // IoT 能源楼层 简化 VO（用于下拉选择）

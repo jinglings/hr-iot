@@ -29,32 +29,32 @@ export interface IotEnergyStatisticsPageReqVO extends PageParam {
   energyTypeId?: number // 能源类型 ID
   buildingId?: number // 建筑 ID
   period?: string // 统计周期
-  startTime?: Date // 开始时间
-  endTime?: Date // 结束时间
+  startTime?: string // 开始时间
+  endTime?: string // 结束时间
 }
 
 // IoT 能源统计 按计量点查询请求 VO
 export interface IotEnergyStatsByMeterReqVO {
   meterId: number // 计量点 ID
   period: string // 统计周期：hour-小时，day-天，month-月，year-年
-  startTime: Date // 开始时间
-  endTime: Date // 结束时间
+  startTime: string // 开始时间
+  endTime: string // 结束时间
 }
 
 // IoT 能源统计 按建筑查询请求 VO
 export interface IotEnergyStatsByBuildingReqVO {
   buildingId: number // 建筑 ID
   period: string // 统计周期：hour-小时，day-天，month-月，year-年
-  startTime: Date // 开始时间
-  endTime: Date // 结束时间
+  startTime: string // 开始时间
+  endTime: string // 结束时间
 }
 
 // IoT 能源统计 按能源类型查询请求 VO
 export interface IotEnergyStatsByTypeReqVO {
   energyTypeId: number // 能源类型 ID
   period: string // 统计周期：hour-小时，day-天，month-月，year-年
-  startTime: Date // 开始时间
-  endTime: Date // 结束时间
+  startTime: string // 开始时间
+  endTime: string // 结束时间
 }
 
 // 查询 IoT 能源统计数据分页

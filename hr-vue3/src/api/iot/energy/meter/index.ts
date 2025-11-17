@@ -44,7 +44,7 @@ export interface IotEnergyMeterPageReqVO extends PageParam {
   parentId?: number // 父级计量点 ID
   isVirtual?: boolean // 是否虚拟表
   status?: number // 计量点状态
-  createTime?: Date[] // 创建时间
+  createTime?: string[] // 创建时间
 }
 
 // IoT 能源计量点 简化 VO（用于下拉选择）

@@ -31,23 +31,23 @@ export interface IotEnergyDataPageReqVO extends PageParam {
   areaId?: number // 区域 ID
   floorId?: number // 楼层 ID
   roomId?: number // 房间 ID
-  startTime?: Date // 开始时间
-  endTime?: Date // 结束时间
+  startTime?: string // 开始时间
+  endTime?: string // 结束时间
   dataQuality?: number // 数据质量
 }
 
 // IoT 能源数据 时间范围查询请求 VO
 export interface IotEnergyDataRangeReqVO {
   meterId: number // 计量点 ID
-  startTime: Date // 开始时间
-  endTime: Date // 结束时间
+  startTime: string // 开始时间
+  endTime: string // 结束时间
 }
 
 // IoT 能源数据 聚合查询请求 VO
 export interface IotEnergyDataAggregateReqVO {
   meterIds: number[] // 计量点 ID 列表
-  startTime: Date // 开始时间
-  endTime: Date // 结束时间
+  startTime: string // 开始时间
+  endTime: string // 结束时间
   interval: string // 聚合间隔：1m-1分钟，1h-1小时，1d-1天
 }
 
@@ -101,11 +101,11 @@ export const getIotEnergyDataAggregate = (params: IotEnergyDataAggregateReqVO) =
 }
 
 // 按建筑统计能耗
-export const getIotEnergyStatsByBuilding = (params: { startTime: Date, endTime: Date }) => {
+export const getIotEnergyStatsByBuilding = (params: { startTime: string, endTime: string }) => {
   return request.get({ url: '/iot/energy/data/stats-by-building', params })
 }
 
 // 按能源类型统计能耗
-export const getIotEnergyStatsByType = (params: { startTime: Date, endTime: Date }) => {
+export const getIotEnergyStatsByType = (params: { startTime: string, endTime: string }) => {
   return request.get({ url: '/iot/energy/data/stats-by-type', params })
 }

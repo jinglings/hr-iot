@@ -25,7 +25,7 @@ export interface IotEnergyBuildingPageReqVO extends PageParam {
   code?: string // 建筑编码
   type?: string // 建筑类型
   status?: number // 建筑状态
-  createTime?: Date[] // 创建时间
+  createTime?: string[] // 创建时间
 }
 
 // IoT 能源建筑 导出请求 VO
@@ -34,7 +34,7 @@ export interface IotEnergyBuildingExportReqVO {
   code?: string // 建筑编码
   type?: string // 建筑类型
   status?: number // 建筑状态
-  createTime?: Date[] // 创建时间
+  createTime?: string[] // 创建时间
 }
 
 // IoT 能源建筑 简化 VO（用于下拉选择）
