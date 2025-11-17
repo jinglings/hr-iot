@@ -79,4 +79,41 @@ public interface ErrorCodeConstants {
     // ========== IoT 告警记录 1-050-014-000 ==========
     ErrorCode ALERT_RECORD_NOT_EXISTS = new ErrorCode(1_050_014_000, "IoT 告警记录不存在");
 
+    // ========== 能源管理 - 建筑 1-050-020-000 ==========
+    ErrorCode ENERGY_BUILDING_NOT_EXISTS = new ErrorCode(1_050_020_000, "能源建筑不存在");
+    ErrorCode ENERGY_BUILDING_CODE_EXISTS = new ErrorCode(1_050_020_001, "建筑编码已存在");
+    ErrorCode ENERGY_BUILDING_DELETE_FAIL_HAS_AREA = new ErrorCode(1_050_020_002, "建筑下存在区域，不允许删除");
+
+    // ========== 能源管理 - 区域 1-050-021-000 ==========
+    ErrorCode ENERGY_AREA_NOT_EXISTS = new ErrorCode(1_050_021_000, "能源区域不存在");
+    ErrorCode ENERGY_AREA_CODE_EXISTS = new ErrorCode(1_050_021_001, "区域编码已存在");
+
+    // ========== 能源管理 - 楼层 1-050-022-000 ==========
+    ErrorCode ENERGY_FLOOR_NOT_EXISTS = new ErrorCode(1_050_022_000, "能源楼层不存在");
+    ErrorCode ENERGY_FLOOR_CODE_EXISTS = new ErrorCode(1_050_022_001, "楼层编码已存在");
+
+    // ========== 能源管理 - 房间 1-050-023-000 ==========
+    ErrorCode ENERGY_ROOM_NOT_EXISTS = new ErrorCode(1_050_023_000, "能源房间不存在");
+    ErrorCode ENERGY_ROOM_CODE_EXISTS = new ErrorCode(1_050_023_001, "房间编码已存在");
+
+    // ========== 能源管理 - 能源类型 1-050-024-000 ==========
+    ErrorCode ENERGY_TYPE_NOT_EXISTS = new ErrorCode(1_050_024_000, "能源类型不存在");
+    ErrorCode ENERGY_TYPE_CODE_EXISTS = new ErrorCode(1_050_024_001, "能源类型编码已存在");
+    ErrorCode ENERGY_TYPE_PARENT_ERROR = new ErrorCode(1_050_024_002, "父级能源类型不合法");
+    ErrorCode ENERGY_TYPE_EXITS_CHILDREN = new ErrorCode(1_050_024_003, "能源类型存在子类型，不允许删除");
+
+    // ========== 能源管理 - 计量点 1-050-025-000 ==========
+    ErrorCode ENERGY_METER_NOT_EXISTS = new ErrorCode(1_050_025_000, "能源计量点不存在");
+    ErrorCode ENERGY_METER_CODE_EXISTS = new ErrorCode(1_050_025_001, "计量点编码已存在");
+    ErrorCode ENERGY_METER_VIRTUAL_FORMULA_REQUIRED = new ErrorCode(1_050_025_002, "虚拟表必须填写计算公式");
+    ErrorCode ENERGY_METER_DEVICE_REQUIRED = new ErrorCode(1_050_025_003, "非虚拟表必须绑定设备");
+    ErrorCode ENERGY_METER_PARENT_ERROR = new ErrorCode(1_050_025_004, "父级计量点不合法");
+    ErrorCode ENERGY_METER_EXITS_CHILDREN = new ErrorCode(1_050_025_005, "计量点存在子计量点，不允许删除");
+
+    // ========== 能源管理 - 报表模板 1-050-026-000 ==========
+    ErrorCode ENERGY_REPORT_TEMPLATE_NOT_EXISTS = new ErrorCode(1_050_026_000, "能源报表模板不存在");
+
+    // ========== 能源管理 - 报表记录 1-050-027-000 ==========
+    ErrorCode ENERGY_REPORT_RECORD_NOT_EXISTS = new ErrorCode(1_050_027_000, "能源报表记录不存在");
+
 }
