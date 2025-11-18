@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.iot.enums.edge;
 
-import cn.iocoder.yudao.framework.common.core.IntArrayValuable;
+import cn.iocoder.yudao.framework.common.core.ArrayValuable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 @AllArgsConstructor
 @Getter
-public enum IotEdgeAiModelTypeEnum implements IntArrayValuable {
+public enum IotEdgeAiModelTypeEnum implements ArrayValuable<Integer> {
 
     IMAGE_CLASSIFICATION(1, "图像分类"),
     OBJECT_DETECTION(2, "目标检测"),
@@ -21,7 +21,7 @@ public enum IotEdgeAiModelTypeEnum implements IntArrayValuable {
     FACE_RECOGNITION(4, "人脸识别"),
     QUALITY_INSPECTION(5, "质量检测");
 
-    public static final int[] ARRAYS = Arrays.stream(values()).mapToInt(IotEdgeAiModelTypeEnum::getType).toArray();
+    public static final Integer[] ARRAYS = Arrays.stream(values()).map(IotEdgeAiModelTypeEnum::getType).toArray(Integer[]::new);
 
     /**
      * 类型值
@@ -33,7 +33,7 @@ public enum IotEdgeAiModelTypeEnum implements IntArrayValuable {
     private final String name;
 
     @Override
-    public int[] array() {
+    public Integer[] array() {
         return ARRAYS;
     }
 

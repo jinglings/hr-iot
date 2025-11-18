@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.iot.enums.edge;
 
-import cn.iocoder.yudao.framework.common.core.IntArrayValuable;
+import cn.iocoder.yudao.framework.common.core.ArrayValuable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,13 +13,13 @@ import java.util.Arrays;
  */
 @AllArgsConstructor
 @Getter
-public enum IotEdgeGatewayStatusEnum implements IntArrayValuable {
+public enum IotEdgeGatewayStatusEnum implements ArrayValuable<Integer> {
 
     INACTIVE(0, "未激活"),
     ONLINE(1, "在线"),
     OFFLINE(2, "离线");
 
-    public static final int[] ARRAYS = Arrays.stream(values()).mapToInt(IotEdgeGatewayStatusEnum::getStatus).toArray();
+    public static final Integer[] ARRAYS = Arrays.stream(values()).map(IotEdgeGatewayStatusEnum::getStatus).toArray(Integer[]::new);
 
     /**
      * 状态值
@@ -31,7 +31,7 @@ public enum IotEdgeGatewayStatusEnum implements IntArrayValuable {
     private final String name;
 
     @Override
-    public int[] array() {
+    public Integer[] array() {
         return ARRAYS;
     }
 

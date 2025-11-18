@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.iot.enums.edge;
 
-import cn.iocoder.yudao.framework.common.core.IntArrayValuable;
+import cn.iocoder.yudao.framework.common.core.ArrayValuable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 @AllArgsConstructor
 @Getter
-public enum IotEdgeModelDeployStatusEnum implements IntArrayValuable {
+public enum IotEdgeModelDeployStatusEnum implements ArrayValuable<Integer> {
 
     NOT_DEPLOYED(0, "未部署"),
     DEPLOYED(1, "已部署"),
@@ -21,7 +21,7 @@ public enum IotEdgeModelDeployStatusEnum implements IntArrayValuable {
     RUNNING(3, "运行中"),
     STOPPED(4, "已停止");
 
-    public static final int[] ARRAYS = Arrays.stream(values()).mapToInt(IotEdgeModelDeployStatusEnum::getStatus).toArray();
+    public static final Integer[] ARRAYS = Arrays.stream(values()).map(IotEdgeModelDeployStatusEnum::getStatus).toArray(Integer[]::new);
 
     /**
      * 状态值
@@ -33,7 +33,7 @@ public enum IotEdgeModelDeployStatusEnum implements IntArrayValuable {
     private final String name;
 
     @Override
-    public int[] array() {
+    public Integer[] array() {
         return ARRAYS;
     }
 

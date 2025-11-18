@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.iot.enums.edge;
 
-import cn.iocoder.yudao.framework.common.core.IntArrayValuable;
+import cn.iocoder.yudao.framework.common.core.ArrayValuable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,13 +13,13 @@ import java.util.Arrays;
  */
 @AllArgsConstructor
 @Getter
-public enum IotEdgeRuleDeployStatusEnum implements IntArrayValuable {
+public enum IotEdgeRuleDeployStatusEnum implements ArrayValuable<Integer> {
 
     NOT_DEPLOYED(0, "未部署"),
     DEPLOYED(1, "已部署"),
     DEPLOY_FAILED(2, "部署失败");
 
-    public static final int[] ARRAYS = Arrays.stream(values()).mapToInt(IotEdgeRuleDeployStatusEnum::getStatus).toArray();
+    public static final Integer[] ARRAYS = Arrays.stream(values()).map(IotEdgeRuleDeployStatusEnum::getStatus).toArray(Integer[]::new);
 
     /**
      * 状态值
@@ -31,7 +31,7 @@ public enum IotEdgeRuleDeployStatusEnum implements IntArrayValuable {
     private final String name;
 
     @Override
-    public int[] array() {
+    public Integer[] array() {
         return ARRAYS;
     }
 

@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.iot.enums.edge;
 
-import cn.iocoder.yudao.framework.common.core.IntArrayValuable;
+import cn.iocoder.yudao.framework.common.core.ArrayValuable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 @AllArgsConstructor
 @Getter
-public enum IotEdgeAiModelFormatEnum implements IntArrayValuable {
+public enum IotEdgeAiModelFormatEnum implements ArrayValuable<Integer> {
 
     ONNX(1, "ONNX"),
     TENSORFLOW_LITE(2, "TensorFlow Lite"),
@@ -21,7 +21,7 @@ public enum IotEdgeAiModelFormatEnum implements IntArrayValuable {
     CAFFE(4, "Caffe"),
     OPENVINO(5, "OpenVINO");
 
-    public static final int[] ARRAYS = Arrays.stream(values()).mapToInt(IotEdgeAiModelFormatEnum::getFormat).toArray();
+    public static final Integer[] ARRAYS = Arrays.stream(values()).map(IotEdgeAiModelFormatEnum::getFormat).toArray(Integer[]::new);
 
     /**
      * 格式值
@@ -33,7 +33,7 @@ public enum IotEdgeAiModelFormatEnum implements IntArrayValuable {
     private final String name;
 
     @Override
-    public int[] array() {
+    public Integer[] array() {
         return ARRAYS;
     }
 
