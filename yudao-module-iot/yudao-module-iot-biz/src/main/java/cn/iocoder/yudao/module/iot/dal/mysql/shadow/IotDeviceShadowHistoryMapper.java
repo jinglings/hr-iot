@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.iot.dal.mysql.shadow;
 
+import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
@@ -43,7 +44,10 @@ public interface IotDeviceShadowHistoryMapper extends BaseMapperX<IotDeviceShado
      * @return 分页结果
      */
     default PageResult<IotDeviceShadowHistoryDO> selectPageByDeviceId(Long deviceId, Integer pageNo, Integer pageSize) {
-        return selectPage(pageNo, pageSize, new LambdaQueryWrapperX<IotDeviceShadowHistoryDO>()
+        PageParam pageParam = new PageParam();
+        pageParam.setPageNo(pageNo);
+        pageParam.setPageSize(pageSize);
+        return selectPage(pageParam, new LambdaQueryWrapperX<IotDeviceShadowHistoryDO>()
                 .eq(IotDeviceShadowHistoryDO::getDeviceId, deviceId)
                 .orderByDesc(IotDeviceShadowHistoryDO::getCreateTime));
     }
