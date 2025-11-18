@@ -8,7 +8,15 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git diff:*)",
-      "Bash(mvn clean compile:*)"
+      "Bash(mvn clean compile:*)",
+      "Bash(git push:*)",
+      "Bash(while read branch)",
+      "Bash(do git log main..$branch --oneline)",
+      "Bash(echo:*)",
+      "Bash(done)",
+      "Bash(sed:*)",
+      "Bash(do git merge origin/$branch --no-edit)",
+      "Bash(do echo \"Merging $branch...\")"
     ],
     "deny": [],
     "ask": []
