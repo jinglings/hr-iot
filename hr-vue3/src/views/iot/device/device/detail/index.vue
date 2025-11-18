@@ -36,6 +36,9 @@
           @success="getDeviceData"
         />
       </el-tab-pane>
+      <el-tab-pane label="设备影子" name="shadow">
+        <DeviceDetailsShadow v-if="activeTab === 'shadow'" :device-id="device.id" />
+      </el-tab-pane>
     </el-tabs>
   </el-col>
 </template>
@@ -50,6 +53,7 @@ import DeviceDetailsThingModel from './DeviceDetailsThingModel.vue'
 import DeviceDetailsMessage from './DeviceDetailsMessage.vue'
 import DeviceDetailsSimulator from './DeviceDetailsSimulator.vue'
 import DeviceDetailConfig from './DeviceDetailConfig.vue'
+import DeviceDetailsShadow from './DeviceDetailsShadow.vue'
 
 defineOptions({ name: 'IoTDeviceDetail' })
 
