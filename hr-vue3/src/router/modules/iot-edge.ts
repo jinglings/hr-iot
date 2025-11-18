@@ -40,31 +40,59 @@ const edgeRouter: AppRouteRecordRaw = {
         canTo: true,
         activeMenu: '/iot/edge/gateway'
       }
+    },
+
+    // 边缘规则管理
+    {
+      path: 'rule',
+      component: () => import('@/views/iot/edge/rule/index.vue'),
+      name: 'IotEdgeRule',
+      meta: {
+        title: '边缘规则',
+        icon: 'ep:operation',
+        noCache: false
+      }
+    },
+
+    // 边缘规则详情（隐藏在菜单中）
+    {
+      path: 'rule/detail/:id',
+      component: () => import('@/views/iot/edge/rule/detail/index.vue'),
+      name: 'IotEdgeRuleDetail',
+      meta: {
+        title: '规则详情',
+        noCache: true,
+        hidden: true,
+        canTo: true,
+        activeMenu: '/iot/edge/rule'
+      }
+    },
+
+    // 边缘AI模型管理
+    {
+      path: 'aimodel',
+      component: () => import('@/views/iot/edge/aimodel/index.vue'),
+      name: 'IotEdgeAiModel',
+      meta: {
+        title: 'AI模型',
+        icon: 'ep:magic-stick',
+        noCache: false
+      }
+    },
+
+    // 边缘AI模型详情（隐藏在菜单中）
+    {
+      path: 'aimodel/detail/:id',
+      component: () => import('@/views/iot/edge/aimodel/detail/index.vue'),
+      name: 'IotEdgeAiModelDetail',
+      meta: {
+        title: '模型详情',
+        noCache: true,
+        hidden: true,
+        canTo: true,
+        activeMenu: '/iot/edge/aimodel'
+      }
     }
-
-    // 边缘规则管理 - 后续添加
-    // {
-    //   path: 'rule',
-    //   component: () => import('@/views/iot/edge/rule/index.vue'),
-    //   name: 'IotEdgeRule',
-    //   meta: {
-    //     title: '边缘规则',
-    //     icon: 'ep:operation',
-    //     noCache: false
-    //   }
-    // },
-
-    // 边缘AI模型管理 - 后续添加
-    // {
-    //   path: 'aimodel',
-    //   component: () => import('@/views/iot/edge/aimodel/index.vue'),
-    //   name: 'IotEdgeAiModel',
-    //   meta: {
-    //     title: '边缘AI模型',
-    //     icon: 'ep:cpu',
-    //     noCache: false
-    //   }
-    // }
   ]
 }
 
