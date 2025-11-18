@@ -18,6 +18,12 @@
       <el-divider direction="vertical" />
 
       <el-button-group>
+        <el-tooltip content="模板库">
+          <el-button @click="handleTemplate">
+            <Icon icon="ep:files" />
+            模板
+          </el-button>
+        </el-tooltip>
         <el-tooltip content="清空画布">
           <el-button @click="handleClear">
             <Icon icon="ep:delete" />
@@ -123,7 +129,7 @@ const dashboardStore = useDashboardStore()
 const { canvas, zoom, canUndo, canRedo } = storeToRefs(dashboardStore)
 
 // Emit事件
-const emit = defineEmits(['preview', 'save', 'export'])
+const emit = defineEmits(['preview', 'save', 'export', 'template'])
 
 // 画布名称
 const canvasName = ref(canvas.value.name)
@@ -144,6 +150,11 @@ const handleUndo = () => {
 // 重做
 const handleRedo = () => {
   dashboardStore.redo()
+}
+
+// 打开模板库
+const handleTemplate = () => {
+  emit('template')
 }
 
 // 清空画布

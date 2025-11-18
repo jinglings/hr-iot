@@ -66,6 +66,8 @@ const emit = defineEmits<{
   select: [componentId: string]
   update: [componentId: string, updates: Partial<DashboardComponent>]
   delete: [componentId: string]
+  dragging: [componentId: string, position: { x: number; y: number }]
+  dragEnd: []
 }>()
 
 const componentRef = ref<HTMLElement>()
@@ -148,16 +150,14 @@ const handleMouseDown = (e: MouseEvent) => {
     newX = Math.max(0, newX)
     newY = Math.max(0, newY)
 
-    emit('update', props.component.id, {
-      position: {
-        ...props.component.position,
-        x: newX,
-        y: newY
-      }
-    })
+    // 触发拖拽事件,让父组件计算对齐
+    emit('dragging', props.component.id, { x: newX, y: newY })
   }
 
   const handleMouseUp = () => {
+    // 触发拖拽结束事件
+    emit('dragEnd')
+
     document.removeEventListener('mousemove', handleMouseMove)
     document.removeEventListener('mouseup', handleMouseUp)
   }
