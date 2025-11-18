@@ -937,6 +937,18 @@ const remainingRouter: AppRouteRecordRaw[] = [
           activeMenu: '/iot/operation/ota/firmware'
         },
         component: () => import('@/views/iot/ota/firmware/detail/index.vue')
+      },
+      {
+        path: 'edge/gateway/detail/:id',
+        name: 'IoTEdgeGatewayDetail',
+        meta: {
+          title: '边缘网关详情',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          activeMenu: '/iot/edge/gateway'
+        },
+        component: () => import('@/views/iot/edge/gateway/detail/index.vue')
       }
     ]
   }
