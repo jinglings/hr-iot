@@ -10,8 +10,15 @@
       <el-table-column label="网关序列号" prop="gatewaySerialNumber" min-width="180" />
       <el-table-column label="部署状态" align="center" width="120">
         <template #default="{ row }">
-          <el-tag :type="getDeployStatusType(row.deployStatus)">
-            {{ getDeployStatusLabel(row.deployStatus) }}
+          <el-tag :type="EdgeModelDeployStatusMap[row.deployStatus]?.type">
+            {{ EdgeModelDeployStatusMap[row.deployStatus]?.label }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="运行状态" align="center" width="100">
+        <template #default="{ row }">
+          <el-tag :type="EdgeModelRunStatusMap[row.status]?.type">
+            {{ EdgeModelRunStatusMap[row.status]?.label }}
           </el-tag>
         </template>
       </el-table-column>
@@ -21,13 +28,6 @@
         :formatter="dateFormatter"
         width="180"
       />
-      <el-table-column label="部署版本" align="center" prop="deployVersion" width="120" />
-      <el-table-column label="错误信息" prop="deployError" min-width="200" show-overflow-tooltip>
-        <template #default="{ row }">
-          <el-text v-if="row.deployError" type="danger">{{ row.deployError }}</el-text>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" align="center" width="120">
         <template #default="scope">
           <el-button link type="primary" @click="viewGateway(scope.row.gatewayId)">
@@ -46,50 +46,23 @@
 
 <script setup lang="ts">
 import { dateFormatter } from '@/utils/formatTime'
+import {
+  EdgeModelDeploymentApi,
+  EdgeModelDeploymentVO,
+  EdgeModelDeployStatusMap,
+  EdgeModelRunStatusMap
+} from '@/api/iot/edge/deployment'
+import { EdgeGatewayApi } from '@/api/iot/edge/gateway'
 
 const props = defineProps<{
   modelId: number
 }>()
 
 const router = useRouter()
-
-// 模型部署VO接口（基于后端API推断）
-interface ModelDeploymentVO {
-  id: number
-  modelId: number
-  gatewayId: number
-  gatewayName: string
-  gatewaySerialNumber: string
-  deployStatus: number // 0=未部署, 1=部署中, 2=已部署, 3=部署失败
-  deployTime: Date
-  deployVersion: string
-  deployError: string
-}
+const message = useMessage()
 
 const loading = ref(true)
-const list = ref<ModelDeploymentVO[]>([])
-
-/** 获取部署状态类型 */
-const getDeployStatusType = (status: number) => {
-  const statusMap = {
-    0: 'info',
-    1: 'warning',
-    2: 'success',
-    3: 'danger'
-  }
-  return statusMap[status] || 'info'
-}
-
-/** 获取部署状态标签 */
-const getDeployStatusLabel = (status: number) => {
-  const statusMap = {
-    0: '未部署',
-    1: '部署中',
-    2: '已部署',
-    3: '部署失败'
-  }
-  return statusMap[status] || '未知'
-}
+const list = ref<any[]>([])
 
 /** 查看网关 */
 const viewGateway = (gatewayId: number) => {
@@ -100,25 +73,25 @@ const viewGateway = (gatewayId: number) => {
 const getList = async () => {
   loading.value = true
   try {
-    // TODO: 调用实际的模型部署API
-    // const data = await EdgeModelDeploymentApi.getByModelId(props.modelId)
-    // list.value = data
+    const data = await EdgeModelDeploymentApi.getPage({
+      pageNo: 1,
+      pageSize: 100,
+      modelId: props.modelId
+    })
 
-    // 模拟数据
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    list.value = [
-      {
-        id: 1,
-        modelId: props.modelId,
-        gatewayId: 1,
-        gatewayName: '边缘网关-01',
-        gatewaySerialNumber: 'GW2024001',
-        deployStatus: 2,
-        deployTime: new Date(),
-        deployVersion: 'v1.0.0',
-        deployError: ''
+    // 获取网关信息
+    const deployments = data.list
+    for (const deployment of deployments) {
+      try {
+        const gateway = await EdgeGatewayApi.get(deployment.gatewayId)
+        deployment.gatewayName = gateway.name
+        deployment.gatewaySerialNumber = gateway.serialNumber
+      } catch (e) {
+        deployment.gatewayName = '-'
+        deployment.gatewaySerialNumber = '-'
       }
-    ]
+    }
+    list.value = deployments
   } finally {
     loading.value = false
   }
