@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.iot.service.edge.engine;
 
+import cn.hutool.core.lang.TypeReference;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class RuleActionExecutor {
             }
 
             // 解析动作JSON
-            List<Map<String, Object>> actions = JSONUtil.toList(actionsJson, Map.class);
+            List<Map<String, Object>> actions = JSONUtil.toBean(actionsJson, new TypeReference<List<Map<String, Object>>>() {}, false);
 
             StringBuilder result = new StringBuilder();
             for (Map<String, Object> action : actions) {
