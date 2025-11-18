@@ -116,4 +116,28 @@ public interface ErrorCodeConstants {
     // ========== 能源管理 - 报表记录 1-050-027-000 ==========
     ErrorCode ENERGY_REPORT_RECORD_NOT_EXISTS = new ErrorCode(1_050_027_000, "能源报表记录不存在");
 
+    // ========== 边缘计算 - 边缘网关 1-050-030-000 ==========
+    ErrorCode EDGE_GATEWAY_NOT_EXISTS = new ErrorCode(1_050_030_000, "边缘网关不存在");
+    ErrorCode EDGE_GATEWAY_SERIAL_NUMBER_EXISTS = new ErrorCode(1_050_030_001, "边缘网关序列号已存在");
+    ErrorCode EDGE_GATEWAY_KEY_EXISTS = new ErrorCode(1_050_030_002, "边缘网关标识已存在");
+    ErrorCode EDGE_GATEWAY_DELETE_FAIL_HAS_RULE = new ErrorCode(1_050_030_003, "边缘网关下存在规则，不允许删除");
+    ErrorCode EDGE_GATEWAY_OFFLINE = new ErrorCode(1_050_030_004, "边缘网关离线");
+    ErrorCode EDGE_GATEWAY_NOT_ONLINE = new ErrorCode(1_050_030_005, "边缘网关未上线");
+
+    // ========== 边缘计算 - 边缘规则 1-050-031-000 ==========
+    ErrorCode EDGE_RULE_NOT_EXISTS = new ErrorCode(1_050_031_000, "边缘规则不存在");
+    ErrorCode EDGE_RULE_DEPLOY_FAILED = new ErrorCode(1_050_031_001, "边缘规则部署失败");
+    ErrorCode EDGE_RULE_ALREADY_DEPLOYED = new ErrorCode(1_050_031_002, "边缘规则已部署");
+
+    // ========== 边缘计算 - AI模型 1-050-032-000 ==========
+    ErrorCode EDGE_AI_MODEL_NOT_EXISTS = new ErrorCode(1_050_032_000, "AI模型不存在");
+    ErrorCode EDGE_AI_MODEL_VERSION_EXISTS = new ErrorCode(1_050_032_001, "AI模型版本已存在");
+    ErrorCode EDGE_AI_MODEL_DELETE_FAIL_HAS_DEPLOYMENT = new ErrorCode(1_050_032_002, "AI模型存在部署记录，不允许删除");
+    ErrorCode EDGE_AI_MODEL_NOT_ENABLED = new ErrorCode(1_050_032_003, "AI模型未启用");
+
+    // ========== 边缘计算 - 模型部署 1-050-033-000 ==========
+    ErrorCode EDGE_MODEL_DEPLOYMENT_NOT_EXISTS = new ErrorCode(1_050_033_000, "模型部署记录不存在");
+    ErrorCode EDGE_MODEL_DEPLOYMENT_ALREADY_EXISTS = new ErrorCode(1_050_033_001, "模型已在该网关部署");
+    ErrorCode EDGE_MODEL_DEPLOYMENT_FAILED = new ErrorCode(1_050_033_002, "模型部署失败");
+
 }
