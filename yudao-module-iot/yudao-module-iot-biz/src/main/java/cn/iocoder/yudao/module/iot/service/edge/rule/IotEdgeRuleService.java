@@ -61,6 +61,13 @@ public interface IotEdgeRuleService {
     void deployRule(Long id);
 
     /**
+     * 取消部署边缘规则
+     *
+     * @param id 编号
+     */
+    void undeployRule(Long id);
+
+    /**
      * 更新规则状态
      *
      * @param id 编号
