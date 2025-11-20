@@ -199,7 +199,7 @@ public class IotEnergyAnalysisServiceImpl implements IotEnergyAnalysisService {
             BigDecimal totalCarbonEmission = BigDecimal.ZERO;
 
             for (Map.Entry<Long, BigDecimal> entry : consumptionByTypeId.entrySet()) {
-                String energyTypeName = energyTypeService.getEnergyType(entry.getKey()).getName();
+                String energyTypeName = energyTypeService.getEnergyType(entry.getKey()).getEnergyName();
                 BigDecimal consumption = entry.getValue();
                 BigDecimal emissionFactor = getCarbonEmissionFactor(energyTypeName);
                 BigDecimal carbonEmission = consumption.multiply(emissionFactor);

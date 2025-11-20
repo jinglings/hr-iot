@@ -103,6 +103,11 @@ public class IotEdgeGatewayServiceImpl implements IotEdgeGatewayService {
         edgeGatewayMapper.updateById(updateObj);
     }
 
+    @Override
+    public IotEdgeGatewayDO getGatewayByKey(String gatewayKey) {
+        return edgeGatewayMapper.selectByGatewayKey(gatewayKey);
+    }
+
     // ==================== 私有方法 ====================
 
     private void validateGatewayExists(Long id) {

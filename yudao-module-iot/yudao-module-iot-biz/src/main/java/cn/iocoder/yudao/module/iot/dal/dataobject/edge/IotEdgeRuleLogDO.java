@@ -80,4 +80,6 @@ public class IotEdgeRuleLogDO {
      */
     private LocalDateTime createTime;
 
+    private Integer executeStatus;
+
 }

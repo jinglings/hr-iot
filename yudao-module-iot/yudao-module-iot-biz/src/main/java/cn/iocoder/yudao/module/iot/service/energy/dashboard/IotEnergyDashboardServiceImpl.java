@@ -181,7 +181,7 @@ public class IotEnergyDashboardServiceImpl implements IotEnergyDashboardService 
                 if ("building".equals(objectType)) {
                     objectId = stat.getBuildingId();
                     if (objectId != null) {
-                        objectName = buildingService.getBuilding(objectId).getName();
+                        objectName = buildingService.getBuilding(objectId).getBuildingName();
                     }
                 }
                 // TODO: 支持其他对象类型（area/floor/room）
@@ -341,7 +341,7 @@ public class IotEnergyDashboardServiceImpl implements IotEnergyDashboardService 
             BigDecimal totalConsumption = BigDecimal.ZERO;
 
             for (Map.Entry<Long, BigDecimal> entry : consumptionByTypeId.entrySet()) {
-                String typeName = energyTypeService.getEnergyType(entry.getKey()).getName();
+                String typeName = energyTypeService.getEnergyType(entry.getKey()).getEnergyName();
                 BigDecimal consumption = entry.getValue();
                 totalConsumption = totalConsumption.add(consumption);
 
@@ -408,7 +408,7 @@ public class IotEnergyDashboardServiceImpl implements IotEnergyDashboardService 
         Map<String, BigDecimal> result = new HashMap<>();
         for (Map.Entry<Long, BigDecimal> entry : consumptionByTypeId.entrySet()) {
             try {
-                String typeName = energyTypeService.getEnergyType(entry.getKey()).getName();
+                String typeName = energyTypeService.getEnergyType(entry.getKey()).getEnergyName();
                 result.put(typeName, entry.getValue());
             } catch (Exception e) {
                 log.warn("[calculateConsumptionByType][获取能源类型名称失败] energyTypeId={}", entry.getKey());

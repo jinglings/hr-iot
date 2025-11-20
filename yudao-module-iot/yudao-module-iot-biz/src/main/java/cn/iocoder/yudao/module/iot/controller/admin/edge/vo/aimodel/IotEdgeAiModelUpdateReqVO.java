@@ -37,4 +37,6 @@ public class IotEdgeAiModelUpdateReqVO {
     @Schema(description = "描述")
     private String description;
 
+    private Integer status;
+
 }

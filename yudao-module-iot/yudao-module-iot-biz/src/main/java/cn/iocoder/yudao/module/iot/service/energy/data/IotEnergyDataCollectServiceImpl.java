@@ -40,7 +40,7 @@ public class IotEnergyDataCollectServiceImpl implements IotEnergyDataCollectServ
     @Async
     public void processDevicePropertyReport(IotDeviceDO device, IotDeviceMessage message) {
         // 1. 判断是否为属性上报消息
-        if (!IotDeviceMessageMethodEnum.PROPERTY_REPORT.getMethod().equals(message.getMethod())) {
+        if (!IotDeviceMessageMethodEnum.PROPERTY_POST.getMethod().equals(message.getMethod())) {
             return;
         }
 

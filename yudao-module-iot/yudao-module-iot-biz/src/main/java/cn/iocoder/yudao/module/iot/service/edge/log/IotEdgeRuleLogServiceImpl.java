@@ -31,7 +31,7 @@ public class IotEdgeRuleLogServiceImpl implements IotEdgeRuleLogService {
                 .gatewayId(gatewayId)
                 .executeTime(LocalDateTime.now())
                 .executeStatus(executeStatus)
-                .executeResult(executeResult)
+                .executeResult(Integer.valueOf(executeResult))
                 .build();
         ruleLogMapper.insert(log);
     }

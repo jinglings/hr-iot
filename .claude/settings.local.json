@@ -16,7 +16,8 @@
       "Bash(done)",
       "Bash(sed:*)",
       "Bash(do git merge origin/$branch --no-edit)",
-      "Bash(do echo \"Merging $branch...\")"
+      "Bash(do echo \"Merging $branch...\")",
+      "Bash(while read branch do git merge origin/$branch --no-edit echo \"Merging $branch...\" done)"
     ],
     "deny": [],
     "ask": []

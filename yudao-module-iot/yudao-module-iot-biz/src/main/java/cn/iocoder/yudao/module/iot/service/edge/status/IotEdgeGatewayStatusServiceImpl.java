@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -34,9 +35,9 @@ public class IotEdgeGatewayStatusServiceImpl implements IotEdgeGatewayStatusServ
             IotEdgeGatewayStatusDO statusDO = IotEdgeGatewayStatusDO.builder()
                     .gatewayId(gatewayId)
                     .status(status)
-                    .cpuUsage(cpuUsage)
-                    .memoryUsage(memoryUsage)
-                    .diskUsage(diskUsage)
+                    .cpuUsage(new BigDecimal(cpuUsage))
+                    .memoryUsage(new BigDecimal(memoryUsage))
+                    .diskUsage(new BigDecimal(diskUsage))
                     .lastHeartbeatTime(LocalDateTime.now())
                     .build();
             gatewayStatusMapper.insert(statusDO);
@@ -45,9 +46,9 @@ public class IotEdgeGatewayStatusServiceImpl implements IotEdgeGatewayStatusServ
             IotEdgeGatewayStatusDO updateObj = IotEdgeGatewayStatusDO.builder()
                     .id(existStatus.getId())
                     .status(status)
-                    .cpuUsage(cpuUsage)
-                    .memoryUsage(memoryUsage)
-                    .diskUsage(diskUsage)
+                    .cpuUsage(new BigDecimal(cpuUsage))
+                    .memoryUsage(new BigDecimal(memoryUsage))
+                    .diskUsage(new BigDecimal(diskUsage))
                     .lastHeartbeatTime(LocalDateTime.now())
                     .build();
             gatewayStatusMapper.updateById(updateObj);

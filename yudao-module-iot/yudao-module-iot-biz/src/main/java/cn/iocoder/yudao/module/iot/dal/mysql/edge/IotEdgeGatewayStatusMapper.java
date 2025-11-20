@@ -41,4 +41,8 @@ public interface IotEdgeGatewayStatusMapper extends BaseMapperX<IotEdgeGatewaySt
                 .orderByAsc(IotEdgeGatewayStatusDO::getRecordTime));
     }
 
+    default IotEdgeGatewayStatusDO selectByGatewayId(Long gatewayId){
+        return selectOne(new LambdaQueryWrapperX<IotEdgeGatewayStatusDO>()
+                .eq(IotEdgeGatewayStatusDO::getGatewayId, gatewayId));
+    }
 }

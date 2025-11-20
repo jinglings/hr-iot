@@ -105,7 +105,7 @@ public class IotEdgeRuleServiceImpl implements IotEdgeRuleService {
         // 3. 更新部署状态
         IotEdgeRuleDO updateObj = new IotEdgeRuleDO();
         updateObj.setId(id);
-        updateObj.setDeployStatus(IotEdgeRuleDeployStatusEnum.DEPLOYING.getStatus());
+        updateObj.setDeployStatus(IotEdgeRuleDeployStatusEnum.DEPLOYED.getStatus());
         updateObj.setDeployTime(LocalDateTime.now());
         edgeRuleMapper.updateById(updateObj);
 
@@ -115,7 +115,7 @@ public class IotEdgeRuleServiceImpl implements IotEdgeRuleService {
                 .ruleId(rule.getId())
                 .ruleName(rule.getName())
                 .gatewayKey(gateway.getGatewayKey())
-                .ruleType(rule.getRuleType())
+                .ruleType(Integer.valueOf(rule.getRuleType()))
                 .ruleConfig(rule.getRuleConfig())
                 .status(rule.getStatus())
                 .build();

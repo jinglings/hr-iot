@@ -104,4 +104,8 @@ public class IotEdgeGatewayStatusDO {
      */
     private LocalDateTime recordTime;
 
+    private Integer status;
+
+    private LocalDateTime lastHeartbeatTime;
+
 }

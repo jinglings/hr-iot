@@ -61,4 +61,10 @@ public interface IotEdgeGatewayService {
      */
     void updateGatewayStatus(Long id, Integer status);
 
+    /**
+     * 根据网关标识获得边缘网关
+     * @param gatewayKey
+     * @return
+     */
+    IotEdgeGatewayDO getGatewayByKey(String gatewayKey);
 }

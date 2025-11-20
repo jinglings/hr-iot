@@ -65,6 +65,8 @@ public class IotEdgeRuleDO extends TenantBaseDO {
      */
     private String actionConfig;
 
+    private String ruleConfig;
+
     // ========== 执行配置 ==========
 
     /**

@@ -86,6 +86,13 @@ public class IotEdgeAiModelDO extends TenantBaseDO {
      */
     private Integer gpuRequired;
 
+    private String modelUrl;
+
+    /**
+     * 配置JSON
+     */
+    private String config;
+
     // ========== 应用场景 ==========
 
     /**
