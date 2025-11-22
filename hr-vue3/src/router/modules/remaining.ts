@@ -920,6 +920,17 @@ const remainingRouter: AppRouteRecordRaw[] = [
         component: () => import('@/views/iot/device/device/detail/index.vue')
       },
       {
+        path: 'bacnet/discovery',
+        name: 'IoTBACnetDiscovery',
+        meta: {
+          title: 'BACnet设备发现',
+          noCache: true,
+          hidden: true,
+          activeMenu: '/iot/bacnet/discovery'
+        },
+        component: () => import('@/views/iot/bacnet/discovery/index.vue')
+      },
+      {
         path: 'ota/operation/firmware/detail/:id',
         name: 'IoTOtaFirmwareDetail',
         meta: {

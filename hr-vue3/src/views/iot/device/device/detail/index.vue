@@ -39,6 +39,9 @@
       <el-tab-pane label="设备影子" name="shadow">
         <DeviceDetailsShadow v-if="activeTab === 'shadow'" :device-id="device.id" />
       </el-tab-pane>
+      <el-tab-pane label="BACnet配置" name="bacnet">
+        <DeviceDetailBACnetConfig v-if="activeTab === 'bacnet'" :device="device" />
+      </el-tab-pane>
     </el-tabs>
   </el-col>
 </template>
@@ -54,6 +57,7 @@ import DeviceDetailsMessage from './DeviceDetailsMessage.vue'
 import DeviceDetailsSimulator from './DeviceDetailsSimulator.vue'
 import DeviceDetailConfig from './DeviceDetailConfig.vue'
 import DeviceDetailsShadow from './DeviceDetailsShadow.vue'
+import DeviceDetailBACnetConfig from './DeviceDetailBACnetConfig.vue'
 
 defineOptions({ name: 'IoTDeviceDetail' })
 
