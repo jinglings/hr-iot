@@ -53,6 +53,14 @@ public class LongSetTypeHandler implements TypeHandler<Set<Long>> {
         if (value == null) {
             return null;
         }
+        // 处理 JSON 数组格式 (如: "[1,2,3]" 或 "[1]")
+        if (value.startsWith("[") && value.endsWith("]")) {
+            value = value.substring(1, value.length() - 1);
+        }
+        // 如果清理后的字符串为空,返回空集合
+        if (value.isEmpty()) {
+            return CollUtil.newHashSet();
+        }
         return StrUtils.splitToLongSet(value, COMMA);
     }
 }

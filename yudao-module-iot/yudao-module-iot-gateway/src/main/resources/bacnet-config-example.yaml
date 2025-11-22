@@ -1,0 +1,81 @@
+# BACnet 协议配置示例
+# 将此配置添加到 application.yaml 或 application-local.yaml 中
+
+yudao:
+  iot:
+    bacnet:
+      # 是否启用 BACnet 协议（必填）
+      enabled: true
+
+      # BACnet 本地设备 ID（必填，1-4194303）
+      device-id: 1234
+
+      # BACnet 端口（可选，默认 47808）
+      port: 47808
+
+      # 本地绑定地址（可选，不配置则绑定所有网卡）
+      local-bind-address: 192.168.1.100
+
+      # 广播地址（可选，不配置则使用默认广播地址）
+      broadcast-address: 192.168.1.255
+
+      # 设备发现超时时间（毫秒，可选，默认 3000）
+      discovery-timeout: 3000
+
+      # 设备发现定时任务 Cron 表达式（可选，默认每5分钟执行一次）
+      # 格式: 秒 分 时 日 月 周
+      # 示例: "0 */5 * * * ?" 表示每5分钟执行一次
+      discovery-cron: "0 */5 * * * ?"
+
+# 配置说明：
+# 1. enabled: 控制 BACnet 协议是否启用，设为 false 可完全禁用 BACnet 功能
+# 2. device-id: BACnet 网络中的本地设备 ID，必须在网络中唯一
+# 3. port: BACnet/IP 使用的 UDP 端口，标准端口为 47808
+# 4. local-bind-address: 指定绑定的本地 IP 地址，多网卡环境下需要配置
+# 5. broadcast-address: BACnet 设备发现使用的广播地址
+# 6. discovery-timeout: WHO-IS 广播后等待 I-AM 响应的超时时间
+# 7. discovery-cron: 自动设备发现的执行频率
+
+# 使用场景示例：
+
+# 场景1：局域网环境（推荐配置）
+# yudao:
+#   iot:
+#     bacnet:
+#       enabled: true
+#       device-id: 1234
+#       local-bind-address: 192.168.1.100
+#       broadcast-address: 192.168.1.255
+#       discovery-cron: "0 */10 * * * ?"  # 每10分钟发现一次
+
+# 场景2：单网卡环境（简化配置）
+# yudao:
+#   iot:
+#     bacnet:
+#       enabled: true
+#       device-id: 1234
+
+# 场景3：禁用自动发现（手动配置设备）
+# yudao:
+#   iot:
+#     bacnet:
+#       enabled: true
+#       device-id: 1234
+#       discovery-cron: "-"  # 禁用定时发现任务
+
+# 场景4：测试环境（快速发现）
+# yudao:
+#   iot:
+#     bacnet:
+#       enabled: true
+#       device-id: 1234
+#       discovery-timeout: 5000
+#       discovery-cron: "0 */1 * * * ?"  # 每1分钟发现一次
+
+# 注意事项：
+# 1. device-id 在整个 BACnet 网络中必须唯一
+# 2. 如果有防火墙，需要开放 UDP 47808 端口
+# 3. local-bind-address 必须是本机实际存在的 IP 地址
+# 4. broadcast-address 需要与 local-bind-address 在同一子网
+# 5. discovery-cron 频率不宜过高，避免网络流量过大
+# 6. 生产环境建议适当增加 discovery-timeout 以应对网络延迟

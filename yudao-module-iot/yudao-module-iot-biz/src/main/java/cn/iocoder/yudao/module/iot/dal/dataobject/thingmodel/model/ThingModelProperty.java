@@ -4,6 +4,7 @@ import cn.iocoder.yudao.framework.common.validation.InEnum;
 import cn.iocoder.yudao.module.iot.dal.dataobject.thingmodel.model.dataType.ThingModelDataSpecs;
 import cn.iocoder.yudao.module.iot.enums.thingmodel.IotDataSpecsDataTypeEnum;
 import cn.iocoder.yudao.module.iot.enums.thingmodel.IotThingModelAccessModeEnum;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author HUIHUI
  */
 @Data
+@JsonDeserialize(using = ThingModelPropertyDeserializer.class)
 public class ThingModelProperty {
 
     /**

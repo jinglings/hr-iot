@@ -24,7 +24,7 @@ export function getAdapterStyle(config: ScreenAdapterConfig): CSSProperties {
   const scaleX = windowWidth / width
   const scaleY = windowHeight / height
 
-  let style: CSSProperties = {
+  const style: CSSProperties = {
     width: `${width}px`,
     height: `${height}px`,
     transformOrigin: 'top left'

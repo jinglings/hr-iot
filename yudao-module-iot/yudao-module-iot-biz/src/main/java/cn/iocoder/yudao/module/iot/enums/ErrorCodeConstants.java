@@ -140,4 +140,19 @@ public interface ErrorCodeConstants {
     ErrorCode EDGE_MODEL_DEPLOYMENT_ALREADY_EXISTS = new ErrorCode(1_050_033_001, "模型已在该网关部署");
     ErrorCode EDGE_MODEL_DEPLOYMENT_FAILED = new ErrorCode(1_050_033_002, "模型部署失败");
 
+    // ========== BACnet 协议 - 设备配置 1-050-040-000 ==========
+    ErrorCode BACNET_DEVICE_CONFIG_NOT_EXISTS = new ErrorCode(1_050_040_000, "BACnet 设备配置不存在");
+    ErrorCode BACNET_DEVICE_CONFIG_EXISTS = new ErrorCode(1_050_040_001, "设备已存在 BACnet 配置");
+    ErrorCode BACNET_INSTANCE_NUMBER_EXISTS = new ErrorCode(1_050_040_002, "BACnet 设备实例号已被使用");
+
+    // ========== BACnet 协议 - 属性映射 1-050-041-000 ==========
+    ErrorCode BACNET_PROPERTY_MAPPING_NOT_EXISTS = new ErrorCode(1_050_041_000, "BACnet 属性映射不存在");
+    ErrorCode BACNET_PROPERTY_MAPPING_EXISTS = new ErrorCode(1_050_041_001, "BACnet 属性映射已存在");
+
+    // ========== BACnet 协议 - 设备发现 1-050-042-000 ==========
+    ErrorCode BACNET_DISCOVERY_RECORD_NOT_EXISTS = new ErrorCode(1_050_042_000, "BACnet 设备发现记录不存在");
+    ErrorCode BACNET_DISCOVERY_DEVICE_NOT_FOUND = new ErrorCode(1_050_042_001, "未找到 BACnet 设备");
+    ErrorCode BACNET_DISCOVERY_ALREADY_BOUND = new ErrorCode(1_050_042_002, "BACnet 设备已绑定");
+    ErrorCode BACNET_BIND_PARAM_ERROR = new ErrorCode(1_050_042_003, "绑定参数错误，请选择设备或填写设备信息");
+
 }

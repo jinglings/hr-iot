@@ -245,6 +245,96 @@ public class BACnetClient {
     }
 
     /**
+     * 写入对象属性值
+     */
+    public void writeProperty(Integer deviceInstanceNumber,
+                             ObjectType objectType,
+                             Integer objectInstanceNumber,
+                             PropertyIdentifier propertyId,
+                             Object value,
+                             Integer priority) throws Exception {
+        if (!initialized) {
+            throw new IllegalStateException("BACnet 客户端未初始化");
+        }
+
+        RemoteDevice device = remoteDevices.get(deviceInstanceNumber);
+        if (device == null) {
+            device = localDevice.getRemoteDevice(deviceInstanceNumber).get();
+            if (device != null) {
+                remoteDevices.put(deviceInstanceNumber, device);
+            }
+        }
+
+        if (device == null) {
+            throw new IllegalArgumentException("设备不存在: " + deviceInstanceNumber);
+        }
+
+        try {
+            com.serotonin.bacnet4j.type.primitive.ObjectIdentifier objectIdentifier =
+                    new com.serotonin.bacnet4j.type.primitive.ObjectIdentifier(objectType, objectInstanceNumber);
+
+            // 转换值为 BACnet 编码值
+            com.serotonin.bacnet4j.type.Encodable encodableValue = convertToEncodable(value);
+
+            // 构建写入请求
+            com.serotonin.bacnet4j.service.confirmed.WritePropertyRequest request;
+            if (priority != null) {
+                request = new com.serotonin.bacnet4j.service.confirmed.WritePropertyRequest(
+                        objectIdentifier,
+                        propertyId,
+                        null, // arrayIndex
+                        encodableValue,
+                        new com.serotonin.bacnet4j.type.primitive.UnsignedInteger(priority)
+                );
+            } else {
+                request = new com.serotonin.bacnet4j.service.confirmed.WritePropertyRequest(
+                        objectIdentifier,
+                        propertyId,
+                        null, // arrayIndex
+                        encodableValue,
+                        null // priority
+                );
+            }
+
+            // 发送写入请求
+            localDevice.send(device, request).get();
+
+            log.info("[writeProperty][写入属性成功] device={}, objectType={}, objectInstance={}, property={}, value={}",
+                    deviceInstanceNumber, objectType, objectInstanceNumber, propertyId, value);
+
+        } catch (Exception e) {
+            log.error("[writeProperty][写入属性失败] device={}, objectType={}, objectInstance={}, property={}",
+                    deviceInstanceNumber, objectType, objectInstanceNumber, propertyId, e);
+            throw e;
+        }
+    }
+
+    /**
+     * 转换 Java 对象为 BACnet 编码值
+     */
+    private com.serotonin.bacnet4j.type.Encodable convertToEncodable(Object value) {
+        if (value == null) {
+            return new com.serotonin.bacnet4j.type.primitive.Null();
+        }
+
+        if (value instanceof Boolean) {
+            return new com.serotonin.bacnet4j.type.primitive.Boolean((Boolean) value);
+        } else if (value instanceof Integer) {
+            return new com.serotonin.bacnet4j.type.primitive.UnsignedInteger((Integer) value);
+        } else if (value instanceof Long) {
+            return new com.serotonin.bacnet4j.type.primitive.UnsignedInteger(((Long) value).intValue());
+        } else if (value instanceof Float) {
+            return new com.serotonin.bacnet4j.type.primitive.Real((Float) value);
+        } else if (value instanceof Double) {
+            return new com.serotonin.bacnet4j.type.primitive.Double((Double) value);
+        } else if (value instanceof String) {
+            return new com.serotonin.bacnet4j.type.primitive.CharacterString((String) value);
+        } else {
+            throw new IllegalArgumentException("不支持的数据类型: " + value.getClass());
+        }
+    }
+
+    /**
      * 获取本地设备
      */
     public LocalDevice getLocalDevice() {

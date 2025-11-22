@@ -726,16 +726,16 @@ const remainingRouter: AppRouteRecordRaw[] = [
           noCache: false
         }
       },
-      // 空间管理（集成页面）
-      {
-        path: 'space',
-        component: () => import('@/views/iot/energy/space/index.vue'),
-        name: 'IotEnergySpace',
-        meta: {
-          title: '空间管理',
-          icon: 'ep:office-building'
-        }
-      },
+      // 空间管理（集成页面）- 暂时注释，文件不存在
+      // {
+      //   path: 'space',
+      //   component: () => import('@/views/iot/energy/space/index.vue'),
+      //   name: 'IotEnergySpace',
+      //   meta: {
+      //     title: '空间管理',
+      //     icon: 'ep:office-building'
+      //   }
+      // },
       // 建筑管理
       {
         path: 'building',
@@ -743,9 +743,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         name: 'IotEnergyBuilding',
         meta: {
           title: '建筑管理',
-          icon: 'ep:office-building',
-          hidden: true,
-          activeMenu: '/iot/energy/space'
+          icon: 'ep:office-building'
         }
       },
       // 区域管理
@@ -755,9 +753,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         name: 'IotEnergyArea',
         meta: {
           title: '区域管理',
-          icon: 'ep:location',
-          hidden: true,
-          activeMenu: '/iot/energy/space'
+          icon: 'ep:location'
         }
       },
       // 楼层管理
@@ -767,9 +763,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         name: 'IotEnergyFloor',
         meta: {
           title: '楼层管理',
-          icon: 'ep:files',
-          hidden: true,
-          activeMenu: '/iot/energy/space'
+          icon: 'ep:files'
         }
       },
       // 房间管理
@@ -779,9 +773,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         name: 'IotEnergyRoom',
         meta: {
           title: '房间管理',
-          icon: 'ep:document',
-          hidden: true,
-          activeMenu: '/iot/energy/space'
+          icon: 'ep:document'
         }
       },
       // 能源类型管理
