@@ -11,7 +11,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-18T13:59:21+0800",
+    date = "2025-11-22T19:37:26+0800",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.2 (Oracle Corporation)"
 )
 public class IotEdgeGatewayConvertImpl implements IotEdgeGatewayConvert {

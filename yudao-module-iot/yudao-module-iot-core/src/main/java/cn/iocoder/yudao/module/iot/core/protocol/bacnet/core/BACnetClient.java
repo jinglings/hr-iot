@@ -317,8 +317,11 @@ public class BACnetClient {
             return new com.serotonin.bacnet4j.type.primitive.Null();
         }
 
-        if (value instanceof Boolean) {
-            return new com.serotonin.bacnet4j.type.primitive.Boolean((Boolean) value);
+        if (value instanceof java.lang.Boolean) {
+            // BACnet4J的Boolean类使用静态常量TRUE和FALSE
+            return ((java.lang.Boolean) value) ?
+                com.serotonin.bacnet4j.type.primitive.Boolean.TRUE :
+                com.serotonin.bacnet4j.type.primitive.Boolean.FALSE;
         } else if (value instanceof Integer) {
             return new com.serotonin.bacnet4j.type.primitive.UnsignedInteger((Integer) value);
         } else if (value instanceof Long) {

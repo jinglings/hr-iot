@@ -30,12 +30,12 @@
       </el-form-item>
     </el-form>
   </div>
-  <div v-else>
+<!--  <div v-else>
     <el-descriptions :column="2" border :labelStyle="{ 'font-weight': 'bold' }">
       <el-descriptions-item label="设备位置:">{{ state.address }}</el-descriptions-item>
     </el-descriptions>
     <div id="bdMap" class="mapContainer"></div>
-  </div>
+  </div>-->
 </template>
 
 <script setup lang="ts">
@@ -82,7 +82,7 @@ const loadMap = () => {
   script.src = `https://api.map.baidu.com/api?v=1.0&type=webgl&ak=${
     import.meta.env.VITE_BAIDU_MAP_KEY
   }&callback=initBaiduMap`
-  document.body.appendChild(script)
+  // document.body.appendChild(script)
 
   // 定义全局回调函数
   window.initBaiduMap = () => {
@@ -111,17 +111,17 @@ const loadMap = () => {
 
 /** 初始化地图 */
 const initMap = () => {
-  const mapId = 'bdMap'
-  state.map = new window.BMapGL.Map(mapId)
-  // TODO @super：这个是默认的哇？
-  state.map.centerAndZoom(new window.BMapGL.Point(116.404, 39.915), 11)
-  state.map.enableScrollWheelZoom()
-  state.map.disableDoubleClickZoom()
-
-  // 添加地图控件
-  state.map.addControl(new window.BMapGL.NavigationControl())
-  state.map.addControl(new window.BMapGL.ScaleControl())
-  state.map.addControl(new window.BMapGL.ZoomControl())
+  // const mapId = 'bdMap'
+  // state.map = new window.BMapGL.Map(mapId)
+  // // TODO @super：这个是默认的哇？
+  // state.map.centerAndZoom(new window.BMapGL.Point(116.404, 39.915), 11)
+  // state.map.enableScrollWheelZoom()
+  // state.map.disableDoubleClickZoom()
+  //
+  // // 添加地图控件
+  // state.map.addControl(new window.BMapGL.NavigationControl())
+  // state.map.addControl(new window.BMapGL.ScaleControl())
+  // state.map.addControl(new window.BMapGL.ZoomControl())
 }
 
 /** 初始化地理编码器 */

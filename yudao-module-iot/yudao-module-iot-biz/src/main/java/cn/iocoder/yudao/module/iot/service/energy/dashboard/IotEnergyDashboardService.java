@@ -25,13 +25,13 @@ public interface IotEnergyDashboardService {
     /**
      * 获取能耗排名
      *
-     * @param objectType 对象类型（building/area/floor/room）
+     * @param type 对象类型（building-建筑，meter-计量点）
      * @param startTime 开始时间
      * @param endTime 结束时间
      * @param topN 取前N名
      * @return 排名列表
      */
-    List<IotEnergyRankingRespVO> getEnergyRanking(String objectType, LocalDateTime startTime,
+    List<IotEnergyRankingRespVO> getEnergyRanking(String type, LocalDateTime startTime,
                                                    LocalDateTime endTime, Integer topN);
 
     /**

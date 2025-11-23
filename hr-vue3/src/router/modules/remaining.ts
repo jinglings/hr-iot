@@ -705,149 +705,149 @@ const remainingRouter: AppRouteRecordRaw[] = [
     }
   },
   // IoT 能源管理路由
-  {
-    path: '/iot/energy',
-    component: Layout,
-    name: 'IotEnergy',
-    meta: {
-      title: '能源管理',
-      icon: 'ep:lightning',
-      alwaysShow: true
-    },
-    children: [
-      // 能源仪表板
-      {
-        path: 'dashboard',
-        component: () => import('@/views/iot/energy/dashboard/index.vue'),
-        name: 'IotEnergyDashboard',
-        meta: {
-          title: '能源仪表板',
-          icon: 'ep:data-analysis',
-          noCache: false
-        }
-      },
-      // 空间管理（集成页面）- 暂时注释，文件不存在
-      // {
-      //   path: 'space',
-      //   component: () => import('@/views/iot/energy/space/index.vue'),
-      //   name: 'IotEnergySpace',
-      //   meta: {
-      //     title: '空间管理',
-      //     icon: 'ep:office-building'
-      //   }
-      // },
-      // 建筑管理
-      {
-        path: 'building',
-        component: () => import('@/views/iot/energy/building/index.vue'),
-        name: 'IotEnergyBuilding',
-        meta: {
-          title: '建筑管理',
-          icon: 'ep:office-building'
-        }
-      },
-      // 区域管理
-      {
-        path: 'area',
-        component: () => import('@/views/iot/energy/area/index.vue'),
-        name: 'IotEnergyArea',
-        meta: {
-          title: '区域管理',
-          icon: 'ep:location'
-        }
-      },
-      // 楼层管理
-      {
-        path: 'floor',
-        component: () => import('@/views/iot/energy/floor/index.vue'),
-        name: 'IotEnergyFloor',
-        meta: {
-          title: '楼层管理',
-          icon: 'ep:files'
-        }
-      },
-      // 房间管理
-      {
-        path: 'room',
-        component: () => import('@/views/iot/energy/room/index.vue'),
-        name: 'IotEnergyRoom',
-        meta: {
-          title: '房间管理',
-          icon: 'ep:document'
-        }
-      },
-      // 能源类型管理
-      {
-        path: 'energy-type',
-        component: () => import('@/views/iot/energy/energyType/index.vue'),
-        name: 'IotEnergyType',
-        meta: {
-          title: '能源类型',
-          icon: 'ep:files'
-        }
-      },
-      // 计量点管理
-      {
-        path: 'meter',
-        component: () => import('@/views/iot/energy/meter/index.vue'),
-        name: 'IotEnergyMeter',
-        meta: {
-          title: '计量点管理',
-          icon: 'ep:monitor'
-        }
-      },
-      // 能源数据查询
-      {
-        path: 'data',
-        component: () => import('@/views/iot/energy/data/index.vue'),
-        name: 'IotEnergyData',
-        meta: {
-          title: '能源数据',
-          icon: 'ep:document-copy'
-        }
-      },
-      // 能源统计分析
-      {
-        path: 'statistics',
-        component: () => import('@/views/iot/energy/statistics/index.vue'),
-        name: 'IotEnergyStatistics',
-        meta: {
-          title: '统计分析',
-          icon: 'ep:data-line'
-        }
-      },
-      // 能效分析
-      {
-        path: 'analysis',
-        component: () => import('@/views/iot/energy/analysis/index.vue'),
-        name: 'IotEnergyAnalysis',
-        meta: {
-          title: '能效分析',
-          icon: 'ep:trend-charts'
-        }
-      },
-      // 报表模板
-      {
-        path: 'report/template',
-        component: () => import('@/views/iot/energy/report/template/index.vue'),
-        name: 'IotEnergyReportTemplate',
-        meta: {
-          title: '报表模板',
-          icon: 'ep:document-copy'
-        }
-      },
-      // 报表记录
-      {
-        path: 'report/record',
-        component: () => import('@/views/iot/energy/report/record/index.vue'),
-        name: 'IotEnergyReportRecord',
-        meta: {
-          title: '报表记录',
-          icon: 'ep:tickets'
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/iot/energy',
+  //   component: Layout,
+  //   name: 'IotEnergy',
+  //   meta: {
+  //     title: '能源管理',
+  //     icon: 'ep:lightning',
+  //     alwaysShow: true
+  //   },
+  //   children: [
+  //     // 能源仪表板
+  //     {
+  //       path: 'dashboard',
+  //       component: () => import('@/views/iot/energy/dashboard/index.vue'),
+  //       name: 'IotEnergyDashboard',
+  //       meta: {
+  //         title: '能源仪表板',
+  //         icon: 'ep:data-analysis',
+  //         noCache: false
+  //       }
+  //     },
+  //     // 空间管理（集成页面）- 暂时注释，文件不存在
+  //     // {
+  //     //   path: 'space',
+  //     //   component: () => import('@/views/iot/energy/space/index.vue'),
+  //     //   name: 'IotEnergySpace',
+  //     //   meta: {
+  //     //     title: '空间管理',
+  //     //     icon: 'ep:office-building'
+  //     //   }
+  //     // },
+  //     // 建筑管理
+  //     {
+  //       path: 'building',
+  //       component: () => import('@/views/iot/energy/building/index.vue'),
+  //       name: 'IotEnergyBuilding',
+  //       meta: {
+  //         title: '建筑管理',
+  //         icon: 'ep:office-building'
+  //       }
+  //     },
+  //     // 区域管理
+  //     {
+  //       path: 'area',
+  //       component: () => import('@/views/iot/energy/area/index.vue'),
+  //       name: 'IotEnergyArea',
+  //       meta: {
+  //         title: '区域管理',
+  //         icon: 'ep:location'
+  //       }
+  //     },
+  //     // 楼层管理
+  //     {
+  //       path: 'floor',
+  //       component: () => import('@/views/iot/energy/floor/index.vue'),
+  //       name: 'IotEnergyFloor',
+  //       meta: {
+  //         title: '楼层管理',
+  //         icon: 'ep:files'
+  //       }
+  //     },
+  //     // 房间管理
+  //     {
+  //       path: 'room',
+  //       component: () => import('@/views/iot/energy/room/index.vue'),
+  //       name: 'IotEnergyRoom',
+  //       meta: {
+  //         title: '房间管理',
+  //         icon: 'ep:document'
+  //       }
+  //     },
+  //     // 能源类型管理
+  //     {
+  //       path: 'energy-type',
+  //       component: () => import('@/views/iot/energy/energyType/index.vue'),
+  //       name: 'IotEnergyType',
+  //       meta: {
+  //         title: '能源类型',
+  //         icon: 'ep:files'
+  //       }
+  //     },
+  //     // 计量点管理
+  //     {
+  //       path: 'meter',
+  //       component: () => import('@/views/iot/energy/meter/index.vue'),
+  //       name: 'IotEnergyMeter',
+  //       meta: {
+  //         title: '计量点管理',
+  //         icon: 'ep:monitor'
+  //       }
+  //     },
+  //     // 能源数据查询
+  //     {
+  //       path: 'data',
+  //       component: () => import('@/views/iot/energy/data/index.vue'),
+  //       name: 'IotEnergyData',
+  //       meta: {
+  //         title: '能源数据',
+  //         icon: 'ep:document-copy'
+  //       }
+  //     },
+  //     // 能源统计分析
+  //     {
+  //       path: 'statistics',
+  //       component: () => import('@/views/iot/energy/statistics/index.vue'),
+  //       name: 'IotEnergyStatistics',
+  //       meta: {
+  //         title: '统计分析',
+  //         icon: 'ep:data-line'
+  //       }
+  //     },
+  //     // 能效分析
+  //     {
+  //       path: 'analysis',
+  //       component: () => import('@/views/iot/energy/analysis/index.vue'),
+  //       name: 'IotEnergyAnalysis',
+  //       meta: {
+  //         title: '能效分析',
+  //         icon: 'ep:trend-charts'
+  //       }
+  //     },
+  //     // 报表模板
+  //     {
+  //       path: 'report/template',
+  //       component: () => import('@/views/iot/energy/report/template/index.vue'),
+  //       name: 'IotEnergyReportTemplate',
+  //       meta: {
+  //         title: '报表模板',
+  //         icon: 'ep:document-copy'
+  //       }
+  //     },
+  //     // 报表记录
+  //     {
+  //       path: 'report/record',
+  //       component: () => import('@/views/iot/energy/report/record/index.vue'),
+  //       name: 'IotEnergyReportRecord',
+  //       meta: {
+  //         title: '报表记录',
+  //         icon: 'ep:tickets'
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/visualization',
     component: Layout,

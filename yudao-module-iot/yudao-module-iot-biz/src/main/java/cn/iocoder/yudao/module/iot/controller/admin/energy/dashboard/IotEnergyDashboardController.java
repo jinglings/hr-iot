@@ -49,15 +49,15 @@ public class IotEnergyDashboardController {
     @Operation(summary = "获取能耗排名")
     @PreAuthorize("@ss.hasPermission('iot:energy:dashboard:query')")
     public CommonResult<List<IotEnergyRankingRespVO>> getEnergyRanking(
-            @Parameter(description = "对象类型", required = true, example = "building")
-            @RequestParam(value = "objectType") String objectType,
+            @Parameter(description = "对象类型（building-建筑，meter-计量点）", required = true, example = "building")
+            @RequestParam(value = "type") String type,
             @Parameter(description = "开始时间", required = true)
-            @RequestParam(value = "startTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
+            @RequestParam(value = "startTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @Parameter(description = "结束时间", required = true)
-            @RequestParam(value = "endTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime,
+            @RequestParam(value = "endTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
             @Parameter(description = "取前N名", example = "10")
             @RequestParam(value = "topN", required = false, defaultValue = "10") Integer topN) {
-        List<IotEnergyRankingRespVO> ranking = dashboardService.getEnergyRanking(objectType, startTime, endTime, topN);
+        List<IotEnergyRankingRespVO> ranking = dashboardService.getEnergyRanking(type, startTime, endTime, topN);
         return success(ranking);
     }
 

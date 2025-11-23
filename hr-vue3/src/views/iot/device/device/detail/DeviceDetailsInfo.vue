@@ -4,7 +4,7 @@
     <ContentWrap>
       <el-row :gutter="16">
         <!-- 左侧设备信息 -->
-        <el-col :span="12">
+        <el-col :span="24">
           <el-card class="h-full">
             <template #header>
               <div class="flex items-center">
@@ -52,7 +52,7 @@
         </el-col>
 
         <!-- 右侧地图 -->
-        <el-col :span="12">
+<!--        <el-col :span="12">
           <el-card class="h-full">
             <template #header>
               <div class="flex items-center justify-between">
@@ -60,9 +60,9 @@
                   <Icon icon="ep:location" class="mr-2 text-primary" />
                   <span>设备位置</span>
                 </div>
-                <div class="text-[14px] text-[var(--el-text-color-secondary)]">
+                <div class="text-[14px] text-[var(&#45;&#45;el-text-color-secondary)]">
                   最后上线时间：
-                  {{ device.onlineTime ? formatDate(device.onlineTime) : '--' }}
+                  {{ device.onlineTime ? formatDate(device.onlineTime) : '&#45;&#45;' }}
                 </div>
               </div>
             </template>
@@ -70,14 +70,14 @@
               <Map v-if="showMap" :center="getLocationString()" class="h-full w-full" />
               <div
                 v-else
-                class="flex items-center justify-center h-full w-full bg-[var(--el-fill-color-light)] text-[var(--el-text-color-secondary)]"
+                class="flex items-center justify-center h-full w-full bg-[var(&#45;&#45;el-fill-color-light)] text-[var(&#45;&#45;el-text-color-secondary)]"
               >
                 <Icon icon="ep:warning" class="mr-2 text-warning" />
                 <span>暂无位置信息</span>
               </div>
             </div>
           </el-card>
-        </el-col>
+        </el-col>-->
       </el-row>
     </ContentWrap>
 

@@ -304,8 +304,8 @@ const loadItemData = async () => {
     const startTime = new Date(endTime.getTime() - 30 * 24 * 60 * 60 * 1000) // 最近30天
 
     const data: IotEnergyDashboardItemVO[] = await getIotEnergyDashboardItem({
-      startTime,
-      endTime
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString()
     })
 
     const itemData = data.map(item => ({
@@ -363,8 +363,8 @@ const loadRankingData = async () => {
 
     const data: IotEnergyDashboardRankingVO[] = await getIotEnergyDashboardRanking({
       type: rankingType.value,
-      startTime,
-      endTime,
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
       topN: 10
     })
 

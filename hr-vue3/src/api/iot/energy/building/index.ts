@@ -3,9 +3,9 @@ import request from '@/config/axios'
 // IoT 能源建筑 VO
 export interface IotEnergyBuildingVO {
   id: number // 建筑 ID，主键，自增
-  name: string // 建筑名称
-  code: string // 建筑编码
-  type: string // 建筑类型：office-办公楼，factory-厂房，warehouse-仓库，dormitory-宿舍，other-其他
+  buildingName: string // 建筑名称
+  buildingCode: string // 建筑编码
+  buildingType: string // 建筑类型：office-办公楼，factory-厂房，warehouse-仓库，dormitory-宿舍，other-其他
   area: number // 建筑面积（平方米）
   address: string // 建筑地址
   latitude: number // 纬度
@@ -22,7 +22,7 @@ export interface IotEnergyBuildingVO {
 // IoT 能源建筑 分页查询请求 VO
 export interface IotEnergyBuildingPageReqVO extends PageParam {
   name?: string // 建筑名称
-  code?: string // 建筑编码
+  buildingCode?: string // 建筑编码
   type?: string // 建筑类型
   status?: number // 建筑状态
   createTime?: string[] // 创建时间
@@ -30,9 +30,9 @@ export interface IotEnergyBuildingPageReqVO extends PageParam {
 
 // IoT 能源建筑 导出请求 VO
 export interface IotEnergyBuildingExportReqVO {
-  name?: string // 建筑名称
-  code?: string // 建筑编码
-  type?: string // 建筑类型
+  buildingName?: string // 建筑名称
+  buildingCode?: string // 建筑编码
+  buildingType?: string // 建筑类型
   status?: number // 建筑状态
   createTime?: string[] // 创建时间
 }
@@ -40,15 +40,15 @@ export interface IotEnergyBuildingExportReqVO {
 // IoT 能源建筑 简化 VO（用于下拉选择）
 export interface IotEnergyBuildingSimpleVO {
   id: number // 建筑 ID
-  name: string // 建筑名称
-  code: string // 建筑编码
+  buildingName: string // 建筑名称
+  buildingCode: string // 建筑编码
 }
 
 // IoT 能源空间树 VO
 export interface IotEnergySpaceTreeVO {
   id: number // ID
-  name: string // 名称
-  type: string // 类型：building-建筑，area-区域，floor-楼层，room-房间
+  buildingName: string // 名称
+  buildingType: string // 类型：building-建筑，area-区域，floor-楼层，room-房间
   parentId?: number // 父级 ID
   children?: IotEnergySpaceTreeVO[] // 子节点
 }

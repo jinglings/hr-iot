@@ -1,12 +1,13 @@
 package cn.iocoder.yudao.module.iot.gateway.config;
 
+import cn.iocoder.yudao.module.iot.core.messagebus.core.IotMessageBus;
+import cn.iocoder.yudao.module.iot.core.mq.producer.IotDeviceMessageProducer;
 import cn.iocoder.yudao.module.iot.core.protocol.bacnet.core.BACnetDeviceManager;
 import cn.iocoder.yudao.module.iot.dal.mysql.bacnet.IotBACnetDeviceConfigMapper;
 import cn.iocoder.yudao.module.iot.dal.mysql.bacnet.IotBACnetPropertyMappingMapper;
 import cn.iocoder.yudao.module.iot.gateway.protocol.bacnet.IotBACnetDownstreamSubscriber;
 import cn.iocoder.yudao.module.iot.gateway.protocol.bacnet.IotBACnetMasterProtocol;
 import cn.iocoder.yudao.module.iot.gateway.service.device.IotDeviceService;
-import cn.iocoder.yudao.module.iot.gateway.service.device.message.IotDeviceMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +32,7 @@ public class BACnetProtocolConfiguration {
     public IotBACnetMasterProtocol iotBACnetMasterProtocol(
             BACnetDeviceManager bacnetDeviceManager,
             IotDeviceService deviceService,
-            IotDeviceMessageService messageService,
+            IotDeviceMessageProducer deviceMessageProducer,
             IotBACnetDeviceConfigMapper deviceConfigMapper,
             IotBACnetPropertyMappingMapper propertyMappingMapper) {
 
@@ -39,7 +40,7 @@ public class BACnetProtocolConfiguration {
         return new IotBACnetMasterProtocol(
                 bacnetDeviceManager,
                 deviceService,
-                messageService,
+                deviceMessageProducer,
                 deviceConfigMapper,
                 propertyMappingMapper
         );
@@ -51,20 +52,18 @@ public class BACnetProtocolConfiguration {
     @Bean
     public IotBACnetDownstreamSubscriber iotBACnetDownstreamSubscriber(
             BACnetDeviceManager bacnetDeviceManager,
-            IotDeviceService deviceService,
-            IotDeviceMessageService messageService,
+            IotBACnetMasterProtocol masterProtocol,
             IotBACnetDeviceConfigMapper deviceConfigMapper,
             IotBACnetPropertyMappingMapper propertyMappingMapper,
-            IotBACnetMasterProtocol masterProtocol) {
+            IotMessageBus messageBus) {
 
         log.info("[iotBACnetDownstreamSubscriber][初始化 BACnet 下行消息订阅器]");
         return new IotBACnetDownstreamSubscriber(
                 bacnetDeviceManager,
-                deviceService,
-                messageService,
+                masterProtocol,
                 deviceConfigMapper,
                 propertyMappingMapper,
-                masterProtocol
+                messageBus
         );
     }
 

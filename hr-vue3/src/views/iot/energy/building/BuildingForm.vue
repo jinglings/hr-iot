@@ -9,21 +9,21 @@
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="建筑名称" prop="name">
-            <el-input v-model="formData.name" placeholder="请输入建筑名称" />
+          <el-form-item label="建筑名称" prop="buildingName">
+            <el-input v-model="formData.buildingName" placeholder="请输入建筑名称" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="建筑编码" prop="code">
-            <el-input v-model="formData.code" placeholder="请输入建筑编码" />
+          <el-form-item label="建筑编码" prop="buildingCode">
+            <el-input v-model="formData.buildingCode" placeholder="请输入建筑编码" />
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="建筑类型" prop="type">
-            <el-select v-model="formData.type" placeholder="请选择建筑类型" style="width: 100%">
+          <el-form-item label="建筑类型" prop="buildingType">
+            <el-select v-model="formData.buildingType" placeholder="请选择建筑类型" style="width: 100%">
               <el-option label="办公楼" value="office" />
               <el-option label="厂房" value="factory" />
               <el-option label="仓库" value="warehouse" />
@@ -115,9 +115,9 @@ const formLoading = ref(false) // 表单的加载中：1）修改时的数据加
 const formType = ref('') // 表单的类型：create - 新增；update - 修改
 const formData = ref({
   id: undefined,
-  name: undefined,
-  code: undefined,
-  type: 'office',
+  buildingName: undefined,
+  buildingCode: undefined,
+  buildingType: 'office',
   area: undefined,
   address: undefined,
   latitude: undefined,
@@ -129,9 +129,9 @@ const formData = ref({
   status: CommonStatusEnum.ENABLE
 })
 const formRules = reactive({
-  name: [{ required: true, message: '建筑名称不能为空', trigger: 'blur' }],
-  code: [{ required: true, message: '建筑编码不能为空', trigger: 'blur' }],
-  type: [{ required: true, message: '建筑类型不能为空', trigger: 'change' }],
+  buildingName: [{ required: true, message: '建筑名称不能为空', trigger: 'blur' }],
+  buildingCode: [{ required: true, message: '建筑编码不能为空', trigger: 'blur' }],
+  buildingType: [{ required: true, message: '建筑类型不能为空', trigger: 'change' }],
   area: [{ required: true, message: '建筑面积不能为空', trigger: 'blur' }],
   status: [{ required: true, message: '建筑状态不能为空', trigger: 'blur' }],
   sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }]
@@ -184,9 +184,9 @@ const submitForm = async () => {
 const resetForm = () => {
   formData.value = {
     id: undefined,
-    name: undefined,
-    code: undefined,
-    type: 'office',
+    buildingName: undefined,
+    buildingCode: undefined,
+    buildingType: 'office',
     area: undefined,
     address: undefined,
     latitude: undefined,

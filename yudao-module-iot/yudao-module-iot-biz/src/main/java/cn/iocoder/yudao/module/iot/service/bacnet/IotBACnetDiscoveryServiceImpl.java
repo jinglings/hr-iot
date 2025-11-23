@@ -115,7 +115,9 @@ public class IotBACnetDiscoveryServiceImpl implements IotBACnetDiscoveryService 
             }
 
             // 3. 标记超过10分钟未发现的设备为离线
-            discoveryRecordMapper.markOfflineDevices(LocalDateTime.now().minusMinutes(10));
+            if(!devices.isEmpty()){
+                discoveryRecordMapper.markOfflineDevices(LocalDateTime.now().minusMinutes(10));
+            }
 
             return records;
         } catch (Exception e) {

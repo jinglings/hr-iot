@@ -1,9 +1,7 @@
 package cn.iocoder.yudao.module.iot.core.protocol.bacnet.config;
 
-import cn.iocoder.yudao.module.iot.core.protocol.bacnet.core.BACnetClient;
 import cn.iocoder.yudao.module.iot.core.protocol.bacnet.core.BACnetDeviceManager;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +18,12 @@ public class BACnetAutoConfiguration {
 
     /**
      * BACnet 设备管理器
-     * 只有当 yudao.iot.bacnet.enabled=true 时才创建
+     * 注意: 该Bean总是会被创建，但是否启用由BACnetDeviceManager内部的enabled属性控制
+     * 这样可以避免其他依赖BACnetDeviceManager的Bean找不到依赖的问题
      */
     @Bean
-    @ConditionalOnProperty(prefix = "yudao.iot.bacnet", name = "enabled", havingValue = "true")
     public BACnetDeviceManager bacnetDeviceManager(BACnetProperties properties) {
-        log.info("创建 BACnet 设备管理器 Bean");
+        log.info("[bacnetDeviceManager][创建 BACnet 设备管理器 Bean, enabled={}]", properties.getEnabled());
         return new BACnetDeviceManager(properties);
     }
 

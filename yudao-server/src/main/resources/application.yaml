@@ -347,5 +347,19 @@ yudao:
   iot:
     message-bus:
       type: redis # 消息总线的类型
+    bacnet:
+      # 启用BACnet协议
+      enabled: true
 
+      # BACnet设备ID（必须在网络中唯一）
+      device-id: 1234
+
+      # 监听端口
+      port: 47808
+
+      # 本地绑定地址（多网卡环境建议指定）
+      local-bind-address: 192.168.234.144
+
+      # 广播地址
+      broadcast-address: 192.168.234.255
 debug: false

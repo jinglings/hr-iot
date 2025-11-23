@@ -81,9 +81,19 @@ public class IotBACnetDownstreamSubscriber implements IotMessageSubscriber<IotDe
     /**
      * 处理属性设置命令
      */
+    @SuppressWarnings("unchecked")
     private void handlePropertySet(IotDeviceMessage message) {
         Long deviceId = message.getDeviceId();
-        Map<String, Object> params = message.getParams();
+        Object paramsObj = message.getParams();
+
+        // 类型检查和转换
+        if (!(paramsObj instanceof Map)) {
+            log.warn("[handlePropertySet][参数类型错误] deviceId={}, paramsType={}",
+                    deviceId, paramsObj != null ? paramsObj.getClass() : "null");
+            return;
+        }
+
+        Map<String, Object> params = (Map<String, Object>) paramsObj;
 
         if (params == null || params.isEmpty()) {
             log.warn("[handlePropertySet][参数为空] deviceId={}", deviceId);

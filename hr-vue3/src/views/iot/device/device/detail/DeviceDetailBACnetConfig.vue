@@ -113,7 +113,7 @@
             type="primary"
             size="small"
             @click="handleAddMapping"
-            v-hasPermi="['iot:bacnet:mapping:create']"
+
             :disabled="!deviceConfig"
           >
             <Icon icon="ep:plus" class="mr-1" />
@@ -171,7 +171,7 @@
               link
               type="primary"
               @click="handleEditMapping(scope.row)"
-              v-hasPermi="['iot:bacnet:mapping:update']"
+
             >
               编辑
             </el-button>
@@ -179,7 +179,7 @@
               link
               type="danger"
               @click="handleDeleteMapping(scope.row.id)"
-              v-hasPermi="['iot:bacnet:mapping:delete']"
+
             >
               删除
             </el-button>
@@ -189,7 +189,7 @@
     </el-card>
   </div>
 
-  <!-- 属性映射编辑弹窗 -->
+  <!-- 属性映射编辑弹窗   v-hasPermi="['iot:bacnet:mapping:update']  v-hasPermi="['iot:bacnet:mapping:delete']""-->
   <el-dialog
     v-model="mappingDialogVisible"
     :title="mappingFormMode === 'create' ? '添加属性映射' : '编辑属性映射'"

@@ -163,7 +163,7 @@ public class IotEnergyDashboardServiceImpl implements IotEnergyDashboardService 
     }
 
     @Override
-    public List<IotEnergyRankingRespVO> getEnergyRanking(String objectType, LocalDateTime startTime,
+    public List<IotEnergyRankingRespVO> getEnergyRanking(String type, LocalDateTime startTime,
                                                           LocalDateTime endTime, Integer topN) {
         try {
             List<IotEnergyStatisticsDO> stats = statisticsService.getStatisticsByTimeRange(
@@ -178,13 +178,18 @@ public class IotEnergyDashboardServiceImpl implements IotEnergyDashboardService 
                 String objectName = null;
 
                 // 根据对象类型获取对应的ID和名称
-                if ("building".equals(objectType)) {
+                if ("building".equals(type)) {
                     objectId = stat.getBuildingId();
                     if (objectId != null) {
                         objectName = buildingService.getBuilding(objectId).getBuildingName();
                     }
+                } else if ("meter".equals(type)) {
+                    // TODO: 实现计量点排名逻辑
+                    objectId = stat.getMeterId();
+                    if (objectId != null) {
+                        objectName = meterService.getMeter(objectId).getMeterName();
+                    }
                 }
-                // TODO: 支持其他对象类型（area/floor/room）
 
                 if (objectId != null) {
                     consumptionMap.merge(objectId, stat.getConsumption(), BigDecimal::add);
@@ -208,7 +213,7 @@ public class IotEnergyDashboardServiceImpl implements IotEnergyDashboardService 
                 rankings.add(IotEnergyRankingRespVO.builder()
                         .objectId(entry.getKey())
                         .objectName(nameMap.get(entry.getKey()))
-                        .objectType(objectType)
+                        .objectType(type)
                         .consumption(consumption)
                         .percentage(percentage)
                         .build());

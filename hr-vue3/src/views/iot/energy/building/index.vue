@@ -17,9 +17,9 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="建筑编码" prop="code">
+      <el-form-item label="建筑编码" prop="buildingCode">
         <el-input
-          v-model="queryParams.code"
+          v-model="queryParams.buildingCode"
           placeholder="请输入建筑编码"
           clearable
           @keyup.enter="handleQuery"
@@ -84,14 +84,14 @@
   <ContentWrap>
     <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
       <el-table-column label="ID" align="center" prop="id" width="80" />
-      <el-table-column label="建筑名称" align="center" prop="name" min-width="120" />
-      <el-table-column label="建筑编码" align="center" prop="code" width="120" />
-      <el-table-column label="建筑类型" align="center" prop="type" width="100">
+      <el-table-column label="建筑名称" align="center" prop="buildingName" min-width="120" />
+      <el-table-column label="建筑编码" align="center" prop="buildingCode" width="120" />
+      <el-table-column label="建筑类型" align="center" prop="buildingType" width="100">
         <template #default="scope">
-          <el-tag v-if="scope.row.type === 'office'" type="primary">办公楼</el-tag>
-          <el-tag v-else-if="scope.row.type === 'factory'" type="success">厂房</el-tag>
-          <el-tag v-else-if="scope.row.type === 'warehouse'" type="warning">仓库</el-tag>
-          <el-tag v-else-if="scope.row.type === 'dormitory'" type="info">宿舍</el-tag>
+          <el-tag v-if="scope.row.buildingType === 'office'" type="primary">办公楼</el-tag>
+          <el-tag v-else-if="scope.row.buildingType === 'factory'" type="success">厂房</el-tag>
+          <el-tag v-else-if="scope.row.buildingType === 'warehouse'" type="warning">仓库</el-tag>
+          <el-tag v-else-if="scope.row.buildingType === 'dormitory'" type="info">宿舍</el-tag>
           <el-tag v-else>其他</el-tag>
         </template>
       </el-table-column>
@@ -164,9 +164,9 @@ const total = ref(0) // 列表的总页数
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  name: undefined,
-  code: undefined,
-  type: undefined,
+  buildingName: undefined,
+  buildingCode: undefined,
+  buildingType: undefined,
   status: undefined,
   createTime: []
 })
