@@ -22,6 +22,9 @@ public class IotEnergyMeterRespVO {
     @Schema(description = "能源类型ID", example = "1")
     private Long energyTypeId;
 
+    @Schema(description = "能源类型名称", example = "电能")
+    private String energyTypeName;
+
     @Schema(description = "关联设备ID", example = "1")
     private Long deviceId;
 
@@ -31,14 +34,26 @@ public class IotEnergyMeterRespVO {
     @Schema(description = "所属建筑ID", example = "1")
     private Long buildingId;
 
+    @Schema(description = "所属建筑名称", example = "1号办公楼")
+    private String buildingName;
+
     @Schema(description = "所属区域ID", example = "1")
     private Long areaId;
+
+    @Schema(description = "所属区域名称", example = "A区")
+    private String areaName;
 
     @Schema(description = "所属楼层ID", example = "1")
     private Long floorId;
 
+    @Schema(description = "所属楼层名称", example = "1层")
+    private String floorName;
+
     @Schema(description = "所属房间ID", example = "1")
     private Long roomId;
+
+    @Schema(description = "所属房间名称", example = "101办公室")
+    private String roomName;
 
     @Schema(description = "计量点级别(1:一级表 2:二级表 3:三级表)", example = "1")
     private Integer meterLevel;

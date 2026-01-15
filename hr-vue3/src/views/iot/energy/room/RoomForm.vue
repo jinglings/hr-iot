@@ -19,7 +19,7 @@
               <el-option
                 v-for="building in buildingList"
                 :key="building.id"
-                :label="building.name"
+                :label="building.buildingName"
                 :value="building.id"
               />
             </el-select>
@@ -36,7 +36,7 @@
               <el-option
                 v-for="area in areaList"
                 :key="area.id"
-                :label="area.name"
+                :label="area.areaName"
                 :value="area.id"
               />
             </el-select>
@@ -49,7 +49,7 @@
           <el-option
             v-for="floor in floorList"
             :key="floor.id"
-            :label="floor.name"
+            :label="floor.floorName"
             :value="floor.id"
           />
         </el-select>
@@ -57,21 +57,21 @@
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="房间名称" prop="name">
-            <el-input v-model="formData.name" placeholder="请输入房间名称" />
+          <el-form-item label="房间名称" prop="roomName">
+            <el-input v-model="formData.roomName" placeholder="请输入房间名称" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="房间编码" prop="code">
-            <el-input v-model="formData.code" placeholder="请输入房间编码" />
+          <el-form-item label="房间编码" prop="roomCode">
+            <el-input v-model="formData.roomCode" placeholder="请输入房间编码" />
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="房间类型" prop="type">
-            <el-select v-model="formData.type" placeholder="请选择房间类型" style="width: 100%">
+          <el-form-item label="房间类型" prop="roomType">
+            <el-select v-model="formData.roomType" placeholder="请选择房间类型" style="width: 100%">
               <el-option label="办公室" value="office" />
               <el-option label="会议室" value="meeting" />
               <el-option label="仓库" value="warehouse" />
@@ -142,9 +142,9 @@ const formData = ref({
   buildingId: undefined,
   areaId: undefined,
   floorId: undefined,
-  name: undefined,
-  code: undefined,
-  type: 'office',
+  roomName: undefined,
+  roomCode: undefined,
+  roomType: 'office',
   area: undefined,
   description: undefined,
   sort: 0,
@@ -154,9 +154,9 @@ const formRules = reactive({
   buildingId: [{ required: true, message: '所属建筑不能为空', trigger: 'change' }],
   areaId: [{ required: true, message: '所属区域不能为空', trigger: 'change' }],
   floorId: [{ required: true, message: '所属楼层不能为空', trigger: 'change' }],
-  name: [{ required: true, message: '房间名称不能为空', trigger: 'blur' }],
-  code: [{ required: true, message: '房间编码不能为空', trigger: 'blur' }],
-  type: [{ required: true, message: '房间类型不能为空', trigger: 'change' }],
+  roomName: [{ required: true, message: '房间名称不能为空', trigger: 'blur' }],
+  roomCode: [{ required: true, message: '房间编码不能为空', trigger: 'blur' }],
+  roomType: [{ required: true, message: '房间类型不能为空', trigger: 'change' }],
   status: [{ required: true, message: '房间状态不能为空', trigger: 'blur' }],
   sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }]
 })
@@ -257,9 +257,9 @@ const resetForm = () => {
     buildingId: undefined,
     areaId: undefined,
     floorId: undefined,
-    name: undefined,
-    code: undefined,
-    type: 'office',
+    roomName: undefined,
+    roomCode: undefined,
+    roomType: 'office',
     area: undefined,
     description: undefined,
     sort: 0,

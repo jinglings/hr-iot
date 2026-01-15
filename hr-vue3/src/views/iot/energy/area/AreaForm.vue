@@ -12,18 +12,18 @@
           <el-option
             v-for="building in buildingList"
             :key="building.id"
-            :label="building.name"
+            :label="building.buildingName"
             :value="building.id"
           />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="区域名称" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入区域名称" />
+      <el-form-item label="区域名称" prop="areaName">
+        <el-input v-model="formData.areaName" placeholder="请输入区域名称" />
       </el-form-item>
 
-      <el-form-item label="区域编码" prop="code">
-        <el-input v-model="formData.code" placeholder="请输入区域编码" />
+      <el-form-item label="区域编码" prop="areaCode">
+        <el-input v-model="formData.areaCode" placeholder="请输入区域编码" />
       </el-form-item>
 
       <el-form-item label="区域状态" prop="status">
@@ -73,16 +73,16 @@ const buildingList = ref([]) // 建筑列表
 const formData = ref({
   id: undefined,
   buildingId: undefined,
-  name: undefined,
-  code: undefined,
+  areaName: undefined,
+  areaCode: undefined,
   description: undefined,
   sort: 0,
   status: CommonStatusEnum.ENABLE
 })
 const formRules = reactive({
   buildingId: [{ required: true, message: '所属建筑不能为空', trigger: 'change' }],
-  name: [{ required: true, message: '区域名称不能为空', trigger: 'blur' }],
-  code: [{ required: true, message: '区域编码不能为空', trigger: 'blur' }],
+  areaName: [{ required: true, message: '区域名称不能为空', trigger: 'blur' }],
+  areaCode: [{ required: true, message: '区域编码不能为空', trigger: 'blur' }],
   status: [{ required: true, message: '区域状态不能为空', trigger: 'blur' }],
   sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }]
 })
@@ -142,8 +142,8 @@ const resetForm = () => {
   formData.value = {
     id: undefined,
     buildingId: undefined,
-    name: undefined,
-    code: undefined,
+    areaName: undefined,
+    areaCode: undefined,
     description: undefined,
     sort: 0,
     status: CommonStatusEnum.ENABLE

@@ -22,8 +22,14 @@ public class IotEnergyFloorRespVO {
     @Schema(description = "所属建筑ID", example = "1")
     private Long buildingId;
 
+    @Schema(description = "所属建筑名称", example = "1号办公楼")
+    private String buildingName;
+
     @Schema(description = "所属区域ID", example = "1")
     private Long areaId;
+
+    @Schema(description = "所属区域名称", example = "A区")
+    private String areaName;
 
     @Schema(description = "楼层序号", example = "1")
     private Integer floorNumber;

@@ -9,13 +9,13 @@
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="计量点名称" prop="name">
-            <el-input v-model="formData.name" placeholder="请输入计量点名称" />
+          <el-form-item label="计量点名称" prop="meterName">
+            <el-input v-model="formData.meterName" placeholder="请输入计量点名称" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="计量点编码" prop="code">
-            <el-input v-model="formData.code" placeholder="请输入计量点编码" />
+          <el-form-item label="计量点编码" prop="meterCode">
+            <el-input v-model="formData.meterCode" placeholder="请输入计量点编码" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -110,7 +110,7 @@
               <el-option
                 v-for="building in buildingList"
                 :key="building.id"
-                :label="building.name"
+                :label="building.buildingName"
                 :value="building.id"
               />
             </el-select>
@@ -127,7 +127,7 @@
               <el-option
                 v-for="area in areaList"
                 :key="area.id"
-                :label="area.name"
+                :label="area.areaName"
                 :value="area.id"
               />
             </el-select>
@@ -142,7 +142,7 @@
               <el-option
                 v-for="floor in floorList"
                 :key="floor.id"
-                :label="floor.name"
+                :label="floor.floorName"
                 :value="floor.id"
               />
             </el-select>
@@ -154,7 +154,7 @@
               <el-option
                 v-for="room in roomList"
                 :key="room.id"
-                :label="room.name"
+                :label="room.roomName"
                 :value="room.id"
               />
             </el-select>
@@ -227,13 +227,13 @@
 
 <script setup lang="ts">
 import { getIntDictOptions, DICT_TYPE } from '@/utils/dict'
-import { IotEnergyMeterVO, getIotEnergyMeter, createIotEnergyMeter, updateIotEnergyMeter, getIotEnergyMeterSimpleList } from '@/api/iot/energy/meter'
-import { getIotEnergyTypeSimpleList } from '@/api/iot/energy/energyType'
-import { getIotEnergyBuildingSimpleList } from '@/api/iot/energy/building'
-import { getIotEnergyAreaListByBuildingId } from '@/api/iot/energy/area'
-import { getIotEnergyFloorListByBuildingId, getIotEnergyFloorListByAreaId } from '@/api/iot/energy/floor'
-import { getIotEnergyRoomListByFloorId } from '@/api/iot/energy/room'
-import { DeviceApi } from '@/api/iot/device/device'
+import { IotEnergyMeterVO, IotEnergyMeterSimpleVO, getIotEnergyMeter, createIotEnergyMeter, updateIotEnergyMeter, getIotEnergyMeterSimpleList } from '@/api/iot/energy/meter'
+import { IotEnergyTypeSimpleVO, getIotEnergyTypeSimpleList } from '@/api/iot/energy/energyType'
+import { IotEnergyBuildingSimpleVO, getIotEnergyBuildingSimpleList } from '@/api/iot/energy/building'
+import { IotEnergyAreaVO, getIotEnergyAreaListByBuildingId } from '@/api/iot/energy/area'
+import { IotEnergyFloorVO, getIotEnergyFloorListByBuildingId, getIotEnergyFloorListByAreaId } from '@/api/iot/energy/floor'
+import { IotEnergyRoomVO, getIotEnergyRoomListByFloorId } from '@/api/iot/energy/room'
+import { DeviceApi, DeviceVO } from '@/api/iot/device/device'
 import { CommonStatusEnum } from '@/utils/constants'
 
 /** IoT 能源计量点 表单 */
@@ -247,18 +247,18 @@ const dialogTitle = ref('') // 弹窗的标题
 const formLoading = ref(false) // 表单的加载中
 const formType = ref('') // 表单的类型
 const deviceLoading = ref(false) // 设备加载中
-const energyTypeList = ref([]) // 能源类型列表
-const deviceList = ref([]) // 设备列表
-const deviceProperties = ref([]) // 设备属性列表
-const buildingList = ref([]) // 建筑列表
-const areaList = ref([]) // 区域列表
-const floorList = ref([]) // 楼层列表
-const roomList = ref([]) // 房间列表
-const parentMeterList = ref([]) // 父级计量点列表
+const energyTypeList = ref<IotEnergyTypeSimpleVO[]>([]) // 能源类型列表
+const deviceList = ref<DeviceVO[]>([]) // 设备列表
+const deviceProperties = ref<{ identifier: string; name: string }[]>([]) // 设备属性列表
+const buildingList = ref<IotEnergyBuildingSimpleVO[]>([]) // 建筑列表
+const areaList = ref<IotEnergyAreaVO[]>([]) // 区域列表
+const floorList = ref<IotEnergyFloorVO[]>([]) // 楼层列表
+const roomList = ref<IotEnergyRoomVO[]>([]) // 房间列表
+const parentMeterList = ref<IotEnergyMeterSimpleVO[]>([]) // 父级计量点列表
 const formData = ref({
   id: undefined,
-  name: undefined,
-  code: undefined,
+  meterName: undefined,
+  meterCode: undefined,
   energyTypeId: undefined,
   deviceId: undefined,
   deviceProperty: undefined,
@@ -275,8 +275,8 @@ const formData = ref({
   status: CommonStatusEnum.ENABLE
 })
 const formRules = reactive({
-  name: [{ required: true, message: '计量点名称不能为空', trigger: 'blur' }],
-  code: [{ required: true, message: '计量点编码不能为空', trigger: 'blur' }],
+  meterName: [{ required: true, message: '计量点名称不能为空', trigger: 'blur' }],
+  meterCode: [{ required: true, message: '计量点编码不能为空', trigger: 'blur' }],
   energyTypeId: [{ required: true, message: '能源类型不能为空', trigger: 'change' }],
   deviceId: [{ required: true, message: '绑定设备不能为空', trigger: 'change' }],
   deviceProperty: [{ required: true, message: '设备属性不能为空', trigger: 'change' }],
@@ -320,8 +320,11 @@ const searchDevices = async (query: string) => {
 }
 
 /** 设备变化时，加载设备属性 */
-const handleDeviceChange = async (deviceId: number) => {
-  formData.value.deviceProperty = undefined
+const handleDeviceChange = async (deviceId: number, preserveProperty: boolean = false) => {
+  // 如果不是保留模式，才清空设备属性
+  if (!preserveProperty) {
+    formData.value.deviceProperty = undefined
+  }
   deviceProperties.value = []
 
   if (deviceId) {
@@ -419,7 +422,12 @@ const open = async (type: string, id?: number) => {
   if (id) {
     formLoading.value = true
     try {
-      formData.value = await getIotEnergyMeter(id)
+      const data = await getIotEnergyMeter(id)
+      // 确保 coefficient 有默认值
+      if (data.coefficient === undefined || data.coefficient === null) {
+        data.coefficient = 1
+      }
+      formData.value = data
       // 加载对应的级联数据
       if (formData.value.buildingId) {
         areaList.value = await getIotEnergyAreaListByBuildingId(formData.value.buildingId)
@@ -434,11 +442,12 @@ const open = async (type: string, id?: number) => {
       }
       // 加载设备信息
       if (formData.value.deviceId) {
-        const data = await DeviceApi.getDevicePage({ id: formData.value.deviceId, pageNo: 1, pageSize: 1 })
-        if (data.list && data.list.length > 0) {
-          deviceList.value = data.list
+        const deviceData = await DeviceApi.getDevicePage({ id: formData.value.deviceId, pageNo: 1, pageSize: 1 })
+        if (deviceData.list && deviceData.list.length > 0) {
+          deviceList.value = deviceData.list
         }
-        await handleDeviceChange(formData.value.deviceId)
+        // 使用 preserveProperty=true 保留已有的 deviceProperty 值
+        await handleDeviceChange(formData.value.deviceId, true)
       }
       // 处理虚拟表规则
       handleVirtualChange(formData.value.isVirtual || false)
@@ -477,8 +486,8 @@ const submitForm = async () => {
 const resetForm = () => {
   formData.value = {
     id: undefined,
-    name: undefined,
-    code: undefined,
+    meterName: undefined,
+    meterCode: undefined,
     energyTypeId: undefined,
     deviceId: undefined,
     deviceProperty: undefined,

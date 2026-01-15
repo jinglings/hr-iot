@@ -614,6 +614,96 @@ This system supports multi-tenancy (SaaS mode):
 
 ---
 
+## Using Spec-Kit for Feature Development
+
+This project integrates **spec-kit**, a specification-driven development methodology, to improve the development workflow for new features. Spec-kit emphasizes clear requirements, thoughtful planning, and systematic implementation.
+
+### What is Spec-Kit?
+
+Spec-kit is a development approach that prioritizes specifications as executable artifacts. Instead of jumping directly into coding:
+
+1. **Define requirements** clearly (what and why)
+2. **Design architecture** thoughtfully (how)
+3. **Break down tasks** systematically (steps)
+4. **Implement with context** (following the plan)
+
+**Benefits**:
+- Clearer requirements reduce rework
+- Thoughtful architecture prevents technical debt
+- Systematic implementation improves code quality
+- Documentation is a natural byproduct
+
+### When to Use Spec-Kit
+
+**✅ Use for**:
+- New major features (device grouping, alert management)
+- Complex enhancements (multi-step workflows, integrations)
+- Cross-module features (backend + frontend + database)
+- Architectural changes
+
+**❌ Don't use for**:
+- Simple bug fixes
+- Trivial UI tweaks
+- Dependency updates
+- Minor refactoring
+
+**Rule of Thumb**: If the feature requires more than 4 hours or touches more than 3 files, consider spec-kit.
+
+### Spec-Kit Workflow
+
+```
+1. /speckit.constitution  → Review project principles
+2. /speckit.specify       → Create feature specification
+3. /speckit.plan          → Design architecture
+4. /speckit.tasks         → Break down tasks
+5. /speckit.implement     → Implement each task
+6. Archive to completed/  → Move spec when done
+```
+
+### Directory Structure
+
+All spec-kit artifacts are in the `specs/` directory:
+
+```
+specs/
+├── .speckit/constitution.md     # Project principles
+├── features/
+│   ├── in-progress/             # Active features
+│   ├── completed/               # Finished features
+│   └── backlog/                 # Planned features
+├── templates/                   # Specification templates
+│   ├── backend-feature.md
+│   ├── frontend-feature.md
+│   └── fullstack-feature.md
+└── README.md                    # Detailed usage guide
+```
+
+### Getting Started
+
+1. **Review Constitution**: Read `specs/.speckit/constitution.md` to understand project conventions
+2. **Choose Template**: Select backend/frontend/fullstack template based on feature scope
+3. **Create Specification**: Use spec-kit commands or manually fill template
+4. **Follow Workflow**: Specify → Plan → Tasks → Implement
+
+**For detailed guidance**, see `specs/README.md`
+
+### Integration with Existing Documentation
+
+Spec-kit **complements** existing documentation:
+
+- **CLAUDE.md** (this file): Project-wide architecture and conventions
+- **Module Guides**: Module-specific capabilities (e.g., IOT_MODULE_GUIDE.md)
+- **Spec-Kit Specs**: Feature-specific requirements and implementation plans
+- **OpenAPI/Swagger**: Live API reference (auto-generated)
+
+Each serves a specific purpose. Spec-kit focuses on feature-level design and implementation tracking.
+
+### Example
+
+See `specs/README.md` for a complete walkthrough of developing a "Device Grouping" feature using spec-kit methodology.
+
+---
+
 ## Common Commands Reference
 
 ### Backend (Maven)

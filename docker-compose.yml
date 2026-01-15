@@ -1,0 +1,137 @@
+version: '3.8'
+
+# HR-IoT SCADA System - Docker Compose Configuration
+# Phase 1: Infrastructure Setup with MQTT Broker
+
+services:
+  # ==================== MQTT Broker (EMQX) ====================
+  mqtt-broker:
+    image: emqx/emqx:5.0.26
+    container_name: hr-iot-mqtt
+    restart: unless-stopped
+    ports:
+      - "1883:1883"      # MQTT
+      - "8083:8083"      # MQTT over WebSocket
+      - "8084:8084"      # MQTT over WSS (Secure WebSocket)
+      - "18083:18083"    # Management Dashboard
+    environment:
+      # EMQX Configuration (Standalone mode)
+      - EMQX_NODE_NAME=emqx@127.0.0.1
+      - EMQX_NODE_COOKIE=hr_iot_secret_cookie
+
+      # Authentication (will be enhanced later)
+      - EMQX_ALLOW_ANONYMOUS=true
+
+      # Logging
+      - EMQX_LOG__CONSOLE_HANDLER__LEVEL=info
+
+      # Dashboard
+      - EMQX_DASHBOARD__LISTENERS__HTTP__BIND=18083
+      - EMQX_DASHBOARD__DEFAULT_USERNAME=admin
+      - EMQX_DASHBOARD__DEFAULT_PASSWORD=hr-iot-admin-2024
+    volumes:
+      - ./emqx/data:/opt/emqx/data
+      - ./emqx/log:/opt/emqx/log
+      # Note: ACL configuration will be added in Phase 2 when implementing authentication
+      # - ./emqx/etc/acl.conf:/opt/emqx/etc/acl.conf:ro
+    networks:
+      - hr-iot-network
+    healthcheck:
+      test: ["CMD", "emqx", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ==================== MySQL Database ====================
+  # Note: This is a placeholder. Use existing MySQL instance in production.
+  # Uncomment if you need a dedicated MySQL for development
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: hr-iot-mysql
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3306:3306"
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=root123456
+  #     - MYSQL_DATABASE=hr_iot
+  #     - MYSQL_USER=hr_iot_user
+  #     - MYSQL_PASSWORD=hr_iot_pass
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+  #     - ./sql:/docker-entrypoint-initdb.d
+  #   networks:
+  #     - hr-iot-network
+
+  # ==================== Redis Cache ====================
+  # Note: This is a placeholder. Use existing Redis instance in production.
+  # Uncomment if you need a dedicated Redis for development
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: hr-iot-redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   command: redis-server --requirepass redis123456
+  #   volumes:
+  #     - redis-data:/data
+  #   networks:
+  #     - hr-iot-network
+
+  # ==================== FUXA Server ====================
+  # Note: Will be added in Phase 2 after FUXA customization
+  # fuxa-server:
+  #   build:
+  #     context: ./fuxa
+  #     dockerfile: Dockerfile
+  #   container_name: hr-iot-fuxa
+  #   restart: unless-stopped
+  #   ports:
+  #     - "1881:1881"
+  #   environment:
+  #     - FUXA_PORT=1881
+  #     - FUXA_AUTH_TYPE=jwt
+  #     - FUXA_AUTH_ENDPOINT=http://hr-iot-backend:48080/api/auth/validate
+  #     - MQTT_BROKER_URL=mqtt://mqtt-broker:1883
+  #     - DATABASE_TYPE=mysql
+  #     - DATABASE_HOST=mysql
+  #     - DATABASE_PORT=3306
+  #     - DATABASE_NAME=hr_iot
+  #     - DATABASE_USER=fuxa_user
+  #     - DATABASE_PASSWORD=${FUXA_DB_PASSWORD:-fuxa123456}
+  #   depends_on:
+  #     - mqtt-broker
+  #   networks:
+  #     - hr-iot-network
+
+  # ==================== Nginx Reverse Proxy ====================
+  nginx:
+    image: nginx:alpine
+    container_name: hr-iot-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - mqtt-broker
+    networks:
+      - hr-iot-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+# ==================== Networks ====================
+networks:
+  hr-iot-network:
+    driver: bridge
+    name: hr-iot-network
+
+# ==================== Volumes ====================
+volumes:
+  mysql-data:
+    name: hr-iot-mysql-data
+  redis-data:
+    name: hr-iot-redis-data

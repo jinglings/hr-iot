@@ -17,7 +17,7 @@
           <el-option
             v-for="building in buildingList"
             :key="building.id"
-            :label="building.name"
+            :label="building.buildingName"
             :value="building.id"
           />
         </el-select>
@@ -28,18 +28,18 @@
           <el-option
             v-for="area in areaList"
             :key="area.id"
-            :label="area.name"
+            :label="area.areaName"
             :value="area.id"
           />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="楼层名称" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入楼层名称" />
+      <el-form-item label="楼层名称" prop="floorName">
+        <el-input v-model="formData.floorName" placeholder="请输入楼层名称" />
       </el-form-item>
 
-      <el-form-item label="楼层编码" prop="code">
-        <el-input v-model="formData.code" placeholder="请输入楼层编码" />
+      <el-form-item label="楼层编码" prop="floorCode">
+        <el-input v-model="formData.floorCode" placeholder="请输入楼层编码" />
       </el-form-item>
 
       <el-form-item label="楼层号" prop="floorNumber">
@@ -102,8 +102,8 @@ const formData = ref({
   id: undefined,
   buildingId: undefined,
   areaId: undefined,
-  name: undefined,
-  code: undefined,
+  floorName: undefined,
+  floorCode: undefined,
   floorNumber: 1,
   area: undefined,
   description: undefined,
@@ -113,8 +113,8 @@ const formData = ref({
 const formRules = reactive({
   buildingId: [{ required: true, message: '所属建筑不能为空', trigger: 'change' }],
   areaId: [{ required: true, message: '所属区域不能为空', trigger: 'change' }],
-  name: [{ required: true, message: '楼层名称不能为空', trigger: 'blur' }],
-  code: [{ required: true, message: '楼层编码不能为空', trigger: 'blur' }],
+  floorName: [{ required: true, message: '楼层名称不能为空', trigger: 'blur' }],
+  floorCode: [{ required: true, message: '楼层编码不能为空', trigger: 'blur' }],
   floorNumber: [{ required: true, message: '楼层号不能为空', trigger: 'blur' }],
   status: [{ required: true, message: '楼层状态不能为空', trigger: 'blur' }],
   sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }]
@@ -149,9 +149,11 @@ const open = async (type: string, id?: number) => {
     formLoading.value = true
     try {
       formData.value = await getIotEnergyFloor(id)
-      // 加载对应的区域列表
+      // 加载对应的区域列表(保存原始的areaId,避免被清空)
       if (formData.value.buildingId) {
-        await handleBuildingChange(formData.value.buildingId)
+        const savedAreaId = formData.value.areaId
+        areaList.value = await getIotEnergyAreaListByBuildingId(formData.value.buildingId)
+        formData.value.areaId = savedAreaId
       }
     } finally {
       formLoading.value = false
@@ -187,8 +189,8 @@ const resetForm = () => {
     id: undefined,
     buildingId: undefined,
     areaId: undefined,
-    name: undefined,
-    code: undefined,
+    floorName: undefined,
+    floorCode: undefined,
     floorNumber: 1,
     area: undefined,
     description: undefined,

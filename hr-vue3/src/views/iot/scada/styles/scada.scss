@@ -1,0 +1,610 @@
+/**
+ * SCADA 模块样式表
+ * 
+ * 提供专业的 SCADA 界面样式，包括：
+ * - 深色主题支持
+ * - 响应式布局
+ * - 工业风格颜色
+ * - 动画效果
+ * 
+ * Part of SCADA-024: Style SCADA Page Layout
+ * 
+ * @author HR-IoT Team
+ */
+
+// ==========================================
+// 变量定义
+// ==========================================
+
+// 主题颜色
+$scada-primary: #409eff;
+$scada-success: #67c23a;
+$scada-warning: #e6a23c;
+$scada-danger: #f56c6c;
+$scada-info: #909399;
+
+// 深色主题颜色
+$scada-dark-bg: #1a1a2e;
+$scada-dark-surface: #16213e;
+$scada-dark-surface-alt: #0f3460;
+$scada-dark-border: #2d4a6f;
+$scada-dark-text: #e4e7ed;
+$scada-dark-text-secondary: #909399;
+
+// 浅色主题颜色
+$scada-light-bg: #f5f7fa;
+$scada-light-surface: #ffffff;
+$scada-light-border: #e4e7ed;
+$scada-light-text: #303133;
+$scada-light-text-secondary: #606266;
+
+// 渐变色
+$scada-gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$scada-gradient-success: linear-gradient(135deg, #67c23a 0%, #95d475 100%);
+$scada-gradient-warning: linear-gradient(135deg, #e6a23c 0%, #f4d489 100%);
+$scada-gradient-danger: linear-gradient(135deg, #f56c6c 0%, #fab6b6 100%);
+$scada-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+
+// 阴影
+$scada-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+$scada-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+$scada-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+$scada-shadow-glow: 0 0 20px rgba(64, 158, 255, 0.3);
+
+// 动画时长
+$scada-transition-fast: 0.15s;
+$scada-transition-normal: 0.3s;
+$scada-transition-slow: 0.5s;
+
+// 圆角
+$scada-radius-sm: 4px;
+$scada-radius-md: 8px;
+$scada-radius-lg: 12px;
+$scada-radius-xl: 16px;
+
+// 间距
+$scada-spacing-xs: 4px;
+$scada-spacing-sm: 8px;
+$scada-spacing-md: 16px;
+$scada-spacing-lg: 24px;
+$scada-spacing-xl: 32px;
+
+// ==========================================
+// 混合宏
+// ==========================================
+
+// 卡片容器
+@mixin scada-card($dark: false) {
+  border-radius: $scada-radius-lg;
+  transition: all $scada-transition-normal ease;
+  
+  @if $dark {
+    background: $scada-dark-surface;
+    border: 1px solid $scada-dark-border;
+    box-shadow: $scada-shadow-md;
+  } @else {
+    background: $scada-light-surface;
+    border: 1px solid $scada-light-border;
+    box-shadow: $scada-shadow-sm;
+  }
+  
+  &:hover {
+    box-shadow: $scada-shadow-lg;
+  }
+}
+
+// 发光效果
+@mixin scada-glow($color: $scada-primary, $intensity: 0.3) {
+  box-shadow: 0 0 20px rgba($color, $intensity);
+}
+
+// 脉冲动画
+@mixin scada-pulse($color: $scada-primary) {
+  animation: scada-pulse 2s infinite;
+  
+  @keyframes scada-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba($color, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba($color, 0);
+    }
+  }
+}
+
+// 响应式断点
+@mixin scada-mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin scada-tablet {
+  @media (min-width: 769px) and (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin scada-desktop {
+  @media (min-width: 1025px) {
+    @content;
+  }
+}
+
+// ==========================================
+// 基础样式
+// ==========================================
+
+.scada-page {
+  min-height: calc(100vh - 84px);
+  padding: $scada-spacing-md;
+  
+  // 深色模式
+  &.dark-mode {
+    background: $scada-gradient-dark;
+    color: $scada-dark-text;
+  }
+  
+  // 浅色模式
+  &.light-mode {
+    background: $scada-light-bg;
+    color: $scada-light-text;
+  }
+}
+
+// ==========================================
+// 页面头部
+// ==========================================
+
+.scada-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $scada-spacing-lg;
+  margin-bottom: $scada-spacing-lg;
+  border-radius: $scada-radius-lg;
+  background: $scada-gradient-primary;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  
+  .header-title {
+    display: flex;
+    align-items: center;
+    
+    .title-icon {
+      font-size: 32px;
+      margin-right: $scada-spacing-md;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+      color: #fff;
+    }
+    
+    .subtitle {
+      margin: $scada-spacing-xs 0 0;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: $scada-spacing-md;
+  }
+  
+  @include scada-mobile {
+    flex-direction: column;
+    gap: $scada-spacing-md;
+    text-align: center;
+    
+    .header-actions {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+}
+
+// ==========================================
+// 统计卡片
+// ==========================================
+
+.scada-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $scada-spacing-md;
+  margin-bottom: $scada-spacing-lg;
+  
+  @include scada-tablet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @include scada-mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scada-stat-card {
+  display: flex;
+  align-items: center;
+  padding: $scada-spacing-lg;
+  @include scada-card;
+  
+  .stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: $scada-radius-lg;
+    margin-right: $scada-spacing-md;
+    font-size: 28px;
+    color: #fff;
+    
+    &.online { background: $scada-gradient-success; }
+    &.offline { background: linear-gradient(135deg, #909399 0%, #c0c4cc 100%); }
+    &.alarm { background: $scada-gradient-danger; }
+    &.control { background: linear-gradient(135deg, $scada-primary 0%, #79bbff 100%); }
+  }
+  
+  .stat-content {
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: $scada-light-text-secondary;
+      margin-top: $scada-spacing-xs;
+    }
+  }
+  
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+// ==========================================
+// 内容区域
+// ==========================================
+
+.scada-content {
+  @include scada-card;
+  padding: $scada-spacing-lg;
+  min-height: 500px;
+}
+
+// ==========================================
+// 仪表板容器
+// ==========================================
+
+.scada-dashboard-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 200px);
+  min-height: 500px;
+  border-radius: $scada-radius-lg;
+  overflow: hidden;
+  background: $scada-dark-bg;
+  
+  .dashboard-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  
+  .dashboard-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($scada-dark-bg, 0.95);
+    
+    .overlay-content {
+      text-align: center;
+      
+      .overlay-icon {
+        font-size: 64px;
+        color: $scada-dark-text-secondary;
+        margin-bottom: $scada-spacing-md;
+      }
+      
+      .overlay-text {
+        font-size: 18px;
+        color: $scada-dark-text;
+      }
+    }
+  }
+}
+
+// ==========================================
+// 设备卡片
+// ==========================================
+
+.scada-device-card {
+  @include scada-card;
+  padding: $scada-spacing-md;
+  position: relative;
+  overflow: hidden;
+  
+  .device-status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    
+    &.online { background: $scada-gradient-success; }
+    &.offline { background: linear-gradient(90deg, #909399, #c0c4cc); }
+  }
+  
+  .device-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $scada-spacing-md;
+    
+    .device-name {
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+  
+  .device-data {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $scada-spacing-sm;
+    padding: $scada-spacing-md;
+    background: $scada-light-bg;
+    border-radius: $scada-radius-md;
+    
+    .data-item {
+      text-align: center;
+      
+      .data-value {
+        font-size: 18px;
+        font-weight: 600;
+        color: $scada-primary;
+      }
+      
+      .data-label {
+        font-size: 12px;
+        color: $scada-light-text-secondary;
+      }
+    }
+  }
+  
+  .device-actions {
+    display: flex;
+    gap: $scada-spacing-sm;
+    margin-top: $scada-spacing-md;
+  }
+}
+
+// ==========================================
+// 告警样式
+// ==========================================
+
+.scada-alarm {
+  &-urgent {
+    background: rgba($scada-danger, 0.1) !important;
+    animation: alarm-blink 1.5s infinite;
+  }
+  
+  &-high {
+    background: rgba($scada-warning, 0.1) !important;
+  }
+  
+  &-priority {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: $scada-radius-sm;
+    font-size: 12px;
+    font-weight: 500;
+    
+    &.urgent { background: $scada-danger; color: #fff; }
+    &.high { background: $scada-warning; color: #fff; }
+    &.medium { background: $scada-info; color: #fff; }
+    &.low { background: $scada-success; color: #fff; }
+  }
+}
+
+@keyframes alarm-blink {
+  0%, 100% { 
+    background: rgba($scada-danger, 0.1); 
+    box-shadow: inset 0 0 0 1px rgba($scada-danger, 0.2);
+  }
+  50% { 
+    background: rgba($scada-danger, 0.2); 
+    box-shadow: inset 0 0 0 1px rgba($scada-danger, 0.4);
+  }
+}
+
+// ==========================================
+// 连接状态
+// ==========================================
+
+.scada-connection-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: relative;
+  
+  &.connected {
+    background: $scada-success;
+    @include scada-glow($scada-success, 0.5);
+  }
+  
+  &.connecting {
+    background: $scada-warning;
+    animation: connecting-pulse 1.5s infinite;
+  }
+  
+  &.disconnected {
+    background: $scada-danger;
+    @include scada-glow($scada-danger, 0.5);
+  }
+}
+
+@keyframes connecting-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+// ==========================================
+// 工具组件
+// ==========================================
+
+// 全屏按钮
+.scada-fullscreen-btn {
+  position: fixed;
+  bottom: $scada-spacing-lg;
+  right: $scada-spacing-lg;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: $scada-gradient-primary;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: $scada-shadow-lg;
+  transition: all $scada-transition-normal ease;
+  z-index: 100;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: $scada-shadow-glow;
+  }
+}
+
+// 刷新指示器
+.scada-refresh-indicator {
+  display: flex;
+  align-items: center;
+  gap: $scada-spacing-xs;
+  font-size: 12px;
+  color: $scada-light-text-secondary;
+  
+  .refresh-icon {
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// ==========================================
+// 深色主题覆盖
+// ==========================================
+
+.dark-mode {
+  .scada-stat-card,
+  .scada-content,
+  .scada-device-card {
+    background: $scada-dark-surface;
+    border-color: $scada-dark-border;
+  }
+  
+  .stat-label,
+  .device-info,
+  .data-label {
+    color: $scada-dark-text-secondary;
+  }
+  
+  .device-data {
+    background: $scada-dark-surface-alt;
+  }
+}
+
+// ==========================================
+// 响应式调整
+// ==========================================
+
+@include scada-mobile {
+  .scada-page {
+    padding: $scada-spacing-sm;
+  }
+  
+  .scada-header {
+    padding: $scada-spacing-md;
+    
+    .title-icon {
+      font-size: 24px;
+    }
+    
+    h1 {
+      font-size: 18px;
+    }
+  }
+  
+  .scada-stat-card {
+    padding: $scada-spacing-md;
+    
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      font-size: 22px;
+    }
+    
+    .stat-value {
+      font-size: 22px;
+    }
+  }
+  
+  .scada-dashboard-container {
+    height: calc(100vh - 280px);
+    min-height: 400px;
+  }
+}
+
+@include scada-tablet {
+  .scada-dashboard-container {
+    height: calc(100vh - 240px);
+  }
+}
+
+// ==========================================
+// 工具类
+// ==========================================
+
+.scada-text-primary { color: $scada-primary; }
+.scada-text-success { color: $scada-success; }
+.scada-text-warning { color: $scada-warning; }
+.scada-text-danger { color: $scada-danger; }
+.scada-text-muted { color: $scada-light-text-secondary; }
+
+.scada-bg-primary { background-color: $scada-primary; }
+.scada-bg-success { background-color: $scada-success; }
+.scada-bg-warning { background-color: $scada-warning; }
+.scada-bg-danger { background-color: $scada-danger; }
+
+.scada-gradient-primary { background: $scada-gradient-primary; }
+.scada-gradient-success { background: $scada-gradient-success; }
+.scada-gradient-warning { background: $scada-gradient-warning; }
+.scada-gradient-danger { background: $scada-gradient-danger; }
+
+.scada-shadow-sm { box-shadow: $scada-shadow-sm; }
+.scada-shadow-md { box-shadow: $scada-shadow-md; }
+.scada-shadow-lg { box-shadow: $scada-shadow-lg; }
+.scada-shadow-glow { box-shadow: $scada-shadow-glow; }
+
+.scada-rounded-sm { border-radius: $scada-radius-sm; }
+.scada-rounded-md { border-radius: $scada-radius-md; }
+.scada-rounded-lg { border-radius: $scada-radius-lg; }
+.scada-rounded-xl { border-radius: $scada-radius-xl; }

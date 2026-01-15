@@ -132,7 +132,18 @@ public class IotEnergyStatisticsServiceImpl implements IotEnergyStatisticsServic
             LocalDateTime startTime = getStartTime(statTime, statPeriod);
             LocalDateTime endTime = getEndTime(statTime, statPeriod);
 
-            // 4. 从TDengine查询该时间段的数据
+            // 4. 确保子表存在（如果不存在则创建）
+            realtimeDataMapper.ensureTableExists(
+                    meterId,
+                    meter.getEnergyTypeId(),
+                    meter.getBuildingId(),
+                    meter.getAreaId(),
+                    meter.getFloorId(),
+                    meter.getRoomId(),
+                    meter.getTenantId()
+            );
+
+            // 5. 从TDengine查询该时间段的数据
             Long startTs = LocalDateTimeUtil.toEpochMilli(startTime);
             Long endTs = LocalDateTimeUtil.toEpochMilli(endTime);
 
@@ -144,7 +155,7 @@ public class IotEnergyStatisticsServiceImpl implements IotEnergyStatisticsServic
                 return;
             }
 
-            // 5. 计算统计值
+            // 6. 计算统计值
             BigDecimal startValue = null;
             BigDecimal endValue = null;
             BigDecimal maxValue = null;
@@ -180,19 +191,19 @@ public class IotEnergyStatisticsServiceImpl implements IotEnergyStatisticsServic
                 }
             }
 
-            // 6. 计算能耗量（结束值 - 起始值）
+            // 7. 计算能耗量（结束值 - 起始值）
             BigDecimal consumption = null;
             if (startValue != null && endValue != null) {
                 consumption = endValue.subtract(startValue);
             }
 
-            // 7. 计算平均值
+            // 8. 计算平均值
             BigDecimal avgValue = null;
             if (count > 0) {
                 avgValue = sumValue.divide(BigDecimal.valueOf(count), 4, BigDecimal.ROUND_HALF_UP);
             }
 
-            // 8. 构建统计数据对象
+            // 9. 构建统计数据对象
             IotEnergyStatisticsDO statistics = IotEnergyStatisticsDO.builder()
                     .statTime(statTime)
                     .statPeriod(statPeriod)
@@ -210,7 +221,7 @@ public class IotEnergyStatisticsServiceImpl implements IotEnergyStatisticsServic
                     .avgValue(avgValue)
                     .build();
 
-            // 9. 保存统计数据
+            // 10. 保存统计数据
             saveStatistics(statistics);
 
             log.debug("[aggregateData][成功聚合计量点({})的{}数据，时间：{}]", meterId, statPeriod, statTime);

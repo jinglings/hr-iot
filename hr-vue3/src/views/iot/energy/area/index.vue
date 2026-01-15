@@ -13,23 +13,23 @@
           <el-option
             v-for="building in buildingList"
             :key="building.id"
-            :label="building.name"
+            :label="building.buildingName"
             :value="building.id"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="区域名称" prop="name">
+      <el-form-item label="区域名称" prop="areaName">
         <el-input
-          v-model="queryParams.name"
+          v-model="queryParams.areaName"
           placeholder="请输入区域名称"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="区域编码" prop="code">
+      <el-form-item label="区域编码" prop="areaCode">
         <el-input
-          v-model="queryParams.code"
+          v-model="queryParams.areaCode"
           placeholder="请输入区域编码"
           clearable
           @keyup.enter="handleQuery"
@@ -66,8 +66,8 @@
     <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
       <el-table-column label="ID" align="center" prop="id" width="80" />
       <el-table-column label="所属建筑" align="center" prop="buildingName" min-width="120" />
-      <el-table-column label="区域名称" align="center" prop="name" min-width="120" />
-      <el-table-column label="区域编码" align="center" prop="code" width="120" />
+      <el-table-column label="区域名称" align="center" prop="areaName" min-width="120" />
+      <el-table-column label="区域编码" align="center" prop="areaCode" width="120" />
       <el-table-column label="状态" align="center" prop="status" width="80">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
@@ -137,8 +137,8 @@ const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   buildingId: undefined,
-  name: undefined,
-  code: undefined,
+  areaName: undefined,
+  areaCode: undefined,
   status: undefined
 })
 const queryFormRef = ref() // 搜索的表单

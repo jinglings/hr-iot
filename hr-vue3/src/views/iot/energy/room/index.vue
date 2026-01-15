@@ -19,7 +19,7 @@
           <el-option
             v-for="building in buildingList"
             :key="building.id"
-            :label="building.name"
+            :label="building.buildingName"
             :value="building.id"
           />
         </el-select>
@@ -29,23 +29,23 @@
           <el-option
             v-for="floor in floorList"
             :key="floor.id"
-            :label="floor.name"
+            :label="floor.floorName"
             :value="floor.id"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="房间名称" prop="name">
+      <el-form-item label="房间名称" prop="roomName">
         <el-input
-          v-model="queryParams.name"
+          v-model="queryParams.roomName"
           placeholder="请输入房间名称"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="房间编码" prop="code">
+      <el-form-item label="房间编码" prop="roomCode">
         <el-input
-          v-model="queryParams.code"
+          v-model="queryParams.roomCode"
           placeholder="请输入房间编码"
           clearable
           @keyup.enter="handleQuery"
@@ -93,8 +93,8 @@
       <el-table-column label="所属建筑" align="center" prop="buildingName" min-width="120" />
       <el-table-column label="所属区域" align="center" prop="areaName" min-width="120" />
       <el-table-column label="所属楼层" align="center" prop="floorName" min-width="120" />
-      <el-table-column label="房间名称" align="center" prop="name" min-width="120" />
-      <el-table-column label="房间编码" align="center" prop="code" width="120" />
+      <el-table-column label="房间名称" align="center" prop="roomName" min-width="120" />
+      <el-table-column label="房间编码" align="center" prop="roomCode" width="120" />
       <el-table-column label="房间类型" align="center" prop="type" width="100">
         <template #default="scope">
           <el-tag v-if="scope.row.type === 'office'" type="primary">办公室</el-tag>
@@ -180,8 +180,8 @@ const queryParams = reactive({
   pageSize: 10,
   buildingId: undefined,
   floorId: undefined,
-  name: undefined,
-  code: undefined,
+  roomName: undefined,
+  roomCode: undefined,
   type: undefined,
   status: undefined
 })

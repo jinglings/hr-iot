@@ -9,9 +9,9 @@ export interface IotEnergyRoomVO {
   areaName?: string // 区域名称（用于显示）
   floorId: number // 楼层 ID
   floorName?: string // 楼层名称（用于显示）
-  name: string // 房间名称
-  code: string // 房间编码
-  type: string // 房间类型：office-办公室，meeting-会议室，warehouse-仓库，lab-实验室，other-其他
+  roomName: string // 房间名称
+  roomCode: string // 房间编码
+  roomType: string // 房间类型：office-办公室，meeting-会议室，warehouse-仓库，lab-实验室，other-其他
   area: number // 房间面积（平方米）
   description: string // 房间描述
   sort: number // 排序
@@ -25,9 +25,9 @@ export interface IotEnergyRoomPageReqVO extends PageParam {
   buildingId?: number // 建筑 ID
   areaId?: number // 区域 ID
   floorId?: number // 楼层 ID
-  name?: string // 房间名称
-  code?: string // 房间编码
-  type?: string // 房间类型
+  roomName?: string // 房间名称
+  roomCode?: string // 房间编码
+  roomType?: string // 房间类型
   status?: number // 房间状态
   createTime?: string[] // 创建时间
 }
@@ -35,8 +35,8 @@ export interface IotEnergyRoomPageReqVO extends PageParam {
 // IoT 能源房间 简化 VO（用于下拉选择）
 export interface IotEnergyRoomSimpleVO {
   id: number // 房间 ID
-  name: string // 房间名称
-  code: string // 房间编码
+  roomName: string // 房间名称
+  roomCode: string // 房间编码
   floorId: number // 楼层 ID
 }
 

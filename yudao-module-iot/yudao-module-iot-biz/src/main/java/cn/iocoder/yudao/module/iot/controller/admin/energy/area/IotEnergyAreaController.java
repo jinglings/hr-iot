@@ -8,7 +8,9 @@ import cn.iocoder.yudao.module.iot.controller.admin.energy.area.vo.IotEnergyArea
 import cn.iocoder.yudao.module.iot.controller.admin.energy.area.vo.IotEnergyAreaRespVO;
 import cn.iocoder.yudao.module.iot.controller.admin.energy.area.vo.IotEnergyAreaSaveReqVO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyAreaDO;
+import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyBuildingDO;
 import cn.iocoder.yudao.module.iot.service.energy.area.IotEnergyAreaService;
+import cn.iocoder.yudao.module.iot.service.energy.building.IotEnergyBuildingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
@@ -31,6 +35,9 @@ public class IotEnergyAreaController {
 
     @Resource
     private IotEnergyAreaService areaService;
+
+    @Resource
+    private IotEnergyBuildingService buildingService;
 
     @PostMapping("/create")
     @Operation(summary = "创建能源区域")
@@ -70,10 +77,25 @@ public class IotEnergyAreaController {
     @PreAuthorize("@ss.hasPermission('iot:energy-area:query')")
     public CommonResult<PageResult<IotEnergyAreaRespVO>> getAreaPage(@Valid IotEnergyAreaPageReqVO pageReqVO) {
         PageResult<IotEnergyAreaDO> pageResult = areaService.getAreaPage(pageReqVO);
-        return success(BeanUtils.toBean(pageResult, IotEnergyAreaRespVO.class));
+        PageResult<IotEnergyAreaRespVO> respPageResult = BeanUtils.toBean(pageResult, IotEnergyAreaRespVO.class);
+
+        // 批量获取建筑信息
+        List<Long> buildingIds = convertList(respPageResult.getList(), IotEnergyAreaRespVO::getBuildingId);
+        if (!buildingIds.isEmpty()) {
+            Map<Long, String> buildingNameMap = buildingService.getBuildingList(buildingIds).stream()
+                    .collect(Collectors.toMap(IotEnergyBuildingDO::getId, IotEnergyBuildingDO::getBuildingName));
+            // 填充建筑名称
+            respPageResult.getList().forEach(area -> {
+                if (area.getBuildingId() != null) {
+                    area.setBuildingName(buildingNameMap.get(area.getBuildingId()));
+                }
+            });
+        }
+
+        return success(respPageResult);
     }
 
-    @GetMapping("/list-by-building")
+    @GetMapping("/list-by-building-id")
     @Operation(summary = "获得指定建筑的能源区域列表")
     @Parameter(name = "buildingId", description = "建筑ID", required = true, example = "1")
     @PreAuthorize("@ss.hasPermission('iot:energy-area:query')")

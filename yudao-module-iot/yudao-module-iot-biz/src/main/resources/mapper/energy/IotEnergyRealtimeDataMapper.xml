@@ -53,6 +53,12 @@
         </foreach>
     </insert>
 
+    <update id="ensureTableExists">
+        CREATE TABLE IF NOT EXISTS energy_realtime_data_${meterId}
+        USING energy_realtime_data
+        TAGS (#{energyTypeId}, #{buildingId}, #{areaId}, #{floorId}, #{roomId}, #{tenantId})
+    </update>
+
     <select id="selectPage" resultType="cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyRealtimeDataDO">
         SELECT ts, meter_id, instant_power, cumulative_value,
                voltage, current, power_factor, data_quality

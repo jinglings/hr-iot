@@ -22,6 +22,9 @@ public class IotEnergyAreaRespVO {
     @Schema(description = "所属建筑ID", example = "1")
     private Long buildingId;
 
+    @Schema(description = "所属建筑名称", example = "1号办公楼")
+    private String buildingName;
+
     @Schema(description = "区域类型", example = "production")
     private String areaType;
 

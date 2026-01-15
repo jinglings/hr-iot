@@ -3,8 +3,8 @@ import request from '@/config/axios'
 // IoT 能源计量点 VO
 export interface IotEnergyMeterVO {
   id: number // 计量点 ID，主键，自增
-  name: string // 计量点名称
-  code: string // 计量点编码
+  meterName: string // 计量点名称
+  meterCode: string // 计量点编码
   energyTypeId: number // 能源类型 ID
   energyTypeName?: string // 能源类型名称（用于显示）
   deviceId: number // 设备 ID
@@ -32,8 +32,8 @@ export interface IotEnergyMeterVO {
 
 // IoT 能源计量点 分页查询请求 VO
 export interface IotEnergyMeterPageReqVO extends PageParam {
-  name?: string // 计量点名称
-  code?: string // 计量点编码
+  meterName?: string // 计量点名称
+  meterCode?: string // 计量点编码
   energyTypeId?: number // 能源类型 ID
   deviceId?: number // 设备 ID
   buildingId?: number // 建筑 ID
@@ -50,8 +50,8 @@ export interface IotEnergyMeterPageReqVO extends PageParam {
 // IoT 能源计量点 简化 VO（用于下拉选择）
 export interface IotEnergyMeterSimpleVO {
   id: number // 计量点 ID
-  name: string // 计量点名称
-  code: string // 计量点编码
+  meterName: string // 计量点名称
+  meterCode: string // 计量点编码
   energyTypeId: number // 能源类型 ID
   isVirtual: boolean // 是否虚拟表
 }

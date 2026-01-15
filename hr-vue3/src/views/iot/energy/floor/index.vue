@@ -13,14 +13,14 @@
           <el-option
             v-for="building in buildingList"
             :key="building.id"
-            :label="building.name"
+            :label="building.buildingName"
             :value="building.id"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="楼层名称" prop="name">
+      <el-form-item label="楼层名称" prop="floorName">
         <el-input
-          v-model="queryParams.name"
+          v-model="queryParams.floorName"
           placeholder="请输入楼层名称"
           clearable
           @keyup.enter="handleQuery"
@@ -58,8 +58,8 @@
       <el-table-column label="ID" align="center" prop="id" width="80" />
       <el-table-column label="所属建筑" align="center" prop="buildingName" min-width="120" />
       <el-table-column label="所属区域" align="center" prop="areaName" min-width="120" />
-      <el-table-column label="楼层名称" align="center" prop="name" min-width="120" />
-      <el-table-column label="楼层编码" align="center" prop="code" width="120" />
+      <el-table-column label="楼层名称" align="center" prop="floorName" min-width="120" />
+      <el-table-column label="楼层编码" align="center" prop="floorCode" width="120" />
       <el-table-column label="楼层号" align="center" prop="floorNumber" width="80" />
       <el-table-column label="楼层面积" align="center" prop="area" width="100">
         <template #default="scope">
@@ -133,7 +133,7 @@ const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   buildingId: undefined,
-  name: undefined,
+  floorName: undefined,
   status: undefined
 })
 const queryFormRef = ref() // 搜索的表单

@@ -103,6 +103,13 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- SCADA MQTT 集成 -->
+        <dependency>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+
         <!-- IoT 网络组件：接收来自设备的上行数据 -->
         <!--        <dependency>-->
         <!--            <groupId>cn.iocoder.boot</groupId>-->

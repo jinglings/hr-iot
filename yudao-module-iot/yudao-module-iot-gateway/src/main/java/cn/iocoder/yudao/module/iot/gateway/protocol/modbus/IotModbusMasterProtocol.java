@@ -56,7 +56,7 @@ public class IotModbusMasterProtocol {
         this.messageService = messageService;
         this.connectionManager = connectionManager;
         // 生成服务器 ID（使用 modbus 协议标识）
-        this.serverId = IotDeviceMessageUtils.generateServerId("modbus-" + modbusProperties.getPort());
+        this.serverId = IotDeviceMessageUtils.generateServerId(modbusProperties.getPort());
     }
 
     @PostConstruct

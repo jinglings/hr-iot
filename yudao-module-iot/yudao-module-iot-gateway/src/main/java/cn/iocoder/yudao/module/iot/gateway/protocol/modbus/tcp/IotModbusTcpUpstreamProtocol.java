@@ -46,7 +46,7 @@ public class IotModbusTcpUpstreamProtocol {
         this.deviceService = deviceService;
         this.messageService = messageService;
         this.vertx = vertx;
-        this.serverId = IotDeviceMessageUtils.generateServerId("MODBUS_TCP", modbusTcpProperties.getPort());
+        this.serverId = IotDeviceMessageUtils.generateServerId( modbusTcpProperties.getPort());
     }
 
     @PostConstruct

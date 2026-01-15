@@ -7,7 +7,11 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.iot.controller.admin.energy.floor.vo.IotEnergyFloorPageReqVO;
 import cn.iocoder.yudao.module.iot.controller.admin.energy.floor.vo.IotEnergyFloorRespVO;
 import cn.iocoder.yudao.module.iot.controller.admin.energy.floor.vo.IotEnergyFloorSaveReqVO;
+import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyAreaDO;
+import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyBuildingDO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyFloorDO;
+import cn.iocoder.yudao.module.iot.service.energy.area.IotEnergyAreaService;
+import cn.iocoder.yudao.module.iot.service.energy.building.IotEnergyBuildingService;
 import cn.iocoder.yudao.module.iot.service.energy.floor.IotEnergyFloorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
@@ -31,6 +37,12 @@ public class IotEnergyFloorController {
 
     @Resource
     private IotEnergyFloorService floorService;
+
+    @Resource
+    private IotEnergyBuildingService buildingService;
+
+    @Resource
+    private IotEnergyAreaService areaService;
 
     @PostMapping("/create")
     @Operation(summary = "创建能源楼层")
@@ -70,10 +82,34 @@ public class IotEnergyFloorController {
     @PreAuthorize("@ss.hasPermission('iot:energy-floor:query')")
     public CommonResult<PageResult<IotEnergyFloorRespVO>> getFloorPage(@Valid IotEnergyFloorPageReqVO pageReqVO) {
         PageResult<IotEnergyFloorDO> pageResult = floorService.getFloorPage(pageReqVO);
-        return success(BeanUtils.toBean(pageResult, IotEnergyFloorRespVO.class));
+        PageResult<IotEnergyFloorRespVO> respPageResult = BeanUtils.toBean(pageResult, IotEnergyFloorRespVO.class);
+
+        // 批量获取建筑信息
+        List<Long> buildingIds = convertList(respPageResult.getList(), IotEnergyFloorRespVO::getBuildingId);
+        Map<Long, String> buildingNameMap = buildingIds.isEmpty() ? Map.of() :
+                buildingService.getBuildingList(buildingIds).stream()
+                        .collect(Collectors.toMap(IotEnergyBuildingDO::getId, IotEnergyBuildingDO::getBuildingName));
+
+        // 批量获取区域信息
+        List<Long> areaIds = convertList(respPageResult.getList(), IotEnergyFloorRespVO::getAreaId);
+        Map<Long, String> areaNameMap = areaIds.isEmpty() ? Map.of() :
+                areaService.getAreaList(areaIds).stream()
+                        .collect(Collectors.toMap(IotEnergyAreaDO::getId, IotEnergyAreaDO::getAreaName));
+
+        // 填充建筑名称和区域名称
+        respPageResult.getList().forEach(floor -> {
+            if (floor.getBuildingId() != null) {
+                floor.setBuildingName(buildingNameMap.get(floor.getBuildingId()));
+            }
+            if (floor.getAreaId() != null) {
+                floor.setAreaName(areaNameMap.get(floor.getAreaId()));
+            }
+        });
+
+        return success(respPageResult);
     }
 
-    @GetMapping("/list-by-building")
+    @GetMapping("/list-by-building-id")
     @Operation(summary = "获得指定建筑的能源楼层列表")
     @Parameter(name = "buildingId", description = "建筑ID", required = true, example = "1")
     @PreAuthorize("@ss.hasPermission('iot:energy-floor:query')")
@@ -82,7 +118,7 @@ public class IotEnergyFloorController {
         return success(BeanUtils.toBean(list, IotEnergyFloorRespVO.class));
     }
 
-    @GetMapping("/list-by-area")
+    @GetMapping("/list-by-area-id")
     @Operation(summary = "获得指定区域的能源楼层列表")
     @Parameter(name = "areaId", description = "区域ID", required = true, example = "1")
     @PreAuthorize("@ss.hasPermission('iot:energy-floor:query')")

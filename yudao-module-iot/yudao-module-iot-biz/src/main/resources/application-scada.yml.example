@@ -1,0 +1,114 @@
+# SCADA MQTT 配置示例
+# 复制此文件到 application-scada.yml 或在 application.yml 中添加以下配置
+# Part of SCADA-013: Configure Spring MQTT Integration
+
+# ==========================================
+# SCADA 模块配置
+# ==========================================
+scada:
+  # FUXA 配置
+  fuxa:
+    # FUXA 服务基础 URL
+    base-url: http://localhost:1881
+    # 是否启用 FUXA 集成
+    enabled: true
+  
+  # MQTT 配置
+  mqtt:
+    # 是否启用 SCADA MQTT 集成
+    enabled: true
+    
+    # MQTT Broker 连接配置
+    broker-url: tcp://localhost:1883
+    # 如果使用 EMQX 集群，可以配置为:
+    # broker-url: tcp://emqx:1883
+    
+    # 客户端 ID 前缀
+    client-id-prefix: hr-iot-scada
+    
+    # 认证配置（如果 Broker 需要认证）
+    username: ${SCADA_MQTT_USERNAME:}
+    password: ${SCADA_MQTT_PASSWORD:}
+    
+    # SSL/TLS 配置
+    ssl: false
+    
+    # 连接配置
+    connection-timeout: 30      # 连接超时（秒）
+    keep-alive-interval: 60     # 保持活动间隔（秒）
+    automatic-reconnect: true   # 自动重连
+    reconnect-interval: 5000    # 重连间隔（毫秒）
+    max-reconnect-attempts: 0   # 最大重连次数（0=无限）
+    clean-session: true         # 清除会话
+    
+    # 消息配置
+    default-qos: 1              # 默认 QoS (0, 1, 2)
+    default-retained: false     # 默认是否保留消息
+    
+    # 主题配置（支持占位符: {tenantId}, {deviceId}）
+    topic-prefix: scada
+    control-topic-template: scada/{tenantId}/device/{deviceId}/control
+    property-topic-template: scada/{tenantId}/device/{deviceId}/properties
+    state-topic-template: scada/{tenantId}/device/{deviceId}/state
+    alarm-topic-template: scada/{tenantId}/alarm
+    
+    # 订阅主题（通配符）
+    control-subscribe-topic: scada/+/device/+/control/#
+    
+    # 线程池配置
+    publisher-thread-pool-size: 4    # 发布者线程池大小
+    subscriber-thread-pool-size: 2   # 订阅者线程池大小
+    message-queue-size: 1000         # 消息队列大小
+    completion-timeout: 30000        # 完成超时（毫秒）
+
+# ==========================================
+# 各环境配置示例
+# ==========================================
+
+---
+# 开发环境
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+scada:
+  mqtt:
+    enabled: true
+    broker-url: tcp://localhost:1883
+    # 开发环境不需要认证
+    username: 
+    password: 
+
+---
+# 测试环境
+spring:
+  config:
+    activate:
+      on-profile: test
+
+scada:
+  mqtt:
+    enabled: true
+    broker-url: tcp://mqtt-broker:1883
+    username: ${SCADA_MQTT_USERNAME}
+    password: ${SCADA_MQTT_PASSWORD}
+
+---
+# 生产环境
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+scada:
+  mqtt:
+    enabled: true
+    broker-url: tcp://mqtt-cluster:1883
+    username: ${SCADA_MQTT_USERNAME}
+    password: ${SCADA_MQTT_PASSWORD}
+    ssl: false  # 如果需要，改为 true
+    default-qos: 1
+    publisher-thread-pool-size: 8
+    subscriber-thread-pool-size: 4
+    message-queue-size: 5000

@@ -53,17 +53,17 @@ public class IotBACnetMasterProtocol {
     private ScheduledExecutorService pollingScheduler;
 
     public IotBACnetMasterProtocol(BACnetDeviceManager bacnetDeviceManager,
-                                   IotDeviceService deviceService,
-                                   IotDeviceMessageProducer deviceMessageProducer,
-                                   IotBACnetDeviceConfigMapper deviceConfigMapper,
-                                   IotBACnetPropertyMappingMapper propertyMappingMapper) {
+            IotDeviceService deviceService,
+            IotDeviceMessageProducer deviceMessageProducer,
+            IotBACnetDeviceConfigMapper deviceConfigMapper,
+            IotBACnetPropertyMappingMapper propertyMappingMapper) {
         this.bacnetDeviceManager = bacnetDeviceManager;
         this.deviceService = deviceService;
         this.deviceMessageProducer = deviceMessageProducer;
         this.deviceConfigMapper = deviceConfigMapper;
         this.propertyMappingMapper = propertyMappingMapper;
-        // 生成服务器 ID（使用 bacnet 协议标识）
-        this.serverId = IotDeviceMessageUtils.generateServerId();
+        // 生成服务器 ID（使用配置的 BACnet 端口）
+        this.serverId = IotDeviceMessageUtils.generateServerId(bacnetDeviceManager.getPort());
     }
 
     @PostConstruct
@@ -84,8 +84,7 @@ public class IotBACnetMasterProtocol {
         int deviceCount = configs.size();
         pollingScheduler = Executors.newScheduledThreadPool(
                 Math.min(deviceCount, Runtime.getRuntime().availableProcessors()),
-                r -> new Thread(r, "bacnet-polling-" + Thread.currentThread().getId())
-        );
+                r -> new Thread(r, "bacnet-polling-" + Thread.currentThread().getId()));
 
         // 为每个设备启动轮询任务
         for (IotBACnetDeviceConfigDO config : configs) {
@@ -117,7 +116,8 @@ public class IotBACnetMasterProtocol {
      */
     private void startPollingForDevice(IotBACnetDeviceConfigDO config) {
         // 获取该设备启用轮询的属性映射
-        List<IotBACnetPropertyMappingDO> mappings = propertyMappingMapper.selectEnabledPollingMappings(config.getDeviceId());
+        List<IotBACnetPropertyMappingDO> mappings = propertyMappingMapper
+                .selectEnabledPollingMappings(config.getDeviceId());
         if (mappings == null || mappings.isEmpty()) {
             log.warn("[startPollingForDevice][设备未配置轮询属性映射，设备 ID: {}]", config.getDeviceId());
             return;
@@ -128,8 +128,7 @@ public class IotBACnetMasterProtocol {
                 () -> pollDevice(config, mappings),
                 0, // 立即开始
                 config.getPollingInterval(),
-                TimeUnit.MILLISECONDS
-        );
+                TimeUnit.MILLISECONDS);
 
         log.info("[startPollingForDevice][启动设备轮询，设备 ID: {}, Instance: {}, 轮询项数量: {}, 轮询间隔: {}ms]",
                 config.getDeviceId(), config.getInstanceNumber(), mappings.size(), config.getPollingInterval());
@@ -181,8 +180,7 @@ public class IotBACnetMasterProtocol {
                     config.getInstanceNumber(),
                     objectType,
                     mapping.getObjectInstance(),
-                    propertyId
-            );
+                    propertyId);
 
             return convertBACnetValue(value, mapping.getDataType());
         } catch (Exception e) {

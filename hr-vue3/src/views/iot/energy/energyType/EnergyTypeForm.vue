@@ -9,13 +9,13 @@
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="能源类型名称" prop="name">
-            <el-input v-model="formData.name" placeholder="请输入能源类型名称" />
+          <el-form-item label="能源类型名称" prop="energyName">
+            <el-input v-model="formData.energyName" placeholder="请输入能源类型名称" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="能源类型编码" prop="code">
-            <el-input v-model="formData.code" placeholder="请输入能源类型编码" />
+          <el-form-item label="能源类型编码" prop="energyCode">
+            <el-input v-model="formData.energyCode" placeholder="请输入能源类型编码" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -49,15 +49,15 @@
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="折标煤系数" prop="coalFactor">
-            <el-input v-model="formData.coalFactor" placeholder="请输入折标煤系数" type="number" step="0.0001">
+          <el-form-item label="折标煤系数" prop="coalConversionFactor">
+            <el-input v-model="formData.coalConversionFactor" placeholder="请输入折标煤系数" type="number" step="0.0001">
               <template #append>kgce/单位</template>
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="碳排放系数" prop="carbonFactor">
-            <el-input v-model="formData.carbonFactor" placeholder="请输入碳排放系数" type="number" step="0.0001">
+          <el-form-item label="碳排放系数" prop="carbonEmissionFactor">
+            <el-input v-model="formData.carbonEmissionFactor" placeholder="请输入碳排放系数" type="number" step="0.0001">
               <template #append>kgCO₂/单位</template>
             </el-input>
           </el-form-item>
@@ -133,12 +133,12 @@ const formType = ref('') // 表单的类型
 const energyTypeTree = ref([]) // 能源类型树
 const formData = ref({
   id: undefined,
-  name: undefined,
-  code: undefined,
+  energyName: undefined,
+  energyCode: undefined,
   parentId: undefined,
   unit: 'kWh',
-  coalFactor: undefined,
-  carbonFactor: undefined,
+  coalConversionFactor: undefined,
+  carbonEmissionFactor: undefined,
   icon: undefined,
   color: '#409EFF',
   description: undefined,
@@ -146,8 +146,8 @@ const formData = ref({
   status: CommonStatusEnum.ENABLE
 })
 const formRules = reactive({
-  name: [{ required: true, message: '能源类型名称不能为空', trigger: 'blur' }],
-  code: [{ required: true, message: '能源类型编码不能为空', trigger: 'blur' }],
+  energyName: [{ required: true, message: '能源类型名称不能为空', trigger: 'blur' }],
+  energyCode: [{ required: true, message: '能源类型编码不能为空', trigger: 'blur' }],
   parentId: [{ required: true, message: '父级能源类型不能为空', trigger: 'change' }],
   unit: [{ required: true, message: '计量单位不能为空', trigger: 'change' }],
   status: [{ required: true, message: '类型状态不能为空', trigger: 'blur' }],
@@ -158,7 +158,7 @@ const formRef = ref() // 表单 Ref
 /** 获取能源类型树 */
 const getEnergyTypeTree = async () => {
   energyTypeTree.value = []
-  const data = await getIotEnergyTypePage({ pageNo: 1, pageSize: 1000 })
+  const data = await getIotEnergyTypePage({ pageNo: 1, pageSize: 100 })
   const root: Tree = { id: 0, name: '顶级能源类型', children: [] }
   root.children = handleTree(data.list, 'id', 'parentId')
   energyTypeTree.value.push(root)
@@ -212,12 +212,12 @@ const submitForm = async () => {
 const resetForm = () => {
   formData.value = {
     id: undefined,
-    name: undefined,
-    code: undefined,
+    energyName: undefined,
+    energyCode: undefined,
     parentId: undefined,
     unit: 'kWh',
-    coalFactor: undefined,
-    carbonFactor: undefined,
+    coalConversionFactor: undefined,
+    carbonEmissionFactor: undefined,
     icon: undefined,
     color: '#409EFF',
     description: undefined,

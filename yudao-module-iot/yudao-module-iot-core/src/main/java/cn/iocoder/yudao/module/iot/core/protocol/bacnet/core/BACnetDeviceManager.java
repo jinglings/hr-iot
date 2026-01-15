@@ -110,7 +110,7 @@ public class BACnetDeviceManager {
      * 读取设备属性
      */
     public Object readDeviceProperty(Integer deviceInstanceNumber, ObjectType objectType,
-                                    Integer objectInstanceNumber, PropertyIdentifier propertyId) {
+            Integer objectInstanceNumber, PropertyIdentifier propertyId) {
         if (!isEnabled()) {
             throw new IllegalStateException("BACnet 协议未启用");
         }
@@ -163,30 +163,30 @@ public class BACnetDeviceManager {
      * 写入设备属性
      *
      * @param deviceInstanceNumber BACnet 设备实例号
-     * @param objectType 对象类型
+     * @param objectType           对象类型
      * @param objectInstanceNumber 对象实例号
-     * @param propertyId 属性标识符
-     * @param value 属性值
-     * @param priority 写入优先级（1-16，可选）
+     * @param propertyId           属性标识符
+     * @param value                属性值
+     * @param priority             写入优先级（1-16，可选）
      */
     public void writeProperty(Integer deviceInstanceNumber,
-                             com.serotonin.bacnet4j.type.enumerated.ObjectType objectType,
-                             Integer objectInstanceNumber,
-                             com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier propertyId,
-                             Object value,
-                             Integer priority) {
+            com.serotonin.bacnet4j.type.enumerated.ObjectType objectType,
+            Integer objectInstanceNumber,
+            com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier propertyId,
+            Object value,
+            Integer priority) {
         if (!isEnabled()) {
             throw new IllegalStateException("BACnet 协议未启用");
         }
 
         try {
             bacnetClient.writeProperty(deviceInstanceNumber, objectType, objectInstanceNumber,
-                                      propertyId, value, priority);
+                    propertyId, value, priority);
             log.info("[writeProperty][写入属性成功] device={}, objectType={}, objectInstance={}, property={}, value={}",
-                deviceInstanceNumber, objectType, objectInstanceNumber, propertyId, value);
+                    deviceInstanceNumber, objectType, objectInstanceNumber, propertyId, value);
         } catch (Exception e) {
             log.error("[writeProperty][写入属性失败] device={}, objectType={}, objectInstance={}, property={}",
-                deviceInstanceNumber, objectType, objectInstanceNumber, propertyId, e);
+                    deviceInstanceNumber, objectType, objectInstanceNumber, propertyId, e);
             throw new RuntimeException("写入属性失败", e);
         }
     }
@@ -196,6 +196,13 @@ public class BACnetDeviceManager {
      */
     public BACnetClient getBacnetClient() {
         return bacnetClient;
+    }
+
+    /**
+     * 获取 BACnet 监听端口
+     */
+    public Integer getPort() {
+        return properties.getPort();
     }
 
 }

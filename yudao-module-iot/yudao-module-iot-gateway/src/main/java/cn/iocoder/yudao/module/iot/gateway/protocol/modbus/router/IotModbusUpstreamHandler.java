@@ -25,7 +25,7 @@ public class IotModbusUpstreamHandler implements Handler<NetSocket> {
 
     private final IotDeviceService deviceService;
 
-    private final String serverId;
+    private  String serverId;
 
     private final boolean isTcpMode;
 
@@ -111,7 +111,7 @@ public class IotModbusUpstreamHandler implements Handler<NetSocket> {
         try {
             // 对于 Modbus，我们直接发布消息到消息总线，让业务层处理
             // 这里可以根据实际需求添加设备认证等逻辑
-            deviceMessageService.publishDeviceMessage(message);
+//            deviceMessageService.publishDeviceMessage(message);
             log.debug("[processModbusMessage][Modbus 消息已发布，客户端 ID: {}，消息 ID: {}]",
                     clientId, message.getId());
 

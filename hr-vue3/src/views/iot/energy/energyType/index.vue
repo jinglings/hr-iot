@@ -8,18 +8,18 @@
       :inline="true"
       label-width="80px"
     >
-      <el-form-item label="类型名称" prop="name">
+      <el-form-item label="类型名称" prop="energyName">
         <el-input
-          v-model="queryParams.name"
+          v-model="queryParams.energyName"
           placeholder="请输入能源类型名称"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="类型编码" prop="code">
+      <el-form-item label="类型编码" prop="energyCode">
         <el-input
-          v-model="queryParams.code"
+          v-model="queryParams.energyCode"
           placeholder="请输入能源类型编码"
           clearable
           @keyup.enter="handleQuery"
@@ -66,21 +66,21 @@
       v-if="refreshTable"
     >
       <el-table-column label="ID" align="center" prop="id" width="80" />
-      <el-table-column label="能源类型名称" align="center" prop="name" min-width="150" />
-      <el-table-column label="能源类型编码" align="center" prop="code" width="120" />
+      <el-table-column label="能源类型名称" align="center" prop="energyName" min-width="150" />
+      <el-table-column label="能源类型编码" align="center" prop="energyCode" width="120" />
       <el-table-column label="计量单位" align="center" prop="unit" width="100">
         <template #default="scope">
           <el-tag v-if="scope.row.unit" type="info">{{ scope.row.unit }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="折标煤系数" align="center" prop="coalFactor" width="120">
+      <el-table-column label="折标煤系数" align="center" prop="coalConversionFactor" width="120">
         <template #default="scope">
-          {{ scope.row.coalFactor ? scope.row.coalFactor + ' kgce' : '-' }}
+          {{ scope.row.coalConversionFactor ? scope.row.coalConversionFactor + ' kgce' : '-' }}
         </template>
       </el-table-column>
-      <el-table-column label="碳排放系数" align="center" prop="carbonFactor" width="120">
+      <el-table-column label="碳排放系数" align="center" prop="carbonEmissionFactor" width="120">
         <template #default="scope">
-          {{ scope.row.carbonFactor ? scope.row.carbonFactor + ' kgCO₂' : '-' }}
+          {{ scope.row.carbonEmissionFactor ? scope.row.carbonEmissionFactor + ' kgCO₂' : '-' }}
         </template>
       </el-table-column>
       <el-table-column label="颜色" align="center" prop="color" width="80">
@@ -149,8 +149,8 @@ const list = ref<IotEnergyTypeVO[]>([]) // 列表的数据
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  name: undefined,
-  code: undefined,
+  energyName: undefined,
+  energyCode: undefined,
   status: undefined
 })
 const queryFormRef = ref() // 搜索的表单

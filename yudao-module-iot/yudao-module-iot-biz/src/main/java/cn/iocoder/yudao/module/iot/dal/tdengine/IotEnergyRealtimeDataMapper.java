@@ -68,6 +68,25 @@ public interface IotEnergyRealtimeDataMapper {
     IotEnergyRealtimeDataDO selectLatestByMeterId(@Param("meterId") Long meterId);
 
     /**
+     * 确保子表存在（如果不存在则创建）
+     *
+     * @param meterId 计量点ID
+     * @param energyTypeId 能源类型ID
+     * @param buildingId 建筑ID
+     * @param areaId 区域ID
+     * @param floorId 楼层ID
+     * @param roomId 房间ID
+     * @param tenantId 租户ID
+     */
+    void ensureTableExists(@Param("meterId") Long meterId,
+                          @Param("energyTypeId") Long energyTypeId,
+                          @Param("buildingId") Long buildingId,
+                          @Param("areaId") Long areaId,
+                          @Param("floorId") Long floorId,
+                          @Param("roomId") Long roomId,
+                          @Param("tenantId") Long tenantId);
+
+    /**
      * 查询计量点在指定时间范围内的数据
      *
      * @param meterId 计量点ID

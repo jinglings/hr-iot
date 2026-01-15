@@ -2,85 +2,84 @@
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
-      class="-mb-15px"
+      class="search-form"
       :model="queryParams"
       ref="queryFormRef"
-      :inline="true"
-      label-width="80px"
+      label-width="90px"
     >
-      <el-form-item label="计量点名称" prop="name">
-        <el-input
-          v-model="queryParams.name"
-          placeholder="请输入计量点名称"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="计量点编码" prop="code">
-        <el-input
-          v-model="queryParams.code"
-          placeholder="请输入计量点编码"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="能源类型" prop="energyTypeId">
-        <el-select v-model="queryParams.energyTypeId" placeholder="请选择能源类型" clearable class="!w-240px">
-          <el-option
-            v-for="type in energyTypeList"
-            :key="type.id"
-            :label="type.name"
-            :value="type.id"
+      <div class="search-form-grid">
+        <el-form-item label="计量点名称" prop="meterName">
+          <el-input
+            v-model="queryParams.meterName"
+            placeholder="请输入计量点名称"
+            clearable
+            @keyup.enter="handleQuery"
           />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="所属建筑" prop="buildingId">
-        <el-select v-model="queryParams.buildingId" placeholder="请选择建筑" clearable class="!w-240px">
-          <el-option
-            v-for="building in buildingList"
-            :key="building.id"
-            :label="building.name"
-            :value="building.id"
+        </el-form-item>
+        <el-form-item label="计量点编码" prop="code">
+          <el-input
+            v-model="queryParams.code"
+            placeholder="请输入计量点编码"
+            clearable
+            @keyup.enter="handleQuery"
           />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="计量点级别" prop="meterLevel">
-        <el-select v-model="queryParams.meterLevel" placeholder="请选择计量点级别" clearable class="!w-240px">
-          <el-option label="一级表" :value="1" />
-          <el-option label="二级表" :value="2" />
-          <el-option label="三级表" :value="3" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否虚拟表" prop="isVirtual">
-        <el-select v-model="queryParams.isVirtual" placeholder="请选择" clearable class="!w-240px">
-          <el-option label="是" :value="true" />
-          <el-option label="否" :value="false" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable class="!w-240px">
-          <el-option
-            v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
-        <el-button
-          type="primary"
-          plain
-          @click="openForm('create')"
-          v-hasPermi="['iot:energy-meter:create']"
-        >
-          <Icon icon="ep:plus" class="mr-5px" /> 新增
-        </el-button>
-      </el-form-item>
+        </el-form-item>
+        <el-form-item label="能源类型" prop="energyTypeId">
+          <el-select v-model="queryParams.energyTypeId" placeholder="请选择能源类型" clearable>
+            <el-option
+              v-for="type in energyTypeList"
+              :key="type.id"
+              :label="type.name"
+              :value="type.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属建筑" prop="buildingId">
+          <el-select v-model="queryParams.buildingId" placeholder="请选择建筑" clearable>
+            <el-option
+              v-for="building in buildingList"
+              :key="building.id"
+              :label="building.buildingName"
+              :value="building.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="计量点级别" prop="meterLevel">
+          <el-select v-model="queryParams.meterLevel" placeholder="请选择计量点级别" clearable>
+            <el-option label="一级表" :value="1" />
+            <el-option label="二级表" :value="2" />
+            <el-option label="三级表" :value="3" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否虚拟表" prop="isVirtual">
+          <el-select v-model="queryParams.isVirtual" placeholder="请选择" clearable>
+            <el-option label="是" :value="true" />
+            <el-option label="否" :value="false" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <el-option
+              v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="search-form-actions">
+          <el-button type="primary" @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
+          <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+          <el-button
+            type="success"
+            plain
+            @click="openForm('create')"
+            v-hasPermi="['iot:energy-meter:create']"
+          >
+            <Icon icon="ep:plus" class="mr-5px" /> 新增
+          </el-button>
+        </el-form-item>
+      </div>
     </el-form>
   </ContentWrap>
 
@@ -88,8 +87,8 @@
   <ContentWrap>
     <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
       <el-table-column label="ID" align="center" prop="id" width="80" />
-      <el-table-column label="计量点名称" align="center" prop="name" min-width="150" />
-      <el-table-column label="计量点编码" align="center" prop="code" width="120" />
+      <el-table-column label="计量点名称" align="center" prop="meterName" min-width="150" />
+      <el-table-column label="计量点编码" align="center" prop="meterCode" width="120" />
       <el-table-column label="能源类型" align="center" prop="energyTypeName" width="120" />
       <el-table-column label="设备名称" align="center" prop="deviceName" min-width="150" />
       <el-table-column label="建筑" align="center" prop="buildingName" width="120" />
@@ -159,8 +158,8 @@
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
 import { IotEnergyMeterVO, getIotEnergyMeterPage, deleteIotEnergyMeter } from '@/api/iot/energy/meter'
-import { getIotEnergyTypeSimpleList } from '@/api/iot/energy/energyType'
-import { getIotEnergyBuildingSimpleList } from '@/api/iot/energy/building'
+import { IotEnergyTypeSimpleVO, getIotEnergyTypeSimpleList } from '@/api/iot/energy/energyType'
+import { IotEnergyBuildingSimpleVO, getIotEnergyBuildingSimpleList } from '@/api/iot/energy/building'
 import MeterForm from './MeterForm.vue'
 
 /** IoT 能源计量点管理 */
@@ -172,13 +171,13 @@ const { t } = useI18n() // 国际化
 const loading = ref(true) // 列表的加载中
 const list = ref<IotEnergyMeterVO[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
-const energyTypeList = ref([]) // 能源类型列表
-const buildingList = ref([]) // 建筑列表
+const energyTypeList = ref<IotEnergyTypeSimpleVO[]>([]) // 能源类型列表
+const buildingList = ref<IotEnergyBuildingSimpleVO[]>([]) // 建筑列表
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  name: undefined,
-  code: undefined,
+  meterName: undefined,
+  meterCode: undefined,
   energyTypeId: undefined,
   buildingId: undefined,
   meterLevel: undefined,
@@ -247,3 +246,61 @@ onMounted(() => {
   getList()
 })
 </script>
+
+<style scoped>
+.search-form {
+  margin-bottom: 0;
+}
+
+.search-form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0 20px;
+}
+
+.search-form-grid :deep(.el-form-item) {
+  margin-bottom: 16px;
+}
+
+.search-form-grid :deep(.el-form-item__content) {
+  width: 100%;
+}
+
+.search-form-grid :deep(.el-input),
+.search-form-grid :deep(.el-select) {
+  width: 100%;
+}
+
+.search-form-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.search-form-actions :deep(.el-form-item__content) {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 响应式布局 - 中等屏幕 */
+@media (max-width: 1400px) {
+  .search-form-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 响应式布局 - 小屏幕 */
+@media (max-width: 1000px) {
+  .search-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 响应式布局 - 移动端 */
+@media (max-width: 600px) {
+  .search-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

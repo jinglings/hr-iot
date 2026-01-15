@@ -42,11 +42,7 @@
       </el-row>
 
       <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="楼层数" prop="floors">
-            <el-input v-model="formData.floors" placeholder="请输入楼层数" type="number" />
-          </el-form-item>
-        </el-col>
+
         <el-col :span="12">
           <el-form-item label="建筑状态" prop="status">
             <el-radio-group v-model="formData.status">

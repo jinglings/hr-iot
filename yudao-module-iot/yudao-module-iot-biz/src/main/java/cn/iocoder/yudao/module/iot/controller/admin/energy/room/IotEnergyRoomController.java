@@ -7,7 +7,13 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.iot.controller.admin.energy.room.vo.IotEnergyRoomPageReqVO;
 import cn.iocoder.yudao.module.iot.controller.admin.energy.room.vo.IotEnergyRoomRespVO;
 import cn.iocoder.yudao.module.iot.controller.admin.energy.room.vo.IotEnergyRoomSaveReqVO;
+import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyAreaDO;
+import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyBuildingDO;
+import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyFloorDO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyRoomDO;
+import cn.iocoder.yudao.module.iot.service.energy.area.IotEnergyAreaService;
+import cn.iocoder.yudao.module.iot.service.energy.building.IotEnergyBuildingService;
+import cn.iocoder.yudao.module.iot.service.energy.floor.IotEnergyFloorService;
 import cn.iocoder.yudao.module.iot.service.energy.room.IotEnergyRoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
@@ -31,6 +39,15 @@ public class IotEnergyRoomController {
 
     @Resource
     private IotEnergyRoomService roomService;
+
+    @Resource
+    private IotEnergyBuildingService buildingService;
+
+    @Resource
+    private IotEnergyAreaService areaService;
+
+    @Resource
+    private IotEnergyFloorService floorService;
 
     @PostMapping("/create")
     @Operation(summary = "创建能源房间")
@@ -70,10 +87,43 @@ public class IotEnergyRoomController {
     @PreAuthorize("@ss.hasPermission('iot:energy-room:query')")
     public CommonResult<PageResult<IotEnergyRoomRespVO>> getRoomPage(@Valid IotEnergyRoomPageReqVO pageReqVO) {
         PageResult<IotEnergyRoomDO> pageResult = roomService.getRoomPage(pageReqVO);
-        return success(BeanUtils.toBean(pageResult, IotEnergyRoomRespVO.class));
+        PageResult<IotEnergyRoomRespVO> respPageResult = BeanUtils.toBean(pageResult, IotEnergyRoomRespVO.class);
+
+        // 批量获取建筑信息
+        List<Long> buildingIds = convertList(respPageResult.getList(), IotEnergyRoomRespVO::getBuildingId);
+        Map<Long, String> buildingNameMap = buildingIds.isEmpty() ? Map.of() :
+                buildingService.getBuildingList(buildingIds).stream()
+                        .collect(Collectors.toMap(IotEnergyBuildingDO::getId, IotEnergyBuildingDO::getBuildingName));
+
+        // 批量获取区域信息
+        List<Long> areaIds = convertList(respPageResult.getList(), IotEnergyRoomRespVO::getAreaId);
+        Map<Long, String> areaNameMap = areaIds.isEmpty() ? Map.of() :
+                areaService.getAreaList(areaIds).stream()
+                        .collect(Collectors.toMap(IotEnergyAreaDO::getId, IotEnergyAreaDO::getAreaName));
+
+        // 批量获取楼层信息
+        List<Long> floorIds = convertList(respPageResult.getList(), IotEnergyRoomRespVO::getFloorId);
+        Map<Long, String> floorNameMap = floorIds.isEmpty() ? Map.of() :
+                floorService.getFloorList(floorIds).stream()
+                        .collect(Collectors.toMap(IotEnergyFloorDO::getId, IotEnergyFloorDO::getFloorName));
+
+        // 填充建筑名称、区域名称和楼层名称
+        respPageResult.getList().forEach(room -> {
+            if (room.getBuildingId() != null) {
+                room.setBuildingName(buildingNameMap.get(room.getBuildingId()));
+            }
+            if (room.getAreaId() != null) {
+                room.setAreaName(areaNameMap.get(room.getAreaId()));
+            }
+            if (room.getFloorId() != null) {
+                room.setFloorName(floorNameMap.get(room.getFloorId()));
+            }
+        });
+
+        return success(respPageResult);
     }
 
-    @GetMapping("/list-by-floor")
+    @GetMapping("/list-by-floor-id")
     @Operation(summary = "获得指定楼层的能源房间列表")
     @Parameter(name = "floorId", description = "楼层ID", required = true, example = "1")
     @PreAuthorize("@ss.hasPermission('iot:energy-room:query')")

@@ -1,0 +1,64 @@
+# HR-IoT Project .gitignore
+
+# ==================== Environment Files ====================
+.env
+.env.local
+.env.*.local
+
+# ==================== SCADA/MQTT Runtime Data ====================
+emqx/data/
+emqx/log/
+emqx/etc/loaded_plugins
+emqx/etc/loaded_modules
+
+# ==================== FUXA Data (Phase 2) ====================
+fuxa/data/
+fuxa/log/
+
+# ==================== Docker ====================
+docker-compose.override.yml
+
+# ==================== Node.js (for FUXA development) ====================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==================== Java/Maven (Backend) ====================
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+mvnw
+mvnw.cmd
+
+# ==================== IDE ====================
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# ==================== Logs ====================
+*.log
+logs/
+
+# ==================== SSL Certificates (keep .gitkeep) ====================
+nginx/ssl/*.pem
+nginx/ssl/*.key
+nginx/ssl/*.crt
+
+# ==================== Temporary Files ====================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ==================== Build Output ====================
+dist/
+build/
+out/

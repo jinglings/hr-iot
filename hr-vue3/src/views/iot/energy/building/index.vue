@@ -96,7 +96,6 @@
         </template>
       </el-table-column>
       <el-table-column label="建筑面积(㎡)" align="center" prop="area" width="120" />
-      <el-table-column label="楼层数" align="center" prop="floors" width="80" />
       <el-table-column label="地址" align="center" prop="address" min-width="200" :show-overflow-tooltip="true" />
       <el-table-column label="状态" align="center" prop="status" width="80">
         <template #default="scope">

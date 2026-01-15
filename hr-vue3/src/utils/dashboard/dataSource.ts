@@ -3,7 +3,7 @@
  */
 
 import type { DataConfig, DataSourceType } from '@/types/dashboard'
-import { request } from '@/config/axios'
+import request from '@/config/axios'
 
 /**
  * 数据源管理器

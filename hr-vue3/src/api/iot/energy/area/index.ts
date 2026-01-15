@@ -5,8 +5,8 @@ export interface IotEnergyAreaVO {
   id: number // 区域 ID，主键，自增
   buildingId: number // 建筑 ID
   buildingName?: string // 建筑名称（用于显示）
-  name: string // 区域名称
-  code: string // 区域编码
+  areaName: string // 区域名称
+  areaCode: string // 区域编码
   description: string // 区域描述
   sort: number // 排序
   status: number // 区域状态：0-禁用 1-启用
@@ -17,8 +17,8 @@ export interface IotEnergyAreaVO {
 // IoT 能源区域 分页查询请求 VO
 export interface IotEnergyAreaPageReqVO extends PageParam {
   buildingId?: number // 建筑 ID
-  name?: string // 区域名称
-  code?: string // 区域编码
+  areaName?: string // 区域名称
+  areaCode?: string // 区域编码
   status?: number // 区域状态
   createTime?: string[] // 创建时间
 }
@@ -26,8 +26,8 @@ export interface IotEnergyAreaPageReqVO extends PageParam {
 // IoT 能源区域 简化 VO（用于下拉选择）
 export interface IotEnergyAreaSimpleVO {
   id: number // 区域 ID
-  name: string // 区域名称
-  code: string // 区域编码
+  areaName: string // 区域名称
+  areaCode: string // 区域编码
   buildingId: number // 建筑 ID
 }
 
