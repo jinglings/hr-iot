@@ -13,6 +13,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,11 +24,13 @@ import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeC
 
 /**
  * Iot 设备信息 Service 实现类：调用远程的 device http 接口，进行设备认证、设备获取等
+ * 注意：仅在独立部署 Gateway 时使用，合并部署时使用 biz 模块的本地实现
  *
  * @author 芋道源码
  */
 @Service
 @Slf4j
+@ConditionalOnProperty(prefix = "yudao.iot.gateway.rpc", name = "url")
 public class IotDeviceApiImpl implements IotDeviceCommonApi {
 
     @Resource

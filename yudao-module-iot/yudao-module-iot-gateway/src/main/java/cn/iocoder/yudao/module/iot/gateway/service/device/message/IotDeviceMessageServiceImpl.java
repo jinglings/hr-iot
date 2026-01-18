@@ -24,7 +24,7 @@ import static cn.iocoder.yudao.module.iot.gateway.enums.ErrorCodeConstants.DEVIC
  *
  * @author 芋道源码
  */
-@Service
+@Service("iotGatewayDeviceMessageServiceImpl")
 @Slf4j
 public class IotDeviceMessageServiceImpl implements IotDeviceMessageService {
 
