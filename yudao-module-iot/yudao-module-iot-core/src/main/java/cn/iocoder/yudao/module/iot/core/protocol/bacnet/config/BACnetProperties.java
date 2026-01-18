@@ -43,6 +43,11 @@ public class BACnetProperties {
     private String broadcastAddress = "255.255.255.255";
 
     /**
+     * 网络前缀长度（子网掩码位数，如 24 表示 255.255.255.0）
+     */
+    private Integer networkPrefixLength = 24;
+
+    /**
      * 设备发现超时时间（毫秒）
      */
     private Long discoveryTimeout = 5000L;
@@ -51,6 +56,11 @@ public class BACnetProperties {
      * 设备通信超时时间（毫秒）
      */
     private Long communicationTimeout = 3000L;
+
+    /**
+     * 传输层超时时间（毫秒）
+     */
+    private Integer timeout = 5000;
 
     /**
      * 最大并发请求数

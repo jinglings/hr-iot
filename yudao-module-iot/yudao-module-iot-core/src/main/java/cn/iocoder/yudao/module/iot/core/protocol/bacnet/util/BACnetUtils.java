@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.iot.core.protocol.bacnet.util;
 
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
+import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 
 /**
  * BACnet 工具类
@@ -62,41 +63,218 @@ public class BACnetUtils {
     /**
      * 根据名称获取 ObjectType
      * 在 bacnet4j 6.x 中需要手动查找匹配的类型
+     * 支持多种格式：camelCase, kebab-case, SCREAMING_SNAKE_CASE, 缩写(AI/AO/AV等)
      */
-    private static ObjectType getObjectTypeByName(String name) {
+    public static ObjectType getObjectTypeByName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("对象类型名称不能为空");
+        }
         // 常用的 BACnet 对象类型映射
-        switch (name.toLowerCase()) {
+        switch (name.toLowerCase().replace("_", "").replace("-", "")) {
+            // Analog Input
             case "analoginput":
-            case "analog-input":
+            case "ai":
                 return ObjectType.analogInput;
+            // Analog Output
             case "analogoutput":
-            case "analog-output":
+            case "ao":
                 return ObjectType.analogOutput;
+            // Analog Value
             case "analogvalue":
-            case "analog-value":
+            case "av":
                 return ObjectType.analogValue;
+            // Binary Input
             case "binaryinput":
-            case "binary-input":
+            case "bi":
                 return ObjectType.binaryInput;
+            // Binary Output
             case "binaryoutput":
-            case "binary-output":
+            case "bo":
                 return ObjectType.binaryOutput;
+            // Binary Value
             case "binaryvalue":
-            case "binary-value":
+            case "bv":
                 return ObjectType.binaryValue;
+            // Device
             case "device":
+            case "dev":
                 return ObjectType.device;
+            // Multi-State Input
             case "multistateinput":
-            case "multi-state-input":
+            case "msi":
                 return ObjectType.multiStateInput;
+            // Multi-State Output
             case "multistateoutput":
-            case "multi-state-output":
+            case "mso":
                 return ObjectType.multiStateOutput;
+            // Multi-State Value
             case "multistatevalue":
-            case "multi-state-value":
+            case "msv":
                 return ObjectType.multiStateValue;
+            // Schedule
+            case "schedule":
+            case "sch":
+                return ObjectType.schedule;
+            // Calendar
+            case "calendar":
+            case "cal":
+                return ObjectType.calendar;
+            // Notification Class
+            case "notificationclass":
+            case "nc":
+                return ObjectType.notificationClass;
+            // Trend Log
+            case "trendlog":
+            case "tl":
+                return ObjectType.trendLog;
+            // Loop
+            case "loop":
+                return ObjectType.loop;
+            // Program
+            case "program":
+            case "prg":
+                return ObjectType.program;
+            // File
+            case "file":
+                return ObjectType.file;
             default:
                 throw new IllegalArgumentException("未知的对象类型: " + name);
+        }
+    }
+
+    /**
+     * 根据名称获取 PropertyIdentifier
+     * 支持多种格式：camelCase, kebab-case, SCREAMING_SNAKE_CASE, 缩写(PV/SV/SF等)
+     */
+    public static PropertyIdentifier getPropertyIdentifierByName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("属性标识符名称不能为空");
+        }
+        // 常用的 BACnet 属性标识符映射
+        switch (name.toLowerCase().replace("_", "").replace("-", "")) {
+            // Present Value
+            case "presentvalue":
+            case "pv":
+                return PropertyIdentifier.presentValue;
+            // Status Flags
+            case "statusflags":
+            case "sf":
+                return PropertyIdentifier.statusFlags;
+            // Object Name
+            case "objectname":
+            case "name":
+                return PropertyIdentifier.objectName;
+            // Object Type
+            case "objecttype":
+            case "type":
+                return PropertyIdentifier.objectType;
+            // Object Identifier
+            case "objectidentifier":
+            case "oid":
+                return PropertyIdentifier.objectIdentifier;
+            // Description
+            case "description":
+            case "desc":
+                return PropertyIdentifier.description;
+            // Device Type
+            case "devicetype":
+                return PropertyIdentifier.deviceType;
+            // Units
+            case "units":
+                return PropertyIdentifier.units;
+            // Out of Service
+            case "outofservice":
+            case "oos":
+                return PropertyIdentifier.outOfService;
+            // Event State
+            case "eventstate":
+                return PropertyIdentifier.eventState;
+            // Reliability
+            case "reliability":
+                return PropertyIdentifier.reliability;
+            // Priority Array
+            case "priorityarray":
+                return PropertyIdentifier.priorityArray;
+            // Relinquish Default
+            case "relinquishdefault":
+                return PropertyIdentifier.relinquishDefault;
+            // COV Increment
+            case "covincrement":
+                return PropertyIdentifier.covIncrement;
+            // High Limit
+            case "highlimit":
+                return PropertyIdentifier.highLimit;
+            // Low Limit
+            case "lowlimit":
+                return PropertyIdentifier.lowLimit;
+            // Deadband
+            case "deadband":
+                return PropertyIdentifier.deadband;
+            // Resolution
+            case "resolution":
+                return PropertyIdentifier.resolution;
+            // Min Pres Value
+            case "minpresvalue":
+                return PropertyIdentifier.minPresValue;
+            // Max Pres Value
+            case "maxpresvalue":
+                return PropertyIdentifier.maxPresValue;
+            // Update Interval
+            case "updateinterval":
+                return PropertyIdentifier.updateInterval;
+            // Polarity
+            case "polarity":
+                return PropertyIdentifier.polarity;
+            // Inactive Text
+            case "inactivetext":
+                return PropertyIdentifier.inactiveText;
+            // Active Text
+            case "activetext":
+                return PropertyIdentifier.activeText;
+            // Number of States
+            case "numberofstates":
+                return PropertyIdentifier.numberOfStates;
+            // State Text
+            case "statetext":
+                return PropertyIdentifier.stateText;
+            // Setpoint Reference
+            case "setpointreference":
+                return PropertyIdentifier.setpointReference;
+            // Controlled Variable Value
+            case "controlledvariablevalue":
+                return PropertyIdentifier.controlledVariableValue;
+            // Manipulated Variable Reference
+            case "manipulatedvariablereference":
+                return PropertyIdentifier.manipulatedVariableReference;
+            // Object List
+            case "objectlist":
+                return PropertyIdentifier.objectList;
+            // Vendor Name
+            case "vendorname":
+                return PropertyIdentifier.vendorName;
+            // Vendor Identifier
+            case "vendoridentifier":
+                return PropertyIdentifier.vendorIdentifier;
+            // Model Name
+            case "modelname":
+                return PropertyIdentifier.modelName;
+            // Firmware Revision
+            case "firmwarerevision":
+                return PropertyIdentifier.firmwareRevision;
+            // Application Software Version
+            case "applicationsoftwareversion":
+                return PropertyIdentifier.applicationSoftwareVersion;
+            // Protocol Version
+            case "protocolversion":
+                return PropertyIdentifier.protocolVersion;
+            // Protocol Revision
+            case "protocolrevision":
+                return PropertyIdentifier.protocolRevision;
+            // System Status
+            case "systemstatus":
+                return PropertyIdentifier.systemStatus;
+            default:
+                throw new IllegalArgumentException("未知的属性标识符: " + name);
         }
     }
 

@@ -5,6 +5,7 @@ import cn.iocoder.yudao.module.iot.core.messagebus.core.IotMessageBus;
 import cn.iocoder.yudao.module.iot.core.messagebus.core.IotMessageSubscriber;
 import cn.iocoder.yudao.module.iot.core.mq.message.IotDeviceMessage;
 import cn.iocoder.yudao.module.iot.core.protocol.bacnet.core.BACnetDeviceManager;
+import cn.iocoder.yudao.module.iot.core.protocol.bacnet.util.BACnetUtils;
 import cn.iocoder.yudao.module.iot.core.util.IotDeviceMessageUtils;
 import cn.iocoder.yudao.module.iot.dal.dataobject.bacnet.IotBACnetDeviceConfigDO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.bacnet.IotBACnetPropertyMappingDO;
@@ -149,8 +150,8 @@ public class IotBACnetDownstreamSubscriber implements IotMessageSubscriber<IotDe
                                IotBACnetPropertyMappingDO mapping,
                                Object value) {
         try {
-            ObjectType objectType = ObjectType.forName(mapping.getObjectType());
-            PropertyIdentifier propertyId = PropertyIdentifier.forName(mapping.getPropertyIdentifier());
+            ObjectType objectType = BACnetUtils.getObjectTypeByName(mapping.getObjectType());
+            PropertyIdentifier propertyId = BACnetUtils.getPropertyIdentifierByName(mapping.getPropertyIdentifier());
 
             // 应用值映射（枚举转换）
             value = applyValueMapping(value, mapping);

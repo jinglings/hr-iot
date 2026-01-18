@@ -5,6 +5,7 @@ import cn.iocoder.yudao.module.iot.core.enums.IotDeviceMessageMethodEnum;
 import cn.iocoder.yudao.module.iot.core.mq.message.IotDeviceMessage;
 import cn.iocoder.yudao.module.iot.core.mq.producer.IotDeviceMessageProducer;
 import cn.iocoder.yudao.module.iot.core.protocol.bacnet.core.BACnetDeviceManager;
+import cn.iocoder.yudao.module.iot.core.protocol.bacnet.util.BACnetUtils;
 import cn.iocoder.yudao.module.iot.core.util.IotDeviceMessageUtils;
 import cn.iocoder.yudao.module.iot.dal.dataobject.bacnet.IotBACnetDeviceConfigDO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.bacnet.IotBACnetPropertyMappingDO;
@@ -173,8 +174,8 @@ public class IotBACnetMasterProtocol {
      */
     private Object readBACnetProperty(IotBACnetDeviceConfigDO config, IotBACnetPropertyMappingDO mapping) {
         try {
-            ObjectType objectType = ObjectType.forName(mapping.getObjectType());
-            PropertyIdentifier propertyId = PropertyIdentifier.forName(mapping.getPropertyIdentifier());
+            ObjectType objectType = BACnetUtils.getObjectTypeByName(mapping.getObjectType());
+            PropertyIdentifier propertyId = BACnetUtils.getPropertyIdentifierByName(mapping.getPropertyIdentifier());
 
             Object value = bacnetDeviceManager.readDeviceProperty(
                     config.getInstanceNumber(),

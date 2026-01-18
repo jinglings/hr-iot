@@ -12,6 +12,7 @@ import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyAck;
 import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
+import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
@@ -54,32 +55,45 @@ public class BACnetClient {
             // 创建 IP 网络 - 使用 bacnet4j 6.x API
             IpNetworkBuilder builder = new IpNetworkBuilder();
 
-            // 设置本地绑定地址和端口
+            // 设置广播地址（必须先设置）
+            if (properties.getBroadcastAddress() != null && !properties.getBroadcastAddress().isEmpty()) {
+                builder.withBroadcast(properties.getBroadcastAddress(), properties.getNetworkPrefixLength());
+            }
+
+            // 设置本地绑定地址
             if (properties.getLocalBindAddress() != null && !properties.getLocalBindAddress().isEmpty()) {
-                // 绑定到指定地址
                 builder.withLocalBindAddress(properties.getLocalBindAddress());
             }
 
             // 设置端口
             builder.withPort(properties.getPort());
 
-            // 设置广播地址
-            if (properties.getBroadcastAddress() != null && !properties.getBroadcastAddress().isEmpty()) {
-                builder.withBroadcast(properties.getBroadcastAddress(), 0xFFFF);
-            }
-
             IpNetwork network = builder.build();
 
+            // 创建传输层并设置超时
+            Transport transport = new DefaultTransport(network);
+            transport.setTimeout(properties.getTimeout());
+
             // 创建本地设备
-            DefaultTransport transport = new DefaultTransport(network);
             localDevice = new LocalDevice(properties.getDeviceId(), transport);
-            localDevice.getEventHandler().addListener(new DeviceEventAdapter());
 
             // 初始化设备
             localDevice.initialize();
+
+            // 添加设备发现监听器（必须在 initialize 之后添加）
+            localDevice.getEventHandler().addListener(new BACnetDeviceListener());
+
+            // 发送全局广播发现设备
+            localDevice.sendGlobalBroadcast(new WhoIsRequest());
+
             initialized = true;
-            log.info("BACnet 本地设备初始化成功，设备 ID: {}, 端口: {}",
-                    properties.getDeviceId(), properties.getPort());
+            log.info("BACnet 本地设备初始化成功，设备 ID: {}, 端口: {}, 广播地址: {}",
+                    properties.getDeviceId(), properties.getPort(), properties.getBroadcastAddress());
+
+            // 等待初始设备发现
+            TimeUnit.MILLISECONDS.sleep(properties.getDiscoveryTimeout());
+            log.info("初始化完成，已发现 {} 个设备", remoteDevices.size());
+
         } catch (Exception e) {
             log.error("BACnet 本地设备初始化失败", e);
             throw e;
@@ -87,36 +101,66 @@ public class BACnetClient {
     }
 
     /**
+     * BACnet 设备发现监听器
+     * 当收到 IAm 响应时自动处理设备注册
+     */
+    class BACnetDeviceListener extends DeviceEventAdapter {
+        @Override
+        public void iAmReceived(final RemoteDevice d) {
+            int instanceNumber = d.getInstanceNumber();
+            log.info("[iAmReceived] 发现 BACnet 设备: instanceNumber={}, name={}, address={}",
+                    instanceNumber, d.getName(), d.getAddress());
+
+            // 将设备添加到缓存
+            remoteDevices.put(instanceNumber, d);
+
+            // 尝试获取扩展设备信息
+            try {
+                DiscoveryUtils.getExtendedDeviceInformation(localDevice, d);
+                log.info("[iAmReceived] 获取设备扩展信息成功: instanceNumber={}, vendorName={}, modelName={}",
+                        instanceNumber, d.getVendorName(), d.getModelName());
+            } catch (Exception e) {
+                log.warn("[iAmReceived] 获取设备扩展信息失败: instanceNumber={}, error={}",
+                        instanceNumber, e.getMessage());
+            }
+        }
+    }
+
+    /**
      * 发现网络中的 BACnet 设备
+     * 发送 WhoIs 广播并等待设备响应
      */
     public List<BACnetDeviceInfo> discoverDevices() throws Exception {
         if (!initialized) {
             throw new IllegalStateException("BACnet 客户端未初始化");
         }
 
-        List<BACnetDeviceInfo> deviceInfoList = new ArrayList<>();
-
         try {
-            // 执行设备发现
+            // 发送 WhoIs 广播
             log.info("开始发现 BACnet 设备...");
             localDevice.sendGlobalBroadcast(new WhoIsRequest());
 
-            // 等待设备响应
+            // 等待设备响应（设备会通过 iAmReceived 自动添加到 remoteDevices）
             TimeUnit.MILLISECONDS.sleep(properties.getDiscoveryTimeout());
 
-            // 获取发现的设备
-            for (RemoteDevice device : localDevice.getRemoteDevices()) {
-                BACnetDeviceInfo deviceInfo = convertToDeviceInfo(device);
-                deviceInfoList.add(deviceInfo);
-                remoteDevices.put(device.getInstanceNumber(), device);
-            }
-
-            log.info("发现 {} 个 BACnet 设备", deviceInfoList.size());
+            log.info("发现 {} 个 BACnet 设备", remoteDevices.size());
         } catch (Exception e) {
             log.error("发现 BACnet 设备失败", e);
             throw e;
         }
 
+        // 返回已发现的设备列表
+        return getDiscoveredDevices();
+    }
+
+    /**
+     * 获取已发现的设备列表（不发送新的 WhoIs）
+     */
+    public List<BACnetDeviceInfo> getDiscoveredDevices() {
+        List<BACnetDeviceInfo> deviceInfoList = new ArrayList<>();
+        for (RemoteDevice device : remoteDevices.values()) {
+            deviceInfoList.add(convertToDeviceInfo(device));
+        }
         return deviceInfoList;
     }
 
