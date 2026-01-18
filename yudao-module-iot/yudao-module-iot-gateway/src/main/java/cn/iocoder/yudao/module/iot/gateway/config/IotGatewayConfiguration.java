@@ -17,6 +17,7 @@ import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.IotModbusDownstreamSu
 import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.IotModbusMasterProtocol;
 import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.manager.IotModbusConnectionManager;
 import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.tcp.IotModbusTcpUpstreamProtocol;
+import cn.iocoder.yudao.module.iot.core.mq.producer.IotDeviceMessageProducer;
 import cn.iocoder.yudao.module.iot.gateway.service.device.IotDeviceService;
 import cn.iocoder.yudao.module.iot.gateway.service.device.message.IotDeviceMessageService;
 import io.vertx.core.Vertx;
@@ -171,10 +172,10 @@ public class IotGatewayConfiguration {
         @Bean
         public IotModbusMasterProtocol iotModbusMasterProtocol(IotGatewayProperties gatewayProperties,
                                                                IotDeviceService deviceService,
-                                                               IotDeviceMessageService messageService,
+                                                               IotDeviceMessageProducer deviceMessageProducer,
                                                                IotModbusConnectionManager connectionManager) {
             return new IotModbusMasterProtocol(gatewayProperties.getProtocol().getModbus(),
-                    deviceService, messageService, connectionManager);
+                    deviceService, deviceMessageProducer, connectionManager);
         }
 
         @Bean

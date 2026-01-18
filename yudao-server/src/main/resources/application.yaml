@@ -355,11 +355,11 @@ yudao:
       device-id: 1234
 
       # 监听端口
-      port: 47808
+      port: 2030
 
       # 本地绑定地址（多网卡环境建议指定）
-      local-bind-address: 192.168.234.144
+      local-bind-address:  0.0.0.0
 
       # 广播地址
-      broadcast-address: 192.168.234.255
+      broadcast-address: 255.255.255.255
 debug: false

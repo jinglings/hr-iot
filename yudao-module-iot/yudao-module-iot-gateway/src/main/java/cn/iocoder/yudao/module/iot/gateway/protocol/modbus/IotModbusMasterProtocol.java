@@ -2,12 +2,13 @@ package cn.iocoder.yudao.module.iot.gateway.protocol.modbus;
 
 import cn.iocoder.yudao.module.iot.core.biz.dto.IotDeviceRespDTO;
 import cn.iocoder.yudao.module.iot.core.mq.message.IotDeviceMessage;
+import cn.iocoder.yudao.module.iot.core.enums.IotDeviceMessageMethodEnum;
+import cn.iocoder.yudao.module.iot.core.mq.producer.IotDeviceMessageProducer;
 import cn.iocoder.yudao.module.iot.core.util.IotDeviceMessageUtils;
 import cn.iocoder.yudao.module.iot.gateway.config.IotGatewayProperties;
 import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.manager.IotModbusConnectionManager;
 import cn.iocoder.yudao.module.iot.gateway.protocol.modbus.util.ModbusDataTypeConverter;
 import cn.iocoder.yudao.module.iot.gateway.service.device.IotDeviceService;
-import cn.iocoder.yudao.module.iot.gateway.service.device.message.IotDeviceMessageService;
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.procimg.InputRegister;
 import com.ghgande.j2mod.modbus.util.BitVector;
@@ -35,7 +36,7 @@ public class IotModbusMasterProtocol {
 
     private final IotDeviceService deviceService;
 
-    private final IotDeviceMessageService messageService;
+    private final IotDeviceMessageProducer deviceMessageProducer;
 
     private final IotModbusConnectionManager connectionManager;
 
@@ -49,11 +50,11 @@ public class IotModbusMasterProtocol {
 
     public IotModbusMasterProtocol(IotGatewayProperties.ModbusProperties modbusProperties,
                                    IotDeviceService deviceService,
-                                   IotDeviceMessageService messageService,
+                                   IotDeviceMessageProducer deviceMessageProducer,
                                    IotModbusConnectionManager connectionManager) {
         this.modbusProperties = modbusProperties;
         this.deviceService = deviceService;
-        this.messageService = messageService;
+        this.deviceMessageProducer = deviceMessageProducer;
         this.connectionManager = connectionManager;
         // 生成服务器 ID（使用 modbus 协议标识）
         this.serverId = IotDeviceMessageUtils.generateServerId(modbusProperties.getPort());
@@ -223,11 +224,11 @@ public class IotModbusMasterProtocol {
             message.setDeviceId(slave.getDeviceId());
             message.setTenantId(deviceInfo.getTenantId());
             message.setServerId(serverId);
-            message.setMethod("thing.property.report");
+            message.setMethod(IotDeviceMessageMethodEnum.PROPERTY_POST.getMethod());
             message.setParams(properties);
 
             // 发布消息
-            messageService.publishDeviceMessage(message, deviceInfo.getProductKey(), deviceInfo.getDeviceName());
+            deviceMessageProducer.sendDeviceMessage(message);
 
             log.debug("[publishDeviceMessage][发布 Modbus 设备消息，设备 ID: {}，属性数量: {}]",
                     slave.getDeviceId(), properties.size());

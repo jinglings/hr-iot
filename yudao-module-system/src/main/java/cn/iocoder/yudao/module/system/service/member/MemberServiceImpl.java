@@ -37,18 +37,18 @@ public class MemberServiceImpl implements MemberService {
         return ReflectUtil.invoke(user, "getEmail");
     }
 
-    private Object getMemberUser(Long id) {
-        if (id == null) {
-            return null;
-        }
-        return ReflectUtil.invoke(getMemberUserApi(), "getUser", id);
-    }
-
     private Object getMemberUserApi() {
         if (memberUserApi == null) {
             memberUserApi = SpringUtil.getBean(ClassUtil.loadClass(String.format("%s.module.member.api.user.MemberUserApi", basePackage)));
         }
         return memberUserApi;
+    }
+
+    private Object getMemberUser(Long id) {
+        if (id == null) {
+            return null;
+        }
+        return ReflectUtil.invoke(getMemberUserApi(), "getUser", id);
     }
 
 }

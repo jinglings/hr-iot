@@ -14,9 +14,9 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.6.3/mapstruct-processor-1.6.3.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.6.3/mapstruct-1.6.3.jar" />
         </processorPath>
-        <module name="yudao-server" />
         <module name="yudao-spring-boot-starter-job" />
         <module name="yudao-module-infra" />
+        <module name="yudao-server" />
         <module name="yudao-spring-boot-starter-test" />
         <module name="yudao-spring-boot-starter-biz-data-permission" />
         <module name="yudao-spring-boot-starter-security" />

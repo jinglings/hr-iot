@@ -93,6 +93,11 @@ public class IotGatewayProperties {
          */
         private ModbusProperties modbus;
 
+        /**
+         * Modbus TCP 从站配置
+         */
+        private ModbusTcpProperties modbusTcp;
+
     }
 
     @Data
