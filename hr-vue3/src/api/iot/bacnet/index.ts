@@ -55,6 +55,8 @@ export interface BACnetDeviceConfigPageReqVO {
 export interface BACnetPropertyMappingVO {
   id?: number // 主键ID
   deviceId: number // IoT 设备 ID
+  deviceConfigId?: number // 设备配置编号
+  thingModelId?: number // 物模型功能编号
   identifier: string // 物模型属性标识符
   objectType: string // BACnet 对象类型
   objectInstance: number // BACnet 对象实例号

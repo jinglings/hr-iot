@@ -377,6 +377,8 @@ const thingModelProperties = ref<any[]>([])
 
 const mappingForm = reactive<Partial<BACnetPropertyMappingVO>>({
   deviceId: 0,
+  deviceConfigId: undefined,
+  thingModelId: undefined,
   identifier: '',
   objectType: '',
   objectInstance: 0,
@@ -449,9 +451,10 @@ const loadThingModelProperties = async () => {
       productId: props.device.productId,
       type: 1 // 1表示属性类型
     })
-    // 过滤出属性类型的物模型,并提取必要字段
+    // 过滤出属性类型的物模型,并提取必要字段（包括id用于thingModelId）
     thingModelProperties.value =
       data?.filter((item: any) => item.type === 1).map((item: any) => ({
+        id: item.id,
         identifier: item.identifier,
         name: item.name,
         dataType: item.dataType
@@ -530,7 +533,10 @@ const handleTestConnection = async () => {
 const handleAddMapping = () => {
   mappingFormMode.value = 'create'
   Object.assign(mappingForm, {
+    id: undefined,
     deviceId: props.device.id,
+    deviceConfigId: deviceConfig.value?.id,
+    thingModelId: undefined,
     identifier: '',
     objectType: '',
     objectInstance: 0,
@@ -559,6 +565,19 @@ const handleSaveMapping = async () => {
 
   mappingSaveLoading.value = true
   try {
+    // 根据选择的 identifier 查找对应的物模型 id
+    const selectedProperty = thingModelProperties.value.find(
+      (prop) => prop.identifier === mappingForm.identifier
+    )
+    if (selectedProperty) {
+      mappingForm.thingModelId = selectedProperty.id
+    }
+
+    // 添加设备配置ID
+    if (deviceConfig.value?.id) {
+      mappingForm.deviceConfigId = deviceConfig.value.id
+    }
+
     if (mappingFormMode.value === 'create') {
       await BACnetApi.createPropertyMapping(mappingForm as BACnetPropertyMappingVO)
       ElMessage.success('添加成功')
