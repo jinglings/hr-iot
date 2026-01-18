@@ -55,17 +55,11 @@ public class BACnetClient {
             IpNetwork network = new IpNetworkBuilder().withBroadcast("192.168.88.255",24).build();
             Transport transport = new DefaultTransport(network);
 
-//            String timeMill = propertiesConfig.getTimeout();
-//            if(timeMill != null && !"".equals(timeMill)) {
-//                timeout = Integer.parseInt(timeMill);
-//            }
-
             transport.setTimeout(5000);
             String instaceNum = "15000";
             localDevice = new LocalDevice(Integer.parseInt(instaceNum), transport);
             try {
                 localDevice.initialize();
-//                localDevice.getEventHandler().addListener(new Listener());
                 localDevice.getEventHandler().addListener(new BACnetDeviceListener());
                 localDevice.sendGlobalBroadcast(new WhoIsRequest());
 

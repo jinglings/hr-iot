@@ -74,6 +74,12 @@ public class IotBACnetMasterProtocol {
             return;
         }
 
+        // 防止重复启动
+        if (pollingScheduler != null) {
+            log.warn("[start][BACnet 主站协议已启动，跳过重复启动]");
+            return;
+        }
+
         // 获取启用轮询的设备配置
         List<IotBACnetDeviceConfigDO> configs = deviceConfigMapper.selectEnabledPollingConfigs();
         if (configs == null || configs.isEmpty()) {
@@ -81,14 +87,35 @@ public class IotBACnetMasterProtocol {
             return;
         }
 
+        // 检查是否有重复的设备配置
+        Map<Long, Long> deviceIdCount = configs.stream()
+                .collect(java.util.stream.Collectors.groupingBy(
+                        IotBACnetDeviceConfigDO::getDeviceId,
+                        java.util.stream.Collectors.counting()));
+        deviceIdCount.forEach((deviceId, count) -> {
+            if (count > 1) {
+                log.warn("[start][发现重复的设备配置，设备 ID: {}, 数量: {}]", deviceId, count);
+            }
+        });
+
+        // 去重：每个设备只启动一个轮询任务
+        List<IotBACnetDeviceConfigDO> distinctConfigs = configs.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        IotBACnetDeviceConfigDO::getDeviceId,
+                        c -> c,
+                        (existing, replacement) -> existing))
+                .values()
+                .stream()
+                .collect(java.util.stream.Collectors.toList());
+
         // 创建轮询调度器
-        int deviceCount = configs.size();
+        int deviceCount = distinctConfigs.size();
         pollingScheduler = Executors.newScheduledThreadPool(
                 Math.min(deviceCount, Runtime.getRuntime().availableProcessors()),
                 r -> new Thread(r, "bacnet-polling-" + Thread.currentThread().getId()));
 
         // 为每个设备启动轮询任务
-        for (IotBACnetDeviceConfigDO config : configs) {
+        for (IotBACnetDeviceConfigDO config : distinctConfigs) {
             startPollingForDevice(config);
         }
 
