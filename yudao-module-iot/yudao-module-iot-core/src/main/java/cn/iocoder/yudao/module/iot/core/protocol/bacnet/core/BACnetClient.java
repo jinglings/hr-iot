@@ -52,39 +52,29 @@ public class BACnetClient {
         }
 
         try {
-            // 创建 IP 网络 - 使用 bacnet4j 6.x API
-            IpNetworkBuilder builder = new IpNetworkBuilder();
-
-            // 设置广播地址（必须先设置）
-            if (properties.getBroadcastAddress() != null && !properties.getBroadcastAddress().isEmpty()) {
-                builder.withBroadcast(properties.getBroadcastAddress(), properties.getNetworkPrefixLength());
-            }
-
-            // 设置本地绑定地址
-            if (properties.getLocalBindAddress() != null && !properties.getLocalBindAddress().isEmpty()) {
-                builder.withLocalBindAddress(properties.getLocalBindAddress());
-            }
-
-            // 设置端口
-            builder.withPort(properties.getPort());
-
-            IpNetwork network = builder.build();
-
-            // 创建传输层并设置超时
+            IpNetwork network = new IpNetworkBuilder().withBroadcast("192.168.88.255",24).build();
             Transport transport = new DefaultTransport(network);
-            transport.setTimeout(properties.getTimeout());
 
-            // 创建本地设备
-            localDevice = new LocalDevice(properties.getDeviceId(), transport);
+//            String timeMill = propertiesConfig.getTimeout();
+//            if(timeMill != null && !"".equals(timeMill)) {
+//                timeout = Integer.parseInt(timeMill);
+//            }
 
-            // 初始化设备
-            localDevice.initialize();
+            transport.setTimeout(5000);
+            String instaceNum = "15000";
+            localDevice = new LocalDevice(Integer.parseInt(instaceNum), transport);
+            try {
+                localDevice.initialize();
+//                localDevice.getEventHandler().addListener(new Listener());
+                localDevice.getEventHandler().addListener(new BACnetDeviceListener());
+                localDevice.sendGlobalBroadcast(new WhoIsRequest());
 
-            // 添加设备发现监听器（必须在 initialize 之后添加）
-            localDevice.getEventHandler().addListener(new BACnetDeviceListener());
+                Thread.sleep(5000);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
-            // 发送全局广播发现设备
-            localDevice.sendGlobalBroadcast(new WhoIsRequest());
 
             initialized = true;
             log.info("BACnet 本地设备初始化成功，设备 ID: {}, 端口: {}, 广播地址: {}",
