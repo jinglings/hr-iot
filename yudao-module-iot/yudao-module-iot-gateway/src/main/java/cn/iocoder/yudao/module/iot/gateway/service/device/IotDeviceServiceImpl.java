@@ -21,7 +21,7 @@ import static cn.iocoder.yudao.framework.common.util.cache.CacheUtils.buildAsync
  *
  * @author 芋道源码
  */
-@Service
+@Service("iotGatewayDeviceServiceImpl")
 @Slf4j
 public class IotDeviceServiceImpl implements IotDeviceService {
 
