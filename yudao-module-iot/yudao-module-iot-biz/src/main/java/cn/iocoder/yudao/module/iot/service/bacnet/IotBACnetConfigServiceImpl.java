@@ -49,10 +49,10 @@ public class IotBACnetConfigServiceImpl implements IotBACnetConfigService {
         }
 
         // 校验实例号是否已被使用
-        IotBACnetDeviceConfigDO existingByInstance = deviceConfigMapper.selectByInstanceNumber(createReqVO.getInstanceNumber());
-        if (existingByInstance != null) {
-            throw exception(BACNET_INSTANCE_NUMBER_EXISTS);
-        }
+//        IotBACnetDeviceConfigDO existingByInstance = deviceConfigMapper.selectByInstanceNumber(createReqVO.getInstanceNumber());
+//        if (existingByInstance != null) {
+//            throw exception(BACNET_INSTANCE_NUMBER_EXISTS);
+//        }
 
         // 插入
         IotBACnetDeviceConfigDO config = IotBACnetConfigConvert.INSTANCE.convert(createReqVO);
