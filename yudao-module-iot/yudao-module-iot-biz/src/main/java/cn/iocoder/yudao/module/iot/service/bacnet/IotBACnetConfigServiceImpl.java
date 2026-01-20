@@ -186,6 +186,22 @@ public class IotBACnetConfigServiceImpl implements IotBACnetConfigService {
             return;
         }
 
+        // 按照预定义的名称顺序对物模型进行排序
+        // 顺序: 有功縂电能、瞬時功率、尖、峰、平、谷、A电压、B电压、C电压、A电流、B电流、C电流
+        List<String> predefinedOrder = java.util.Arrays.asList(
+                "有功縂电能", "瞬時功率", "尖", "峰", "平", "谷",
+                "A电压", "B电压", "C电压", "A电流", "B电流", "C电流");
+        thingModels.sort((a, b) -> {
+            int indexA = predefinedOrder.indexOf(a.getName());
+            int indexB = predefinedOrder.indexOf(b.getName());
+            // 如果名称不在预定义列表中，放到最后
+            if (indexA == -1)
+                indexA = Integer.MAX_VALUE;
+            if (indexB == -1)
+                indexB = Integer.MAX_VALUE;
+            return Integer.compare(indexA, indexB);
+        });
+
         // 获取该设备已存在的所有属性映射，找出已映射的 identifier
         List<IotBACnetPropertyMappingDO> existingMappings = propertyMappingMapper
                 .selectListByDeviceId(createReqVO.getDeviceId());
@@ -202,7 +218,7 @@ public class IotBACnetConfigServiceImpl implements IotBACnetConfigService {
 
         int nextObjectInstance = maxObjectInstance + 1;
 
-        // 遍历所有物模型属性，为未映射的属性创建映射
+        // 遍历所有物模型属性（按预定义顺序），为未映射的属性创建映射
         for (IotThingModelDO thingModel : thingModels) {
             // 跳过已映射的属性
             if (mappedIdentifiers.contains(thingModel.getIdentifier())) {
