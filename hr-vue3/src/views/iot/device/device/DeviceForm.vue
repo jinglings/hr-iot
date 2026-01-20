@@ -164,12 +164,12 @@ const formRules = reactive({
   productId: [{ required: true, message: '产品不能为空', trigger: 'blur' }],
   deviceName: [
     { required: true, message: 'DeviceName 不能为空', trigger: 'blur' },
-    {
-      pattern: /^[a-zA-Z0-9_.\-:@]{4,32}$/,
-      message:
-        '支持英文字母、数字、下划线（_）、中划线（-）、点号（.）、半角冒号（:）和特殊字符@，长度限制为 4~32 个字符',
-      trigger: 'blur'
-    }
+    // {
+    //   pattern: /^[a-zA-Z0-9_.\-:@]{4,32}$/,
+    //   message:
+    //     '支持英文字母、数字、下划线（_）、中划线（-）、点号（.）、半角冒号（:）和特殊字符@，长度限制为 4~32 个字符',
+    //   trigger: 'blur'
+    // }
   ],
   nickname: [
     {
