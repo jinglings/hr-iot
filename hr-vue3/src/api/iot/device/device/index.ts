@@ -161,5 +161,10 @@ export const DeviceApi = {
   // 发送设备消息
   sendDeviceMessage: async (params: IotDeviceMessageSendReqVO) => {
     return await request.post({ url: `/iot/device/message/send`, data: params })
+  },
+
+  // 获取设备能耗分页（附带 energy 属性值）
+  getDevicePageWithEnergy: async (params: any) => {
+    return await request.get({ url: `/iot/device/property/page-with-energy`, params })
   }
 }

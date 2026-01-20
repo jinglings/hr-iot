@@ -121,6 +121,17 @@ const energyRouter: AppRouteRecordRaw = {
       }
     },
 
+    // 电表能耗展示
+    {
+      path: 'meter-display',
+      component: () => import('@/views/iot/energy/data/EnergyMeterDisplay.vue'),
+      name: 'IotEnergyMeterDisplay',
+      meta: {
+        title: '电表能耗展示',
+        icon: 'ep:odometer'
+      }
+    },
+
     // 能源统计分析
     {
       path: 'statistics',
