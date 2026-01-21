@@ -354,9 +354,9 @@ const deviceConfig = ref<BACnetDeviceConfigVO | null>(null)
 const configForm = reactive<Partial<BACnetDeviceConfigVO>>({
   deviceId: 0,
   instanceNumber: 0,
-  ipAddress: '',
+  ipAddress: '192.168.88.15',
   pollingEnabled: true,
-  pollingInterval: 5000,
+  pollingInterval: 60000,
   description: ''
 })
 
