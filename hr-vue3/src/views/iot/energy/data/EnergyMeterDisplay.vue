@@ -46,7 +46,7 @@
 
   <!-- 电表展示区域 -->
   <ContentWrap>
-    <div class="meter-container" v-loading="loading">
+    <div class="meter-panel" v-loading="loading">
       <div v-if="list.length === 0 && !loading" class="no-data">
         <el-empty description="暂无电表设备数据" />
       </div>
@@ -54,57 +54,87 @@
         <div
           v-for="device in list"
           :key="device.id"
-          class="meter-card"
-          :class="{ 'offline': device.state !== 1 }"
+          class="meter-unit"
+          :class="{ 'is-offline': device.state !== 1 }"
         >
-          <!-- 电表头部信息 -->
-          <div class="meter-header">
-            <div class="meter-title">
-              <span class="device-name">{{ device.nickname || device.deviceName }}</span>
-              <el-tag
-                :type="device.state === 1 ? 'success' : device.state === 2 ? 'danger' : 'info'"
-                size="small"
-              >
-                {{ device.state === 1 ? '在线' : device.state === 2 ? '离线' : '未激活' }}
-              </el-tag>
+          <!-- 电表外壳 -->
+          <div class="meter-housing">
+            <!-- 顶部螺丝装饰 -->
+            <div class="screw-row top">
+              <div class="screw"></div>
+              <div class="screw"></div>
             </div>
-            <div class="product-name">{{ device.productName || '未知产品' }}</div>
-          </div>
 
-          <!-- 仿真电表显示 -->
-          <div class="meter-display">
-            <div class="meter-frame">
-              <div class="meter-glass">
-                <div class="meter-screen">
-                  <div class="meter-label">累计能耗 (kWh)</div>
-                  <div class="meter-value">
-                    <span class="digit-container">
-                      <span
-                        v-for="(digit, index) in formatEnergyDigits(device.energy)"
-                        :key="index"
-                        class="digit"
-                        :class="{ decimal: digit === '.' }"
-                      >{{ digit }}</span>
-                    </span>
+            <!-- 型号标签区 -->
+            <div class="meter-label-area">
+              <div class="brand-label">HR-IoT</div>
+              <div class="model-label">DDS102</div>
+            </div>
+
+            <!-- 设备名称 -->
+            <div class="device-info">
+              <span class="device-name">{{ device.nickname || device.deviceName }}</span>
+            </div>
+
+            <!-- 主显示窗口 -->
+            <div class="display-window">
+              <div class="display-frame">
+                <!-- 滚轮数字显示 -->
+                <div class="roller-display">
+                  <div class="roller-label">kWh</div>
+                  <div class="roller-digits">
+                    <template v-for="(digit, index) in formatEnergyDigits(device.energy)" :key="index">
+                      <div
+                        v-if="digit !== '.'"
+                        class="roller-digit"
+                        :class="{ 'decimal-place': index >= 6 }"
+                      >
+                        <span class="digit-value">{{ digit }}</span>
+                      </div>
+                      <div v-else class="decimal-dot"></div>
+                    </template>
                   </div>
-                </div>
-                <div class="meter-indicator" :class="{ active: device.state === 1 }">
-                  <div class="indicator-light"></div>
-                  <span>{{ device.state === 1 ? '运行中' : '停止' }}</span>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- 电表底部信息 -->
-          <div class="meter-footer">
-            <div class="info-row">
-              <span class="info-label">设备ID:</span>
-              <span class="info-value">{{ device.id }}</span>
+            <!-- LCD辅助显示 -->
+            <div class="lcd-display">
+              <div class="lcd-screen">
+                <div class="lcd-row">
+                  <span class="lcd-label">状态</span>
+                  <span class="lcd-value" :class="getStateClass(device.state)">
+                    {{ getStateText(device.state) }}
+                  </span>
+                </div>
+                <div class="lcd-row">
+                  <span class="lcd-label">更新</span>
+                  <span class="lcd-value">{{ formatUpdateTime(device.energyUpdateTime) }}</span>
+                </div>
+              </div>
             </div>
-            <div class="info-row">
-              <span class="info-label">更新时间:</span>
-              <span class="info-value">{{ formatUpdateTime(device.energyUpdateTime) }}</span>
+
+            <!-- 指示灯区域 -->
+            <div class="indicator-area">
+              <div class="indicator" :class="{ active: device.state === 1 }">
+                <div class="indicator-led"></div>
+                <span class="indicator-text">RUN</span>
+              </div>
+              <div class="indicator warning" :class="{ active: device.state === 2 }">
+                <div class="indicator-led"></div>
+                <span class="indicator-text">ALM</span>
+              </div>
+            </div>
+
+            <!-- 底部产品信息 -->
+            <div class="product-info">
+              <span>{{ device.productName || '单相电能表' }}</span>
+            </div>
+
+            <!-- 底部螺丝装饰 -->
+            <div class="screw-row bottom">
+              <div class="screw"></div>
+              <div class="screw"></div>
             </div>
           </div>
         </div>
@@ -148,7 +178,6 @@ const formatEnergyDigits = (energy: number | null | undefined): string[] => {
   if (energy === null || energy === undefined) {
     return ['0', '0', '0', '0', '0', '.', '0', '0']
   }
-  // 格式化为最多5位整数部分和2位小数部分
   const formatted = energy.toFixed(2)
   const [intPart, decPart] = formatted.split('.')
   const paddedInt = intPart.padStart(5, '0')
@@ -157,8 +186,22 @@ const formatEnergyDigits = (energy: number | null | undefined): string[] => {
 
 /** 格式化更新时间 */
 const formatUpdateTime = (time: any): string => {
-  if (!time) return '暂无数据'
-  return formatDate(time, 'MM-DD HH:mm:ss')
+  if (!time) return '--:--:--'
+  return formatDate(time, 'HH:mm:ss')
+}
+
+/** 获取状态文本 */
+const getStateText = (state: number): string => {
+  if (state === 1) return '在线'
+  if (state === 2) return '离线'
+  return '未激活'
+}
+
+/** 获取状态类名 */
+const getStateClass = (state: number): string => {
+  if (state === 1) return 'online'
+  if (state === 2) return 'offline'
+  return 'inactive'
 }
 
 /** 获取产品列表 */
@@ -209,8 +252,26 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.meter-container {
+/* 工业电表风格变量 */
+$housing-color: #e8e4df;
+$housing-dark: #d4d0cb;
+$housing-light: #f5f3f0;
+$frame-color: #2c2c2c;
+$screw-color: #8a8a8a;
+$lcd-bg: #c5cba3;
+$lcd-text: #2a3a1a;
+$digit-bg: #1a1a1a;
+$digit-color: #ffffff;
+$decimal-bg: #c41e3a;
+$led-green: #22c55e;
+$led-red: #ef4444;
+$led-off: #4a4a4a;
+
+.meter-panel {
   min-height: 400px;
+  background: linear-gradient(180deg, #f0f0f0 0%, #e0e0e0 100%);
+  border-radius: 4px;
+  padding: 20px;
 }
 
 .no-data {
@@ -222,223 +283,321 @@ onMounted(() => {
 
 .meter-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 24px;
-  padding: 10px;
 }
 
-.meter-card {
-  background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.meter-unit {
+  transition: transform 0.2s ease;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 
-      0 20px 60px rgba(0, 0, 0, 0.5),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
   }
 
-  &.offline {
-    opacity: 0.7;
-    filter: grayscale(0.3);
-  }
-}
+  &.is-offline {
+    opacity: 0.75;
 
-.meter-header {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.meter-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.device-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #e0e0e0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 180px;
-}
-
-.product-name {
-  font-size: 12px;
-  color: #888;
-}
-
-.meter-display {
-  display: flex;
-  justify-content: center;
-  padding: 15px 0;
-}
-
-.meter-frame {
-  background: linear-gradient(180deg, #2a2a3e 0%, #1e1e2e 100%);
-  border-radius: 12px;
-  padding: 4px;
-  box-shadow: 
-    inset 0 2px 10px rgba(0, 0, 0, 0.5),
-    0 2px 4px rgba(0, 0, 0, 0.3);
-  border: 2px solid #3a3a4e;
-}
-
-.meter-glass {
-  background: linear-gradient(180deg, #0a1628 0%, #0d2137 50%, #0a1628 100%);
-  border-radius: 8px;
-  padding: 16px 20px;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 10px;
-    right: 10px;
-    height: 20px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
-    border-radius: 4px;
-    pointer-events: none;
-  }
-}
-
-.meter-screen {
-  text-align: center;
-}
-
-.meter-label {
-  font-size: 11px;
-  color: #4ecdc4;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
-  text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
-}
-
-.meter-value {
-  display: flex;
-  justify-content: center;
-  background: #030a12;
-  padding: 10px 12px;
-  border-radius: 6px;
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(78, 205, 196, 0.2);
-}
-
-.digit-container {
-  display: flex;
-  gap: 2px;
-}
-
-.digit {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 24px;
-  height: 36px;
-  background: linear-gradient(180deg, #0a1a2a 0%, #051520 100%);
-  color: #00ff88;
-  font-family: 'Courier New', monospace;
-  font-size: 24px;
-  font-weight: bold;
-  border-radius: 3px;
-  text-shadow: 
-    0 0 10px rgba(0, 255, 136, 0.8),
-    0 0 20px rgba(0, 255, 136, 0.4);
-  box-shadow: 
-    inset 0 1px 3px rgba(0, 0, 0, 0.5),
-    0 1px 0 rgba(255, 255, 255, 0.05);
-
-  &.decimal {
-    width: 12px;
-    background: transparent;
-    box-shadow: none;
-    color: #00ff88;
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
-  }
-}
-
-.meter-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 11px;
-  color: #666;
-
-  .indicator-light {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #333;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
-  }
-
-  &.active {
-    color: #4ecdc4;
-    
-    .indicator-light {
-      background: #00ff88;
-      box-shadow: 
-        0 0 10px rgba(0, 255, 136, 0.8),
-        0 0 20px rgba(0, 255, 136, 0.4);
-      animation: pulse 2s ease-in-out infinite;
+    .meter-housing {
+      background: linear-gradient(180deg, #d8d8d8 0%, #c8c8c8 50%, #b8b8b8 100%);
     }
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    box-shadow: 
-      0 0 10px rgba(0, 255, 136, 0.8),
-      0 0 20px rgba(0, 255, 136, 0.4);
-  }
-  50% {
-    opacity: 0.6;
-    box-shadow: 
-      0 0 5px rgba(0, 255, 136, 0.4),
-      0 0 10px rgba(0, 255, 136, 0.2);
-  }
+.meter-housing {
+  background: linear-gradient(180deg, $housing-light 0%, $housing-color 50%, $housing-dark 100%);
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid #b8b4af;
+  position: relative;
 }
 
-.meter-footer {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.info-row {
+/* 螺丝装饰 */
+.screw-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 6px;
-  font-size: 12px;
+  padding: 0 4px;
 
-  &:last-child {
-    margin-bottom: 0;
+  &.top {
+    margin-bottom: 8px;
+  }
+
+  &.bottom {
+    margin-top: 8px;
   }
 }
 
-.info-label {
-  color: #666;
+.screw {
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(145deg, #999 0%, #666 100%);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.2);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 1px;
+    background: #444;
+    box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+  }
 }
 
-.info-value {
-  color: #aaa;
-  font-family: monospace;
+/* 型号标签 */
+.meter-label-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding: 0 2px;
+}
+
+.brand-label {
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  color: #1a5fb4;
+  letter-spacing: -0.5px;
+}
+
+.model-label {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  color: #666;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+/* 设备名称 */
+.device-info {
+  text-align: center;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 3px;
+}
+
+.device-name {
+  font-family: 'Microsoft YaHei', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+/* 主显示窗口 */
+.display-window {
+  background: $frame-color;
+  border-radius: 6px;
+  padding: 8px;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.display-frame {
+  background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
+  border-radius: 4px;
+  padding: 10px 8px;
+  border: 2px solid #444;
+}
+
+/* 滚轮数字显示 */
+.roller-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.roller-label {
+  font-family: 'Arial', sans-serif;
+  font-size: 10px;
+  color: #888;
+  letter-spacing: 1px;
+}
+
+.roller-digits {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.roller-digit {
+  width: 22px;
+  height: 32px;
+  background: linear-gradient(
+    180deg,
+    #0a0a0a 0%,
+    $digit-bg 15%,
+    $digit-bg 85%,
+    #0a0a0a 100%
+  );
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid #333;
+
+  &.decimal-place {
+    background: linear-gradient(
+      180deg,
+      #8b0000 0%,
+      $decimal-bg 15%,
+      $decimal-bg 85%,
+      #8b0000 100%
+    );
+    border-color: #7a1a2e;
+  }
+}
+
+.digit-value {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 22px;
+  font-weight: bold;
+  color: $digit-color;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+  line-height: 1;
+}
+
+.decimal-dot {
+  width: 6px;
+  height: 6px;
+  background: $digit-color;
+  border-radius: 50%;
+  margin: 0 1px;
+  align-self: flex-end;
+  margin-bottom: 6px;
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* LCD辅助显示 */
+.lcd-display {
+  margin-top: 10px;
+}
+
+.lcd-screen {
+  background: $lcd-bg;
+  border-radius: 4px;
+  padding: 8px 10px;
+  border: 2px solid #8a9a6a;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.lcd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Consolas', monospace;
+  font-size: 11px;
+  color: $lcd-text;
+
+  &:not(:last-child) {
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed rgba(42, 58, 26, 0.3);
+  }
+}
+
+.lcd-label {
+  font-weight: 500;
+}
+
+.lcd-value {
+  font-weight: 700;
+
+  &.online {
+    color: #1a5a1a;
+  }
+
+  &.offline {
+    color: #8b0000;
+  }
+
+  &.inactive {
+    color: #666;
+  }
+}
+
+/* 指示灯区域 */
+.indicator-area {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+  padding: 8px 0;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+}
+
+.indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.indicator-led {
+  width: 8px;
+  height: 8px;
+  background: $led-off;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+
+  .indicator.active & {
+    background: $led-green;
+    box-shadow:
+      0 0 6px $led-green,
+      0 0 12px rgba($led-green, 0.5);
+  }
+
+  .indicator.warning.active & {
+    background: $led-red;
+    box-shadow:
+      0 0 6px $led-red,
+      0 0 12px rgba($led-red, 0.5);
+    animation: blink 1s ease-in-out infinite;
+  }
+}
+
+.indicator-text {
+  font-family: 'Arial', sans-serif;
+  font-size: 8px;
+  font-weight: bold;
+  color: #666;
+  letter-spacing: 0.5px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* 产品信息 */
+.product-info {
+  text-align: center;
+  margin-top: 8px;
+  font-family: 'Microsoft YaHei', sans-serif;
+  font-size: 10px;
+  color: #888;
 }
 </style>
