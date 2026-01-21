@@ -87,7 +87,7 @@
                       <div
                         v-if="digit !== '.'"
                         class="roller-digit"
-                        :class="{ 'decimal-place': index >= 6 }"
+                        :class="{ 'decimal-place': isDecimalPlace(formatEnergyDigits(device.energy), index) }"
                       >
                         <span class="digit-value">{{ digit }}</span>
                       </div>
@@ -173,15 +173,24 @@ const queryParams = reactive({
 })
 const queryFormRef = ref()
 
-/** 格式化能耗数字为8位电表显示格式 */
+/** 格式化能耗数字为电表显示格式（支持最高9位整数+2位小数） */
 const formatEnergyDigits = (energy: number | null | undefined): string[] => {
   if (energy === null || energy === undefined) {
-    return ['0', '0', '0', '0', '0', '.', '0', '0']
+    return ['0', '0', '0', '0', '0', '0', '.', '0', '0']
   }
   const formatted = energy.toFixed(2)
   const [intPart, decPart] = formatted.split('.')
-  const paddedInt = intPart.padStart(5, '0')
+  // 动态计算整数位数，最少6位，最多9位
+  const minDigits = 6
+  const actualLength = Math.max(minDigits, intPart.length)
+  const paddedInt = intPart.padStart(actualLength, '0')
   return [...paddedInt, '.', ...decPart]
+}
+
+/** 判断是否为小数位（小数点后的数字） */
+const isDecimalPlace = (digits: string[], index: number): boolean => {
+  const dotIndex = digits.indexOf('.')
+  return dotIndex !== -1 && index > dotIndex
 }
 
 /** 格式化更新时间 */
@@ -283,7 +292,7 @@ $led-off: #4a4a4a;
 
 .meter-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 24px;
 }
 
@@ -403,7 +412,7 @@ $led-off: #4a4a4a;
 .display-window {
   background: $frame-color;
   border-radius: 6px;
-  padding: 8px;
+  padding: 6px;
   box-shadow:
     inset 0 2px 4px rgba(0, 0, 0, 0.3),
     0 1px 0 rgba(255, 255, 255, 0.1);
@@ -412,8 +421,9 @@ $led-off: #4a4a4a;
 .display-frame {
   background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
   border-radius: 4px;
-  padding: 10px 8px;
+  padding: 8px 6px;
   border: 2px solid #444;
+  overflow: hidden;
 }
 
 /* 滚轮数字显示 */
@@ -434,12 +444,13 @@ $led-off: #4a4a4a;
 .roller-digits {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
+  flex-wrap: nowrap;
 }
 
 .roller-digit {
-  width: 22px;
-  height: 32px;
+  width: 18px;
+  height: 26px;
   background: linear-gradient(
     180deg,
     #0a0a0a 0%,
@@ -447,14 +458,15 @@ $led-off: #4a4a4a;
     $digit-bg 85%,
     #0a0a0a 100%
   );
-  border-radius: 3px;
+  border-radius: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(0, 0, 0, 0.5),
     0 1px 0 rgba(255, 255, 255, 0.05);
   border: 1px solid #333;
+  flex-shrink: 0;
 
   &.decimal-place {
     background: linear-gradient(
@@ -470,7 +482,7 @@ $led-off: #4a4a4a;
 
 .digit-value {
   font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 22px;
+  font-size: 17px;
   font-weight: bold;
   color: $digit-color;
   text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
@@ -478,14 +490,14 @@ $led-off: #4a4a4a;
 }
 
 .decimal-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   background: $digit-color;
   border-radius: 50%;
-  margin: 0 1px;
+  margin: 0 1px 5px;
   align-self: flex-end;
-  margin-bottom: 6px;
   box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
 }
 
 /* LCD辅助显示 */
