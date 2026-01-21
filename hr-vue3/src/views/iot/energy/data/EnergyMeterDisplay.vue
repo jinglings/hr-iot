@@ -292,7 +292,7 @@ $led-off: #4a4a4a;
 
 .meter-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
 }
 
@@ -411,8 +411,8 @@ $led-off: #4a4a4a;
 /* 主显示窗口 */
 .display-window {
   background: $frame-color;
-  border-radius: 6px;
-  padding: 6px;
+  border-radius: 8px;
+  padding: 8px;
   box-shadow:
     inset 0 2px 4px rgba(0, 0, 0, 0.3),
     0 1px 0 rgba(255, 255, 255, 0.1);
@@ -420,8 +420,8 @@ $led-off: #4a4a4a;
 
 .display-frame {
   background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
-  border-radius: 4px;
-  padding: 8px 6px;
+  border-radius: 6px;
+  padding: 12px 10px;
   border: 2px solid #444;
   overflow: hidden;
 }
@@ -431,39 +431,40 @@ $led-off: #4a4a4a;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .roller-label {
   font-family: 'Arial', sans-serif;
-  font-size: 10px;
-  color: #888;
-  letter-spacing: 1px;
+  font-size: 12px;
+  color: #aaa;
+  letter-spacing: 2px;
+  font-weight: bold;
 }
 
 .roller-digits {
   display: flex;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
   flex-wrap: nowrap;
 }
 
 .roller-digit {
-  width: 18px;
-  height: 26px;
+  width: 28px;
+  height: 42px;
   background: linear-gradient(
     180deg,
     #0a0a0a 0%,
-    $digit-bg 15%,
-    $digit-bg 85%,
+    $digit-bg 10%,
+    $digit-bg 90%,
     #0a0a0a 100%
   );
-  border-radius: 2px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.5),
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
     0 1px 0 rgba(255, 255, 255, 0.05);
   border: 1px solid #333;
   flex-shrink: 0;
@@ -472,8 +473,8 @@ $led-off: #4a4a4a;
     background: linear-gradient(
       180deg,
       #8b0000 0%,
-      $decimal-bg 15%,
-      $decimal-bg 85%,
+      $decimal-bg 10%,
+      $decimal-bg 90%,
       #8b0000 100%
     );
     border-color: #7a1a2e;
@@ -482,21 +483,21 @@ $led-off: #4a4a4a;
 
 .digit-value {
   font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 17px;
+  font-size: 28px;
   font-weight: bold;
   color: $digit-color;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
   line-height: 1;
 }
 
 .decimal-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   background: $digit-color;
   border-radius: 50%;
-  margin: 0 1px 5px;
+  margin: 0 2px 8px;
   align-self: flex-end;
-  box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
   flex-shrink: 0;
 }
 
