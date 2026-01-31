@@ -49,4 +49,7 @@ public class IotDeviceSaveReqVO {
     @Schema(description = "设备位置的经度", example = "16380")
     private BigDecimal longitude;
 
+    @Schema(description = "排序", example = "1")
+    private Integer orderNum;
+
 }

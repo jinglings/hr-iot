@@ -99,4 +99,6 @@ public class IotDeviceRespVO {
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
+    private Integer orderNum;
+
 }

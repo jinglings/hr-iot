@@ -161,4 +161,8 @@ public class IotDeviceDO extends TenantBaseDO {
      */
     private String config;
 
+    private Integer orderNum;
+
+
+
 }

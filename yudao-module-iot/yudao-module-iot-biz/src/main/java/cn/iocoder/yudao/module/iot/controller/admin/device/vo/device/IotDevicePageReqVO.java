@@ -31,4 +31,6 @@ public class IotDevicePageReqVO extends PageParam {
     @Schema(description = "设备分组编号", example = "1024")
     private Long groupId;
 
+
+
 }

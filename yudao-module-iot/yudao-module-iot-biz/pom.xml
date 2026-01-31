@@ -85,6 +85,13 @@
             <artifactId>yudao-spring-boot-starter-excel</artifactId>
         </dependency>
 
+        <!-- CSV 处理（TDengine 备份恢复） -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.7.1</version>
+        </dependency>
+
         <!-- 消息队列相关 -->
         <!-- TODO @芋艿：临时打开 -->
         <dependency>

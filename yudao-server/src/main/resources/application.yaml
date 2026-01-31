@@ -362,4 +362,14 @@ yudao:
 
       # 广播地址
       broadcast-address: 255.255.255.255
+    backup:
+      # TDengine备份配置
+      storage-path: /data/iot-backup/backups # 备份文件存储路径
+      temp-path: /data/iot-backup/temp # 临时文件路径
+      enable-compression: true # 是否启用压缩（默认true）
+      batch-size: 1000 # 批量处理大小（默认1000）
+      async-executor:
+        core-pool-size: 2 # 异步执行核心线程数
+        max-pool-size: 5 # 异步执行最大线程数
+        queue-capacity: 100 # 队列容量
 debug: false

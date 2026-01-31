@@ -172,4 +172,13 @@ public interface ErrorCodeConstants {
         ErrorCode BACNET_DISCOVERY_ALREADY_BOUND = new ErrorCode(1_050_042_002, "BACnet 设备已绑定");
         ErrorCode BACNET_BIND_PARAM_ERROR = new ErrorCode(1_050_042_003, "绑定参数错误，请选择设备或填写设备信息");
 
+        // ========== TDengine 备份恢复 1-050-050-000 ==========
+        ErrorCode BACKUP_RECORD_NOT_EXISTS = new ErrorCode(1_050_050_000, "TDengine 备份记录不存在");
+        ErrorCode BACKUP_CONFIG_NOT_EXISTS = new ErrorCode(1_050_050_001, "TDengine 备份配置不存在");
+        ErrorCode BACKUP_CONFIG_NAME_EXISTS = new ErrorCode(1_050_050_002, "备份配置名称已存在");
+        ErrorCode RESTORE_RECORD_NOT_EXISTS = new ErrorCode(1_050_050_003, "TDengine 恢复记录不存在");
+        ErrorCode BACKUP_FILE_NOT_EXISTS = new ErrorCode(1_050_050_004, "备份文件不存在");
+        ErrorCode BACKUP_IN_PROGRESS = new ErrorCode(1_050_050_005, "备份正在进行中，请稍后再试");
+        ErrorCode RESTORE_IN_PROGRESS = new ErrorCode(1_050_050_006, "恢复正在进行中，请稍后再试");
+
 }

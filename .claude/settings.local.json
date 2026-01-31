@@ -43,7 +43,11 @@
       "Bash(kill:*)",
       "Bash(mvn clean:*)",
       "Bash(git rm:*)",
-      "Bash(xargs git rm --cached)"
+      "Bash(xargs git rm --cached)",
+      "Bash(mvn compile:*)",
+      "Skill(frontend-design)",
+      "Bash(ls:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

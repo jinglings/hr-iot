@@ -23,11 +23,27 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="DeviceName" prop="deviceName">
+      <el-form-item label="设备名称" prop="deviceName">
         <el-input
           v-model="formData.deviceName"
           placeholder="请输入 DeviceName"
           :disabled="formType === 'update'"
+        />
+      </el-form-item>
+      <el-form-item label="设备分组" prop="groupIds">
+        <el-select v-model="formData.groupIds" placeholder="请选择设备分组" multiple clearable>
+          <el-option
+            v-for="group in deviceGroups"
+            :key="group.id"
+            :label="group.name"
+            :value="group.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="序号" prop="orderNum">
+        <el-input
+          v-model="formData.orderNum"
+          placeholder="请输入序号"
         />
       </el-form-item>
       <el-form-item
@@ -53,16 +69,7 @@
           <el-form-item label="设备图片" prop="picUrl">
             <UploadImg v-model="formData.picUrl" :height="'120px'" :width="'120px'" />
           </el-form-item>
-          <el-form-item label="设备分组" prop="groupIds">
-            <el-select v-model="formData.groupIds" placeholder="请选择设备分组" multiple clearable>
-              <el-option
-                v-for="group in deviceGroups"
-                :key="group.id"
-                :label="group.name"
-                :value="group.id"
-              />
-            </el-select>
-          </el-form-item>
+
           <el-form-item label="设备序列号" prop="serialNumber">
             <el-input v-model="formData.serialNumber" placeholder="请输入设备序列号" />
           </el-form-item>
