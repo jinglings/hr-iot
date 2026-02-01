@@ -27,7 +27,7 @@
             @keyup.enter="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="产品" prop="productId">
+<!--        <el-form-item label="产品" prop="productId">
           <el-select v-model="queryParams.productId" placeholder="请选择产品" clearable class="!w-200px">
             <el-option
               v-for="product in productList"
@@ -36,7 +36,7 @@
               :value="product.id"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="开始时间" prop="startTime">
           <el-date-picker
             v-model="queryParams.startTime"
@@ -107,13 +107,23 @@
         show-summary
         :summary-method="getSummaries"
       >
-        <el-table-column label="设备名称" align="center" prop="deviceName" min-width="120" fixed="left">
+        <el-table-column label="位置" align="center" prop="location" min-width="100" fixed="left">
+          <template #default="scope">
+            <span>{{ scope.row.location || '--' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="表号" align="center" prop="meterNo" min-width="140">
+          <template #default="scope">
+            <span>{{ scope.row.meterNo || '--' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="设备名称" align="center" prop="deviceName" min-width="180">
           <template #default="scope">
             <div>{{ scope.row.deviceName }}</div>
             <div v-if="scope.row.nickname" class="text-gray-400 text-xs">{{ scope.row.nickname }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="产品名称" align="center" prop="productName" min-width="100" />
+<!--        <el-table-column label="产品名称" align="center" prop="productName" min-width="100" />-->
         <el-table-column label="开始读数 (kWh)" align="right" prop="startEnergy" min-width="130">
           <template #default="scope">
             <template v-if="scope.row.startEnergy != null">
@@ -307,8 +317,10 @@ const handleExport = async () => {
   }
   exportLoading.value = true
   try {
-    const headers = ['设备名称', '备注名称', '产品名称', '开始读数(kWh)', '结束读数(kWh)', '原始消耗(kWh)', '倍率', '实际消耗(kWh)', '单价(元/度)', '电费(元)']
+    const headers = ['位置', '表号', '设备名称', '备注名称', '产品名称', '开始读数(kWh)', '结束读数(kWh)', '原始消耗(kWh)', '倍率', '实际消耗(kWh)', '单价(元/度)', '电费(元)']
     const rows = list.value.map(item => [
+      item.location || '',
+      item.meterNo || '',
       item.deviceName || '',
       item.nickname || '',
       item.productName || '',

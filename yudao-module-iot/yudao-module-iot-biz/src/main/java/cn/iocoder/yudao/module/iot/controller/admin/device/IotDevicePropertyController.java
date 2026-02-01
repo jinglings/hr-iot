@@ -226,6 +226,10 @@ public class IotDevicePropertyController {
             respVO.setNickname(device.getNickname());
             respVO.setUnitPrice(ELECTRICITY_UNIT_PRICE);
 
+            // 解析设备名称：格式如 B1_01B_倍率30_922101010083
+            // 位置 = 倍率前的部分，倍率 = "倍率"后的数字，表号 = 最后一段
+            parseDeviceName(respVO, device.getDeviceName());
+
             // 设置产品名称
             IotProductDO product = productMap.get(device.getProductId());
             if (product != null) {
@@ -253,16 +257,22 @@ public class IotDevicePropertyController {
                 BigDecimal rawConsumption = respVO.getEndEnergy().subtract(respVO.getStartEnergy());
                 respVO.setRawConsumption(rawConsumption);
 
-                // 4.4 获取倍率（从能源计量点表中获取）
+                // 4.4 获取倍率：优先从设备名称解析，其次从能源计量点表获取
                 BigDecimal ratio = BigDecimal.ONE;
-                List<IotEnergyMeterDO> meters = energyMeterService.getMeterListByDeviceId(device.getId());
-                if (meters != null && !meters.isEmpty()) {
-                    IotEnergyMeterDO meter = meters.get(0);
-                    if (meter.getRatio() != null && meter.getRatio().compareTo(BigDecimal.ZERO) > 0) {
-                        ratio = meter.getRatio();
+                if (respVO.getRatio() != null && respVO.getRatio().compareTo(BigDecimal.ONE) != 0) {
+                    // 设备名称中已解析出倍率
+                    ratio = respVO.getRatio();
+                } else {
+                    // 尝试从能源计量点表获取
+                    List<IotEnergyMeterDO> meters = energyMeterService.getMeterListByDeviceId(device.getId());
+                    if (meters != null && !meters.isEmpty()) {
+                        IotEnergyMeterDO meter = meters.get(0);
+                        if (meter.getRatio() != null && meter.getRatio().compareTo(BigDecimal.ZERO) > 0) {
+                            ratio = meter.getRatio();
+                        }
                     }
+                    respVO.setRatio(ratio);
                 }
-                respVO.setRatio(ratio);
 
                 // 4.5 实际消耗 = 原始消耗 × 倍率
                 BigDecimal consumption = rawConsumption.multiply(ratio).setScale(2, RoundingMode.HALF_UP);
@@ -277,6 +287,62 @@ public class IotDevicePropertyController {
         }
 
         return success(new PageResult<>(resultList, devicePage.getTotal()));
+    }
+
+    /**
+     * 解析设备名称，提取位置、倍率、表号
+     *
+     * 设备名称格式：
+     * - 含倍率：B1_01B_倍率30_922101010083 → 位置=B1_01B, 倍率=30, 表号=922101010083
+     * - 不含倍率：B1_01B_922101010083 → 位置=B1_01B, 倍率=1, 表号=922101010083
+     */
+    private void parseDeviceName(IotDeviceEnergyCostRespVO respVO, String deviceName) {
+        if (deviceName == null || deviceName.isEmpty()) {
+            respVO.setRatio(BigDecimal.ONE);
+            return;
+        }
+
+        int ratioIdx = deviceName.indexOf("倍率");
+        if (ratioIdx >= 0) {
+            // 包含"倍率"：位置 = 倍率前面的部分（去掉末尾下划线）
+            String beforeRatio = deviceName.substring(0, ratioIdx);
+            if (beforeRatio.endsWith("_")) {
+                beforeRatio = beforeRatio.substring(0, beforeRatio.length() - 1);
+            }
+            respVO.setLocation(beforeRatio);
+
+            // "倍率"后面的内容
+            String afterRatio = deviceName.substring(ratioIdx + 2); // 跳过"倍率"两个字
+            // 找到下一个下划线分隔符，前面是倍率数字，后面是表号
+            int sepIdx = afterRatio.indexOf("_");
+            if (sepIdx >= 0) {
+                String ratioStr = afterRatio.substring(0, sepIdx);
+                String meterNo = afterRatio.substring(sepIdx + 1);
+                try {
+                    respVO.setRatio(new BigDecimal(ratioStr));
+                } catch (NumberFormatException e) {
+                    respVO.setRatio(BigDecimal.ONE);
+                }
+                respVO.setMeterNo(meterNo);
+            } else {
+                // 倍率后面没有下划线，整段当作倍率值
+                try {
+                    respVO.setRatio(new BigDecimal(afterRatio));
+                } catch (NumberFormatException e) {
+                    respVO.setRatio(BigDecimal.ONE);
+                }
+            }
+        } else {
+            // 不含"倍率"：最后一个下划线后是表号，前面是位置
+            int lastSep = deviceName.lastIndexOf("_");
+            if (lastSep >= 0) {
+                respVO.setLocation(deviceName.substring(0, lastSep));
+                respVO.setMeterNo(deviceName.substring(lastSep + 1));
+            } else {
+                respVO.setLocation(deviceName);
+            }
+            respVO.setRatio(BigDecimal.ONE);
+        }
     }
 
     /**

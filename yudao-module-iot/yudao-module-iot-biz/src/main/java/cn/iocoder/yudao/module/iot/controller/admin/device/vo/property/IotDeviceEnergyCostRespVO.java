@@ -22,6 +22,12 @@ public class IotDeviceEnergyCostRespVO {
     @Schema(description = "产品名称", example = "智能电表")
     private String productName;
 
+    @Schema(description = "位置（从设备名称解析）", example = "B1_01B")
+    private String location;
+
+    @Schema(description = "表号（从设备名称解析）", example = "922101010083")
+    private String meterNo;
+
     @Schema(description = "开始时间能耗读数", example = "1000.50")
     private BigDecimal startEnergy;
 
