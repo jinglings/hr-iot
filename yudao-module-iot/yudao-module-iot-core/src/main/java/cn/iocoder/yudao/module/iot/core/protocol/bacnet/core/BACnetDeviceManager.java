@@ -201,6 +201,13 @@ public class BACnetDeviceManager {
     /**
      * 获取 BACnet 监听端口
      */
+    /**
+     * 是否启用轮询采集
+     */
+    public boolean isPollingEnabled() {
+        return Boolean.TRUE.equals(properties.getPollingEnabled());
+    }
+
     public Integer getPort() {
         return properties.getPort();
     }

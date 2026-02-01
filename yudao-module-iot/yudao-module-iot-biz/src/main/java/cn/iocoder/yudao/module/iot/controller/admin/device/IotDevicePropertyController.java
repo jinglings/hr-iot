@@ -6,6 +6,8 @@ import cn.hutool.core.lang.Assert;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.iot.controller.admin.device.vo.device.IotDevicePageReqVO;
+import cn.iocoder.yudao.module.iot.controller.admin.device.vo.property.IotDeviceEnergyCostReqVO;
+import cn.iocoder.yudao.module.iot.controller.admin.device.vo.property.IotDeviceEnergyCostRespVO;
 import cn.iocoder.yudao.module.iot.controller.admin.device.vo.property.IotDevicePropertyDetailRespVO;
 import cn.iocoder.yudao.module.iot.controller.admin.device.vo.property.IotDevicePropertyHistoryListReqVO;
 import cn.iocoder.yudao.module.iot.controller.admin.device.vo.property.IotDevicePropertyRespVO;
@@ -14,11 +16,13 @@ import cn.iocoder.yudao.module.iot.controller.admin.device.vo.property.IotDevice
 import cn.iocoder.yudao.module.iot.dal.dataobject.thingmodel.model.ThingModelProperty;
 import cn.iocoder.yudao.module.iot.dal.dataobject.device.IotDeviceDO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.device.IotDevicePropertyDO;
+import cn.iocoder.yudao.module.iot.dal.dataobject.energy.IotEnergyMeterDO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.product.IotProductDO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.thingmodel.IotThingModelDO;
 import cn.iocoder.yudao.module.iot.enums.thingmodel.IotThingModelTypeEnum;
 import cn.iocoder.yudao.module.iot.service.device.IotDeviceService;
 import cn.iocoder.yudao.module.iot.service.device.property.IotDevicePropertyService;
+import cn.iocoder.yudao.module.iot.service.energy.meter.IotEnergyMeterService;
 import cn.iocoder.yudao.module.iot.service.product.IotProductService;
 import cn.iocoder.yudao.module.iot.service.thingmodel.IotThingModelService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +38,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +72,8 @@ public class IotDevicePropertyController {
     private IotDeviceService deviceService;
     @Resource
     private IotProductService productService;
+    @Resource
+    private IotEnergyMeterService energyMeterService;
 
     @GetMapping("/get-latest")
     @Operation(summary = "获取设备属性最新属性")
@@ -172,6 +183,110 @@ public class IotDevicePropertyController {
                 .collect(Collectors.toList());
 
         return success(new PageResult<>(resultList, devicePage.getTotal()));
+    }
+
+    /**
+     * 电费单价（元/度）
+     */
+    private static final BigDecimal ELECTRICITY_UNIT_PRICE = new BigDecimal("1.0616");
+
+    @GetMapping("/energy-cost")
+    @Operation(summary = "计算设备电费（根据时间段能耗差值）")
+    @PreAuthorize("@ss.hasPermission('iot:device:property-query')")
+    public CommonResult<PageResult<IotDeviceEnergyCostRespVO>> getDeviceEnergyCost(
+            @Valid IotDeviceEnergyCostReqVO reqVO) {
+        // 1. 构造分页查询参数，复用已有的设备分页查询
+        IotDevicePageReqVO devicePageReqVO = new IotDevicePageReqVO();
+        devicePageReqVO.setPageNo(reqVO.getPageNo());
+        devicePageReqVO.setPageSize(reqVO.getPageSize());
+        devicePageReqVO.setDeviceName(reqVO.getDeviceName());
+        devicePageReqVO.setNickname(reqVO.getNickname());
+        devicePageReqVO.setProductId(reqVO.getProductId());
+        devicePageReqVO.setGroupId(reqVO.getGroupId());
+
+        // 2. 获取设备分页数据
+        PageResult<IotDeviceDO> devicePage = deviceService.getDevicePage(devicePageReqVO);
+        if (devicePage.getList().isEmpty()) {
+            return success(new PageResult<>(List.of(), devicePage.getTotal()));
+        }
+
+        // 3. 获取产品信息
+        Set<Long> productIds = convertSet(devicePage.getList(), IotDeviceDO::getProductId);
+        List<IotProductDO> allProducts = productService.getProductList();
+        Map<Long, IotProductDO> productMap = allProducts.stream()
+                .filter(p -> productIds.contains(p.getId()))
+                .collect(Collectors.toMap(IotProductDO::getId, p -> p));
+
+        // 4. 遍历设备，计算每个设备的电费
+        List<IotDeviceEnergyCostRespVO> resultList = new ArrayList<>();
+        for (IotDeviceDO device : devicePage.getList()) {
+            IotDeviceEnergyCostRespVO respVO = new IotDeviceEnergyCostRespVO();
+            respVO.setDeviceId(device.getId());
+            respVO.setDeviceName(device.getDeviceName());
+            respVO.setNickname(device.getNickname());
+            respVO.setUnitPrice(ELECTRICITY_UNIT_PRICE);
+
+            // 设置产品名称
+            IotProductDO product = productMap.get(device.getProductId());
+            if (product != null) {
+                respVO.setProductName(product.getName());
+            }
+
+            // 4.1 查询开始时间的能耗读数（取开始时间之前最近的一条）
+            IotDevicePropertyRespVO startProperty = devicePropertyService
+                    .getPropertyValueBeforeTime(device.getId(), ENERGY_PROPERTY_IDENTIFIER, reqVO.getStartTime());
+            // 4.2 查询结束时间的能耗读数（取结束时间之前最近的一条）
+            IotDevicePropertyRespVO endProperty = devicePropertyService
+                    .getPropertyValueBeforeTime(device.getId(), ENERGY_PROPERTY_IDENTIFIER, reqVO.getEndTime());
+
+            if (startProperty != null && startProperty.getValue() != null) {
+                respVO.setStartEnergy(new BigDecimal(String.valueOf(startProperty.getValue())));
+                respVO.setStartEnergyTime(toLocalDateTime(startProperty.getUpdateTime()));
+            }
+            if (endProperty != null && endProperty.getValue() != null) {
+                respVO.setEndEnergy(new BigDecimal(String.valueOf(endProperty.getValue())));
+                respVO.setEndEnergyTime(toLocalDateTime(endProperty.getUpdateTime()));
+            }
+
+            // 4.3 计算实际消耗
+            if (respVO.getStartEnergy() != null && respVO.getEndEnergy() != null) {
+                BigDecimal rawConsumption = respVO.getEndEnergy().subtract(respVO.getStartEnergy());
+                respVO.setRawConsumption(rawConsumption);
+
+                // 4.4 获取倍率（从能源计量点表中获取）
+                BigDecimal ratio = BigDecimal.ONE;
+                List<IotEnergyMeterDO> meters = energyMeterService.getMeterListByDeviceId(device.getId());
+                if (meters != null && !meters.isEmpty()) {
+                    IotEnergyMeterDO meter = meters.get(0);
+                    if (meter.getRatio() != null && meter.getRatio().compareTo(BigDecimal.ZERO) > 0) {
+                        ratio = meter.getRatio();
+                    }
+                }
+                respVO.setRatio(ratio);
+
+                // 4.5 实际消耗 = 原始消耗 × 倍率
+                BigDecimal consumption = rawConsumption.multiply(ratio).setScale(2, RoundingMode.HALF_UP);
+                respVO.setConsumption(consumption);
+
+                // 4.6 电费 = 实际消耗 × 单价
+                BigDecimal cost = consumption.multiply(ELECTRICITY_UNIT_PRICE).setScale(2, RoundingMode.HALF_UP);
+                respVO.setCost(cost);
+            }
+
+            resultList.add(respVO);
+        }
+
+        return success(new PageResult<>(resultList, devicePage.getTotal()));
+    }
+
+    /**
+     * 将毫秒时间戳转换为 LocalDateTime
+     */
+    private LocalDateTime toLocalDateTime(Long epochMilli) {
+        if (epochMilli == null) {
+            return null;
+        }
+        return Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
 }

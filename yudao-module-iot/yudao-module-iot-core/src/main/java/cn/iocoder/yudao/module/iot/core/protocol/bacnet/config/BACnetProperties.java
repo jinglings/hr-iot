@@ -67,4 +67,9 @@ public class BACnetProperties {
      */
     private Integer maxConcurrentRequests = 10;
 
+    /**
+     * 是否启用轮询采集（默认关闭，避免无设备环境报错）
+     */
+    private Boolean pollingEnabled = false;
+
 }

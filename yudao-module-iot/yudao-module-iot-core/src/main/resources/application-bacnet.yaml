@@ -20,3 +20,5 @@ yudao:
       communication-timeout: 3000
       # 最大并发请求数
       max-concurrent-requests: 10
+      # 是否启用轮询采集（默认关闭，无BACnet设备时请保持关闭，避免持续报错）
+      polling-enabled: false

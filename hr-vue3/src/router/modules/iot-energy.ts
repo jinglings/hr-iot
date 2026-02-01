@@ -143,6 +143,17 @@ const energyRouter: AppRouteRecordRaw = {
       }
     },
 
+    // 电费计算
+    {
+      path: 'energy-cost',
+      component: () => import('@/views/iot/energy/energyCost/index.vue'),
+      name: 'IotEnergyCost',
+      meta: {
+        title: '电费计算',
+        icon: 'ep:coin'
+      }
+    },
+
     // 能效分析
     {
       path: 'analysis',

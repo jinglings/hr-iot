@@ -52,6 +52,16 @@ public interface IotDevicePropertyService {
      */
     List<IotDevicePropertyRespVO> getHistoryDevicePropertyList(@Valid IotDevicePropertyHistoryListReqVO listReqVO);
 
+    /**
+     * 获取指定时间点之前最近的属性值
+     *
+     * @param deviceId   设备编号
+     * @param identifier 属性标识符
+     * @param time       时间点
+     * @return 属性值（最近的一条）
+     */
+    IotDevicePropertyRespVO getPropertyValueBeforeTime(Long deviceId, String identifier, LocalDateTime time);
+
     // ========== 设备时间相关操作 ==========
 
     /**

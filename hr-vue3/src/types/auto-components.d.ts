@@ -127,6 +127,7 @@ declare module 'vue' {
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     EndEventNode: typeof import('./../components/SimpleProcessDesignerV2/src/nodes/EndEventNode.vue')['default']
+    EnergyCost: typeof import('./../views/iot/energy/energyCost/index.vue')['default']
     EnergyMeterDisplay: typeof import('./../views/iot/energy/data/EnergyMeterDisplay.vue')['default']
     EnergyTypeSelect: typeof import('./../components/IotEnergy/EnergyTypeSelect.vue')['default']
     Error: typeof import('./../components/Error/src/Error.vue')['default']

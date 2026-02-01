@@ -85,4 +85,18 @@ public interface IotDevicePropertyMapper {
 
     List<IotDevicePropertyRespVO> selectListByHistory(@Param("reqVO") IotDevicePropertyHistoryListReqVO reqVO);
 
+    /**
+     * 查询指定时间点之前最近的一条属性记录（用于获取开始时间能耗读数）
+     */
+    IotDevicePropertyRespVO selectFirstBeforeTime(@Param("deviceId") Long deviceId,
+                                                   @Param("identifier") String identifier,
+                                                   @Param("timeMs") Long timeMs);
+
+    /**
+     * 查询指定时间点之前最近的一条属性记录（用于获取结束时间能耗读数）
+     */
+    IotDevicePropertyRespVO selectLastBeforeTime(@Param("deviceId") Long deviceId,
+                                                  @Param("identifier") String identifier,
+                                                  @Param("timeMs") Long timeMs);
+
 }

@@ -166,5 +166,10 @@ export const DeviceApi = {
   // 获取设备能耗分页（附带 energy 属性值）
   getDevicePageWithEnergy: async (params: any) => {
     return await request.get({ url: `/iot/device/property/page-with-energy`, params })
+  },
+
+  // 计算设备电费（根据时间段能耗差值）
+  getDeviceEnergyCost: async (params: any) => {
+    return await request.get({ url: `/iot/device/property/energy-cost`, params })
   }
 }

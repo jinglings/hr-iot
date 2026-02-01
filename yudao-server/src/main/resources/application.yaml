@@ -362,6 +362,9 @@ yudao:
 
       # 广播地址
       broadcast-address: 255.255.255.255
+
+      # 是否启用轮询采集（默认关闭，无BACnet设备时请保持关闭）
+      polling-enabled: false
     backup:
       # TDengine备份配置
       storage-path: /data/iot-backup/backups # 备份文件存储路径

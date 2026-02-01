@@ -180,6 +180,19 @@ public class IotDevicePropertyServiceImpl implements IotDevicePropertyService {
         }
     }
 
+    @Override
+    public IotDevicePropertyRespVO getPropertyValueBeforeTime(Long deviceId, String identifier, LocalDateTime time) {
+        try {
+            Long timeMs = LocalDateTimeUtil.toEpochMilli(time);
+            return devicePropertyMapper.selectLastBeforeTime(deviceId, identifier, timeMs);
+        } catch (Exception exception) {
+            if (exception.getMessage().contains("Table does not exist")) {
+                return null;
+            }
+            throw exception;
+        }
+    }
+
     // ========== 设备时间相关操作 ==========
 
     @Override

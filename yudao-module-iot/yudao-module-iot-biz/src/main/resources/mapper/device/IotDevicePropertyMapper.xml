@@ -76,4 +76,26 @@
         ORDER BY ts DESC
     </select>
 
+    <!-- 查询指定时间点之前最近的一条记录（开始时间读数） -->
+    <select id="selectFirstBeforeTime"
+            resultType="cn.iocoder.yudao.module.iot.controller.admin.device.vo.property.IotDevicePropertyRespVO">
+        SELECT ${@cn.hutool.core.util.StrUtil@toUnderlineCase(identifier)} AS `value`, ts AS update_time
+        FROM device_property_${deviceId}
+        WHERE ${@cn.hutool.core.util.StrUtil@toUnderlineCase(identifier)} IS NOT NULL
+          AND ts &lt;= ${timeMs}
+        ORDER BY ts DESC
+        LIMIT 1
+    </select>
+
+    <!-- 查询指定时间点之前最近的一条记录（结束时间读数） -->
+    <select id="selectLastBeforeTime"
+            resultType="cn.iocoder.yudao.module.iot.controller.admin.device.vo.property.IotDevicePropertyRespVO">
+        SELECT ${@cn.hutool.core.util.StrUtil@toUnderlineCase(identifier)} AS `value`, ts AS update_time
+        FROM device_property_${deviceId}
+        WHERE ${@cn.hutool.core.util.StrUtil@toUnderlineCase(identifier)} IS NOT NULL
+          AND ts &lt;= ${timeMs}
+        ORDER BY ts DESC
+        LIMIT 1
+    </select>
+
 </mapper>

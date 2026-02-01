@@ -74,6 +74,12 @@ public class IotBACnetMasterProtocol {
             return;
         }
 
+        // 检查轮询采集开关
+        if (!bacnetDeviceManager.isPollingEnabled()) {
+            log.info("[start][BACnet 轮询采集未启用，跳过启动。如需启用，请配置 yudao.iot.bacnet.polling-enabled=true]");
+            return;
+        }
+
         // 防止重复启动
         if (pollingScheduler != null) {
             log.warn("[start][BACnet 主站协议已启动，跳过重复启动]");
