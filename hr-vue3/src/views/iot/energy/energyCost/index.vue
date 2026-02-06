@@ -194,6 +194,7 @@
 import { DeviceApi } from '@/api/iot/device/device'
 import { ProductApi } from '@/api/iot/product/product'
 import { formatDate } from '@/utils/formatTime'
+import download from '@/utils/download'
 
 defineOptions({ name: 'IotEnergyCost' })
 
@@ -309,39 +310,23 @@ const resetQuery = () => {
   total.value = 0
 }
 
-/** 导出（简易CSV导出） */
+/** 导出电费报表 Excel */
 const handleExport = async () => {
-  if (list.value.length === 0) {
-    message.warning('暂无数据可导出')
+  if (!queryParams.startTime || !queryParams.endTime) {
+    message.warning('请选择开始时间和结束时间')
     return
   }
   exportLoading.value = true
   try {
-    const headers = ['位置', '表号', '设备名称', '备注名称', '产品名称', '开始读数(kWh)', '结束读数(kWh)', '原始消耗(kWh)', '倍率', '实际消耗(kWh)', '单价(元/度)', '电费(元)']
-    const rows = list.value.map(item => [
-      item.location || '',
-      item.meterNo || '',
-      item.deviceName || '',
-      item.nickname || '',
-      item.productName || '',
-      item.startEnergy ?? '',
-      item.endEnergy ?? '',
-      item.rawConsumption ?? '',
-      item.ratio ?? '1',
-      item.consumption ?? '',
-      item.unitPrice ?? '1.0616',
-      item.cost ?? ''
-    ])
-
-    const BOM = '\uFEFF'
-    const csvContent = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\n')
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = `电费计算_${queryParams.startTime}_${queryParams.endTime}.csv`
-    link.click()
-    URL.revokeObjectURL(link.href)
+    const data = await DeviceApi.exportEnergyCostExcel({
+      startTime: queryParams.startTime,
+      endTime: queryParams.endTime
+    })
+    download.excel(data, `能源报表_${queryParams.startTime}_${queryParams.endTime}.xlsx`)
     message.success('导出成功')
+  } catch (error) {
+    console.error('导出失败:', error)
+    message.error('导出失败')
   } finally {
     exportLoading.value = false
   }

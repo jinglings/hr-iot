@@ -171,5 +171,10 @@ export const DeviceApi = {
   // 计算设备电费（根据时间段能耗差值）
   getDeviceEnergyCost: async (params: any) => {
     return await request.get({ url: `/iot/device/property/energy-cost`, params })
+  },
+
+  // 导出电费报表 Excel
+  exportEnergyCostExcel: async (params: any) => {
+    return await request.download({ url: `/iot/device/property/export-energy-cost`, params })
   }
 }
