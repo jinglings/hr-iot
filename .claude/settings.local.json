@@ -47,7 +47,11 @@
       "Bash(mvn compile:*)",
       "Skill(frontend-design)",
       "Bash(ls:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "WebSearch",
+      "WebFetch(domain:build.nvidia.com)"
     ],
     "deny": [],
     "ask": []

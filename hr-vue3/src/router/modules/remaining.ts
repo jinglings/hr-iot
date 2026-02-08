@@ -591,7 +591,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
       }
     ]
   },
-  {
+/*  {
     path: '/ai',
     component: Layout,
     name: 'Ai',
@@ -693,7 +693,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         }
       }
     ]
-  },
+  },*/
   {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/Error/404.vue'),

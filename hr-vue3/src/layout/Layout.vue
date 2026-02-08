@@ -3,6 +3,7 @@ import { computed, defineComponent, unref } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import { Backtop } from '@/components/Backtop'
 import { Setting } from '@/layout/components/Setting'
+import AiFloatingButton from '@/views/iot/ai/components/AiFloatingButton.vue'
 import { useRenderLayout } from './components/useRenderLayout'
 import { useDesign } from '@/hooks/web/useDesign'
 
@@ -60,6 +61,8 @@ export default defineComponent({
         <Backtop></Backtop>
 
         <Setting></Setting>
+
+        <AiFloatingButton></AiFloatingButton>
       </section>
     )
   }

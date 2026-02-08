@@ -117,6 +117,18 @@
             <version>1.2.5</version>
         </dependency>
 
+        <!-- AI 助手: OkHttp 用于调用 LLM API (支持 SSE 流式) -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp-sse</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+
         <!-- IoT 网络组件：接收来自设备的上行数据 -->
         <!--        <dependency>-->
         <!--            <groupId>cn.iocoder.boot</groupId>-->
