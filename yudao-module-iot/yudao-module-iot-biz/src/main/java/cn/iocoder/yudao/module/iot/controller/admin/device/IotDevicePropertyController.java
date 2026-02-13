@@ -309,41 +309,43 @@ public class IotDevicePropertyController {
                 respVO.setProductName(product.getName());
             }
 
-            // 查询开始/结束时间的能耗读数
+            // 先确定倍率（从设备名称解析或从数据库查询）
+            BigDecimal ratio = BigDecimal.ONE;
+            if (respVO.getRatio() != null && respVO.getRatio().compareTo(BigDecimal.ONE) != 0) {
+                ratio = respVO.getRatio();
+            } else {
+                List<IotEnergyMeterDO> meters = energyMeterService.getMeterListByDeviceId(device.getId());
+                if (meters != null && !meters.isEmpty()) {
+                    IotEnergyMeterDO meter = meters.get(0);
+                    if (meter.getRatio() != null && meter.getRatio().compareTo(BigDecimal.ZERO) > 0) {
+                        ratio = meter.getRatio();
+                    }
+                }
+                respVO.setRatio(ratio);
+            }
+
+            // 查询开始/结束时间的能耗读数，除以倍率后作为显示读数
             IotDevicePropertyRespVO startProperty = devicePropertyService
                     .getPropertyValueBeforeTime(device.getId(), ENERGY_PROPERTY_IDENTIFIER, startTime);
             IotDevicePropertyRespVO endProperty = devicePropertyService
                     .getPropertyValueBeforeTime(device.getId(), ENERGY_PROPERTY_IDENTIFIER, endTime);
 
             if (startProperty != null && startProperty.getValue() != null) {
-                respVO.setStartEnergy(new BigDecimal(String.valueOf(startProperty.getValue())));
+                BigDecimal rawStart = new BigDecimal(String.valueOf(startProperty.getValue()));
+                respVO.setStartEnergy(rawStart.divide(ratio, 2, RoundingMode.HALF_UP));
                 respVO.setStartEnergyTime(toLocalDateTime(startProperty.getUpdateTime()));
             }
             if (endProperty != null && endProperty.getValue() != null) {
-                respVO.setEndEnergy(new BigDecimal(String.valueOf(endProperty.getValue())));
+                BigDecimal rawEnd = new BigDecimal(String.valueOf(endProperty.getValue()));
+                respVO.setEndEnergy(rawEnd.divide(ratio, 2, RoundingMode.HALF_UP));
                 respVO.setEndEnergyTime(toLocalDateTime(endProperty.getUpdateTime()));
             }
 
-            // 计算实际消耗
+            // 计算实际消耗（基于除以倍率后的读数）
             if (respVO.getStartEnergy() != null && respVO.getEndEnergy() != null) {
-                BigDecimal rawConsumption = respVO.getEndEnergy().subtract(respVO.getStartEnergy());
-                respVO.setRawConsumption(rawConsumption);
-
-                BigDecimal ratio = BigDecimal.ONE;
-                if (respVO.getRatio() != null && respVO.getRatio().compareTo(BigDecimal.ONE) != 0) {
-                    ratio = respVO.getRatio();
-                } else {
-                    List<IotEnergyMeterDO> meters = energyMeterService.getMeterListByDeviceId(device.getId());
-                    if (meters != null && !meters.isEmpty()) {
-                        IotEnergyMeterDO meter = meters.get(0);
-                        if (meter.getRatio() != null && meter.getRatio().compareTo(BigDecimal.ZERO) > 0) {
-                            ratio = meter.getRatio();
-                        }
-                    }
-                    respVO.setRatio(ratio);
-                }
-
-                BigDecimal consumption = rawConsumption.multiply(ratio).setScale(2, RoundingMode.HALF_UP);
+                BigDecimal consumption = respVO.getEndEnergy().subtract(respVO.getStartEnergy())
+                        .setScale(2, RoundingMode.HALF_UP);
+                respVO.setRawConsumption(consumption);
                 respVO.setConsumption(consumption);
 
                 BigDecimal cost = consumption.multiply(ELECTRICITY_UNIT_PRICE).setScale(2, RoundingMode.HALF_UP);
