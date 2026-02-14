@@ -341,11 +341,13 @@ public class IotDevicePropertyController {
                 respVO.setEndEnergyTime(toLocalDateTime(endProperty.getUpdateTime()));
             }
 
-            // 计算实际消耗（基于除以倍率后的读数）
+            // 计算实际消耗（基于除以倍率后的读数，再乘以倍率）
             if (respVO.getStartEnergy() != null && respVO.getEndEnergy() != null) {
-                BigDecimal consumption = respVO.getEndEnergy().subtract(respVO.getStartEnergy())
+                BigDecimal rawConsumption = respVO.getEndEnergy().subtract(respVO.getStartEnergy())
                         .setScale(2, RoundingMode.HALF_UP);
-                respVO.setRawConsumption(consumption);
+                respVO.setRawConsumption(rawConsumption);
+
+                BigDecimal consumption = rawConsumption.multiply(ratio).setScale(2, RoundingMode.HALF_UP);
                 respVO.setConsumption(consumption);
 
                 BigDecimal cost = consumption.multiply(ELECTRICITY_UNIT_PRICE).setScale(2, RoundingMode.HALF_UP);
