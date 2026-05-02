@@ -59,7 +59,7 @@ public class IotRedisMessageBus implements IotMessageBus {
     }
 
     // Stream 最大保留消息数：超出后自动裁剪，防止内存无限增长
-    private static final long STREAM_MAX_LENGTH = 10000L;
+    private static final long STREAM_MAX_LENGTH = 1000L;
 
     @Override
     public void post(String topic, Object message) {
