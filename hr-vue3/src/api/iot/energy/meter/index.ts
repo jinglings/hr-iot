@@ -88,7 +88,7 @@ export const getIotEnergyMeterListByEnergyTypeId = (energyTypeId: number) => {
 
 // 根据设备ID获取计量点列表
 export const getIotEnergyMeterListByDeviceId = (deviceId: number) => {
-  return request.get({ url: `/iot/energy/meter/list-by-device-id?deviceId=${deviceId}` })
+  return request.get({ url: `/iot/energy/meter/list-by-device?deviceId=${deviceId}` })
 }
 
 // 根据建筑ID获取计量点列表

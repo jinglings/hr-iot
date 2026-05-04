@@ -165,6 +165,18 @@ const energyRouter: AppRouteRecordRaw = {
       }
     },
 
+    // 商场智慧电表监控大屏
+    {
+      path: 'mall-screen',
+      component: () => import('@/views/iot/energy/mall-screen/index.vue'),
+      name: 'IotEnergyMallScreen',
+      meta: {
+        title: '商场监控大屏',
+        icon: 'ep:monitor',
+        noCache: true
+      }
+    },
+
     // 报表管理
     {
       path: 'report',
