@@ -123,6 +123,18 @@
             <div v-if="scope.row.nickname" class="text-gray-400 text-xs">{{ scope.row.nickname }}</div>
           </template>
         </el-table-column>
+        <el-table-column label="数据状态" align="center" prop="stale" min-width="110">
+          <template #default="scope">
+            <el-tooltip
+              v-if="scope.row.stale === 1"
+              :content="`数据已冻结，自 ${scope.row.changeTime ? formatTime(scope.row.changeTime) : '-'} 起未更新`"
+              placement="top"
+            >
+              <el-tag type="warning" size="small">数据冻结</el-tag>
+            </el-tooltip>
+            <el-tag v-else type="success" size="small">正常</el-tag>
+          </template>
+        </el-table-column>
 <!--        <el-table-column label="产品名称" align="center" prop="productName" min-width="100" />-->
         <el-table-column label="开始读数 (kWh)" align="right" prop="startEnergy" min-width="130">
           <template #default="scope">

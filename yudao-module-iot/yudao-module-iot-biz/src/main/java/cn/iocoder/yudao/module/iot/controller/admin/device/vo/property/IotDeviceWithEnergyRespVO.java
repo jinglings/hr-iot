@@ -34,6 +34,12 @@ public class IotDeviceWithEnergyRespVO {
     @Schema(description = "能耗更新时间")
     private LocalDateTime energyUpdateTime;
 
+    @Schema(description = "数据是否疑似冻结：1=冻结（能耗值长时间未变化），0=正常", example = "0")
+    private Integer stale;
+
+    @Schema(description = "能耗值最后变化时间（冻结起点）")
+    private LocalDateTime changeTime;
+
     @Schema(description = "设备位置的纬度", example = "30.123456")
     private BigDecimal latitude;
 

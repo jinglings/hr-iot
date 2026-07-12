@@ -86,6 +86,15 @@
                     {{ item.dataType }}
                   </el-tag>
                 </div>
+                <!-- 数据冻结标签 -->
+                <div v-if="item.stale === 1" class="inline-flex items-center mr-2">
+                  <el-tooltip
+                    :content="`数据已冻结，自 ${item.changeTime ? formatDate(item.changeTime) : '-'} 起未更新`"
+                    placement="top"
+                  >
+                    <el-tag size="small" type="warning">数据冻结</el-tag>
+                  </el-tooltip>
+                </div>
                 <!-- 数据图标 - 可点击 -->
                 <div
                   class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-full hover:bg-blue-50 transition-colors"
@@ -133,6 +142,18 @@
         :formatter="dateFormatter"
         width="180px"
       />
+      <el-table-column label="数据状态" align="center" width="160px">
+        <template #default="scope">
+          <el-tooltip
+            v-if="scope.row.stale === 1"
+            :content="`数据已冻结，自 ${scope.row.changeTime ? formatDate(scope.row.changeTime) : '-'} 起未更新`"
+            placement="top"
+          >
+            <el-tag size="small" type="warning">数据冻结</el-tag>
+          </el-tooltip>
+          <el-tag v-else size="small" type="success">正常</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button

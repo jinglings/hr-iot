@@ -20,6 +20,7 @@ import cn.iocoder.yudao.module.iot.dal.redis.device.DeviceServerIdRedisDAO;
 import cn.iocoder.yudao.module.iot.dal.tdengine.IotDevicePropertyMapper;
 import cn.iocoder.yudao.module.iot.enums.thingmodel.IotDataSpecsDataTypeEnum;
 import cn.iocoder.yudao.module.iot.enums.thingmodel.IotThingModelTypeEnum;
+import cn.iocoder.yudao.module.iot.framework.freeze.IotPropertyFreezeProperties;
 import cn.iocoder.yudao.module.iot.framework.tdengine.core.TDengineTableField;
 import cn.iocoder.yudao.module.iot.service.product.IotProductService;
 import cn.iocoder.yudao.module.iot.service.thingmodel.IotThingModelService;
@@ -29,6 +30,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -75,6 +77,9 @@ public class IotDevicePropertyServiceImpl implements IotDevicePropertyService {
 
     @Resource
     private IotDevicePropertyMapper devicePropertyMapper;
+
+    @Resource
+    private IotPropertyFreezeProperties freezeProperties;
 
     // ========== 设备属性相关操作 ==========
 
@@ -157,10 +162,58 @@ public class IotDevicePropertyServiceImpl implements IotDevicePropertyService {
         // 2.1 保存设备属性【数据】
         devicePropertyMapper.insert(device, properties, LocalDateTimeUtil.toEpochMilli(message.getReportTime()));
 
-        // 2.2 保存设备属性【日志】
+        // 2.2 保存设备属性最新值（含数据冻结检测：与上一次值对比，计算变化时间与冻结标志）
+        Map<String, IotDevicePropertyDO> oldProperties = deviceDataRedisDAO.get(device.getId());
+        LocalDateTime reportTime = message.getReportTime();
         Map<String, IotDevicePropertyDO> properties2 = convertMap(properties.entrySet(), Map.Entry::getKey, entry ->
-                IotDevicePropertyDO.builder().value(entry.getValue()).updateTime(message.getReportTime()).build());
+                buildLatestProperty(entry.getKey(), entry.getValue(), reportTime, oldProperties.get(entry.getKey())));
         deviceDataRedisDAO.putAll(device.getId(), properties2);
+    }
+
+    /**
+     * 构建属性最新值 DO，并计算"数据冻结"相关字段
+     *
+     * @param identifier 属性标识符
+     * @param newValue   本次上报值
+     * @param reportTime 本次上报时间
+     * @param old        上一次缓存的属性（可能为 null）
+     */
+    private IotDevicePropertyDO buildLatestProperty(String identifier, Object newValue,
+                                                    LocalDateTime reportTime, IotDevicePropertyDO old) {
+        LocalDateTime changeTime;
+        Integer stale;
+        if (old == null || old.getChangeTime() == null || !isValueEqual(old.getValue(), newValue)) {
+            // 首次上报 或 值发生变化 → 刷新变化时间，未冻结
+            changeTime = reportTime;
+            stale = 0;
+        } else {
+            // 值未变化 → 沿用旧的变化时间，按属性级开关与阈值判定是否冻结
+            changeTime = old.getChangeTime();
+            if (freezeProperties.isDetectEnabled(identifier)) {
+                long frozenMillis = Duration.between(changeTime, reportTime).toMillis();
+                stale = frozenMillis > freezeProperties.getThresholdMillis(identifier) ? 1 : 0;
+            } else {
+                stale = 0;
+            }
+        }
+        return IotDevicePropertyDO.builder().value(newValue).updateTime(reportTime)
+                .changeTime(changeTime).stale(stale).build();
+    }
+
+    /**
+     * 判断两个属性值是否相等。
+     *
+     * 旧值来自 Redis JSON 反序列化，新值为消息原始对象，二者类型可能不一致（如 Integer/Long、1 与 1.0），
+     * 直接 equals 易误判，故统一用 JSON 字符串归一化后比较。
+     */
+    private boolean isValueEqual(Object a, Object b) {
+        if (a == b) {
+            return true;
+        }
+        if (a == null || b == null) {
+            return false;
+        }
+        return Objects.equals(JsonUtils.toJsonString(a), JsonUtils.toJsonString(b));
     }
 
     @Override

@@ -62,3 +62,4 @@ nginx/ssl/*.crt
 dist/
 build/
 out/
+.gitnexus

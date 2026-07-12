@@ -22,4 +22,10 @@ public class IotDevicePropertyDetailRespVO extends IotDevicePropertyRespVO {
     @Schema(description = "数据定义列表")
     private List<ThingModelDataSpecs> dataSpecsList;
 
+    @Schema(description = "数据是否疑似冻结：1=冻结（持续未变化超过阈值），0=正常", example = "0")
+    private Integer stale;
+
+    @Schema(description = "值最后变化时间（冻结起点），毫秒时间戳", example = "1714377600000")
+    private Long changeTime;
+
 }

@@ -40,6 +40,8 @@ export interface IotDevicePropertyDetailRespVO {
   dataType: string // 数据类型
   dataSpecs: any // 数据定义
   dataSpecsList: any[] // 数据定义列表
+  stale?: number // 数据是否疑似冻结：1=冻结，0=正常
+  changeTime?: number // 值最后变化时间（冻结起点），毫秒时间戳
 }
 
 // IoT 设备属性 VO

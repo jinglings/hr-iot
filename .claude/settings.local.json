@@ -51,7 +51,21 @@
       "Bash(python3:*)",
       "Bash(pip3 install:*)",
       "WebSearch",
-      "WebFetch(domain:build.nvidia.com)"
+      "WebFetch(domain:build.nvidia.com)",
+      "Bash(redis-cli ping *)",
+      "Bash(brew services *)",
+      "Bash(redis-server --daemonize yes)",
+      "Bash(npx gitnexus *)",
+      "Skill(update-config)",
+      "Bash(claude mcp *)",
+      "Bash(npx -y gitnexus@latest mcp)",
+      "Bash(npx --version)",
+      "mcp__gitnexus__query",
+      "Bash(pnpm ts:check)",
+      "Bash(pnpm build:dev)",
+      "Bash(npx eslint *)",
+      "Bash(npx vue-tsc *)",
+      "Bash(xargs cat *)"
     ],
     "deny": [],
     "ask": []

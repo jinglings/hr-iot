@@ -57,6 +57,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
@@ -115,6 +117,9 @@ public class IotDevicePropertyController {
             if (property != null) {
                 result.setValue(property.getValue())
                         .setUpdateTime(LocalDateTimeUtil.toEpochMilli(property.getUpdateTime()));
+                result.setStale(property.getStale());
+                result.setChangeTime(property.getChangeTime() == null ? null
+                        : LocalDateTimeUtil.toEpochMilli(property.getChangeTime()));
             }
             return result;
         }));
@@ -189,6 +194,9 @@ public class IotDevicePropertyController {
                             // 如果转换失败，能耗值设为 null
                             respVO.setEnergy(null);
                         }
+                        // 数据冻结标识：方便在设备列表直接看出哪台设备数据长时间未变化
+                        respVO.setStale(energyProperty.getStale());
+                        respVO.setChangeTime(energyProperty.getChangeTime());
                     }
                     return respVO;
                 })
@@ -242,8 +250,16 @@ public class IotDevicePropertyController {
                 {3L}, // 公区备用电表
         };
         String[] sheetNames = {"公共区域、动力电费计算", "商铺", "公区备用电表"};
+        // 各 Sheet 的标题（与模板保持一致）
+        String[] titles = {"公共区域、照明动力用电", "商铺用电", "公区备用电表"};
         // sheetType: 1=公共区域格式, 2=商铺格式
         int[] sheetTypes = {1, 2, 1};
+        // 各 Sheet 的列宽（Excel 字符宽度，与模板逐列保持一致）
+        double[][] sheetWidths = {
+                {25, 32.7, 30, 36.5, 35.6, 42.6, 54.6, 44.5, 53.4, 70.2}, // 公共区域
+                {30, 34.8, 45, 30.8, 44.1, 43.8, 46.5, 43.3, 44.2, 75.8}, // 商铺
+                {25, 24.7, 43.4, 37.7, 40, 34.8, 37.3, 40.5, 44.2, 49.7}, // 公区备用电表
+        };
 
         Workbook workbook = new XSSFWorkbook();
 
@@ -264,7 +280,7 @@ public class IotDevicePropertyController {
             }
 
             // 2. 创建 Sheet
-            buildEnergyCostSheet(workbook, sheetNames[i], sheetTypes[i], dataList);
+            buildEnergyCostSheet(workbook, sheetNames[i], titles[i], sheetTypes[i], sheetWidths[i], dataList);
         }
 
         // 3. 输出 Excel
@@ -307,6 +323,14 @@ public class IotDevicePropertyController {
             IotProductDO product = productMap.get(device.getProductId());
             if (product != null) {
                 respVO.setProductName(product.getName());
+            }
+
+            // 数据冻结标识：基于能耗属性的实时冻结状态，方便看出哪台设备数据长时间未变化
+            IotDevicePropertyDO latestEnergy = devicePropertyService.getLatestDeviceProperties(device.getId())
+                    .get(ENERGY_PROPERTY_IDENTIFIER);
+            if (latestEnergy != null) {
+                respVO.setStale(latestEnergy.getStale());
+                respVO.setChangeTime(latestEnergy.getChangeTime());
             }
 
             // 先确定倍率（从设备名称解析或从数据库查询）
@@ -360,69 +384,79 @@ public class IotDevicePropertyController {
     }
 
     /**
-     * 构建电费报表的 Sheet 页
+     * 报表标题/表头字体（与模板一致：宋体）
+     */
+    private static final String REPORT_HEADER_FONT_NAME = "宋体";
+    /**
+     * 报表数据字体（与模板一致：Calibri）
+     */
+    private static final String REPORT_DATA_FONT_NAME = "Calibri";
+
+    /**
+     * 构建电费报表的 Sheet 页（样式与《抄表电费明细表》模板保持一致）
      *
      * @param workbook  工作簿
      * @param sheetName Sheet 名称
+     * @param title     标题（如：公共区域、照明动力用电 / 商铺用电 / 公区备用电表）
      * @param sheetType Sheet 类型：1=公共区域格式, 2=商铺格式
+     * @param columnWidths 各列宽度（Excel 字符宽度，与模板逐列一致）
      * @param dataList  数据列表
      */
-    private void buildEnergyCostSheet(Workbook workbook, String sheetName, int sheetType,
-                                       List<IotDeviceEnergyCostRespVO> dataList) {
+    private void buildEnergyCostSheet(Workbook workbook, String sheetName, String title,
+                                      int sheetType, double[] columnWidths,
+                                      List<IotDeviceEnergyCostRespVO> dataList) {
         Sheet sheet = workbook.createSheet(sheetName);
+        final int lastCol = 9; // 共 10 列 A:J
+
+        // ===== 字体 =====
+        // 标题/表头：宋体 14 加粗
+        Font boldFont = workbook.createFont();
+        boldFont.setFontName(REPORT_HEADER_FONT_NAME);
+        boldFont.setBold(true);
+        boldFont.setFontHeightInPoints((short) 14);
+
+        // 数据/合计：Calibri 14
+        Font normalFont = workbook.createFont();
+        normalFont.setFontName(REPORT_DATA_FONT_NAME);
+        normalFont.setFontHeightInPoints((short) 14);
 
         // ===== 样式 =====
-        // 标题样式
+        // 标题：宋体 14 加粗 居中 细边框（模板无底色填充）
         CellStyle titleStyle = workbook.createCellStyle();
-        Font titleFont = workbook.createFont();
-        titleFont.setBold(true);
-        titleFont.setFontHeightInPoints((short) 14);
-        titleStyle.setFont(titleFont);
+        titleStyle.setFont(boldFont);
         titleStyle.setAlignment(HorizontalAlignment.CENTER);
         titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        setThinBorder(titleStyle);
 
-        // 表头样式
+        // 表头：与标题样式一致（宋体 14 加粗，无底色）
         CellStyle headerStyle = workbook.createCellStyle();
-        Font headerFont = workbook.createFont();
-        headerFont.setBold(true);
-        headerFont.setFontHeightInPoints((short) 10);
-        headerStyle.setFont(headerFont);
-        headerStyle.setAlignment(HorizontalAlignment.CENTER);
-        headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        headerStyle.setBorderBottom(BorderStyle.THIN);
-        headerStyle.setBorderTop(BorderStyle.THIN);
-        headerStyle.setBorderLeft(BorderStyle.THIN);
-        headerStyle.setBorderRight(BorderStyle.THIN);
+        headerStyle.cloneStyleFrom(titleStyle);
 
-        // 数据样式
+        // 数据：Calibri 14 居中 细边框 通用格式
         CellStyle dataStyle = workbook.createCellStyle();
-        dataStyle.setBorderBottom(BorderStyle.THIN);
-        dataStyle.setBorderTop(BorderStyle.THIN);
-        dataStyle.setBorderLeft(BorderStyle.THIN);
-        dataStyle.setBorderRight(BorderStyle.THIN);
+        dataStyle.setFont(normalFont);
+        dataStyle.setAlignment(HorizontalAlignment.CENTER);
         dataStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        setThinBorder(dataStyle);
 
-        // 数字样式（保留2位小数）
-        CellStyle numberStyle = workbook.createCellStyle();
-        numberStyle.cloneStyleFrom(dataStyle);
-        DataFormat dataFormat = workbook.createDataFormat();
-        numberStyle.setDataFormat(dataFormat.getFormat("#,##0.00"));
-
-        // 合计样式
+        // 合计行：与数据样式一致（Calibri 14，不加粗，无底色）
         CellStyle totalStyle = workbook.createCellStyle();
-        totalStyle.cloneStyleFrom(headerStyle);
+        totalStyle.cloneStyleFrom(dataStyle);
 
         int rowNum = 0;
 
-        // ===== 第1行：标题（合并单元格） =====
+        // ===== 第1行：标题（合并 A1:J1） =====
         Row titleRow = sheet.createRow(rowNum++);
-        Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue(sheetName);
-        titleCell.setCellStyle(titleStyle);
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 9));
+        titleRow.setHeightInPoints(40f);
+        for (int c = 0; c <= lastCol; c++) {
+            titleRow.createCell(c).setCellStyle(titleStyle);
+        }
+        titleRow.getCell(0).setCellValue(title);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, lastCol));
 
         // ===== 第2行：表头 =====
         Row headerRow = sheet.createRow(rowNum++);
+        headerRow.setHeightInPoints(40f);
         String[] headers;
         if (sheetType == 2) {
             // 商铺格式
@@ -440,38 +474,37 @@ public class IotDevicePropertyController {
         // ===== 数据行 =====
         BigDecimal totalConsumption = BigDecimal.ZERO;
         BigDecimal totalCost = BigDecimal.ZERO;
-
         for (int i = 0; i < dataList.size(); i++) {
             IotDeviceEnergyCostRespVO data = dataList.get(i);
             Row dataRow = sheet.createRow(rowNum++);
+            dataRow.setHeightInPoints(30f);
 
             if (sheetType == 2) {
                 // 商铺格式: 序号, 位置, 表号, 倍率, 上月表底, 表底, 实际消耗(度), 单价(元), 合计(元), 签字
-                createCell(dataRow, 0, (double) (i + 1), dataStyle);
-                createCell(dataRow, 1, data.getNickname() != null ? data.getNickname() : data.getLocation(), dataStyle);
+                createCell(dataRow, 0, i + 1, dataStyle);
+                createCell(dataRow, 1, firstNonBlank(data.getLocation(), data.getNickname()), dataStyle);
                 createCell(dataRow, 2, data.getMeterNo(), dataStyle);
-                createCellBigDecimal(dataRow, 3, ratioDisplayValue(data.getRatio()), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 4, data.getStartEnergy(), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 5, data.getEndEnergy(), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 6, data.getConsumption(), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 7, data.getUnitPrice(), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 8, data.getCost(), numberStyle, dataStyle);
+                createCellBigDecimal(dataRow, 3, ratioDisplayValue(data.getRatio()), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 4, data.getStartEnergy(), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 5, data.getEndEnergy(), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 6, data.getConsumption(), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 7, data.getUnitPrice(), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 8, data.getCost(), dataStyle, dataStyle);
                 createCell(dataRow, 9, "", dataStyle); // 签字列留空
             } else {
                 // 公共区域格式: 序号, 受电配电箱编号, 电表安装位置, 表号, 倍率, 上月表底, 表底, 实际消耗(度), 单价(元), 合计(元)
-                createCell(dataRow, 0, (double) (i + 1), dataStyle);
-                createCell(dataRow, 1, data.getNickname() != null ? data.getNickname() : data.getLocation(), dataStyle);
+                createCell(dataRow, 0, i + 1, dataStyle);
+                createCell(dataRow, 1, firstNonBlank(data.getNickname(), data.getLocation()), dataStyle);
                 createCell(dataRow, 2, data.getLocation(), dataStyle);
                 createCell(dataRow, 3, data.getMeterNo(), dataStyle);
-                createCellBigDecimal(dataRow, 4, ratioDisplayValue(data.getRatio()), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 5, data.getStartEnergy(), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 6, data.getEndEnergy(), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 7, data.getConsumption(), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 8, data.getUnitPrice(), numberStyle, dataStyle);
-                createCellBigDecimal(dataRow, 9, data.getCost(), numberStyle, dataStyle);
+                createCellBigDecimal(dataRow, 4, ratioDisplayValue(data.getRatio()), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 5, data.getStartEnergy(), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 6, data.getEndEnergy(), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 7, data.getConsumption(), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 8, data.getUnitPrice(), dataStyle, dataStyle);
+                createCellBigDecimal(dataRow, 9, data.getCost(), dataStyle, dataStyle);
             }
 
-            // 累加合计
             if (data.getConsumption() != null) {
                 totalConsumption = totalConsumption.add(data.getConsumption());
             }
@@ -482,39 +515,43 @@ public class IotDevicePropertyController {
 
         // ===== 合计行 =====
         Row totalRow = sheet.createRow(rowNum);
+        totalRow.setHeightInPoints(30f);
+        for (int c = 0; c <= lastCol; c++) {
+            totalRow.createCell(c).setCellStyle(totalStyle);
+        }
+        totalRow.getCell(1).setCellValue("合计");
         if (sheetType == 2) {
-            createCell(totalRow, 1, "合计", totalStyle);
-            createCellBigDecimal(totalRow, 6, totalConsumption, numberStyle, totalStyle);
-            createCellBigDecimal(totalRow, 8, totalCost, numberStyle, totalStyle);
+            totalRow.getCell(6).setCellValue(totalConsumption.doubleValue());
+            totalRow.getCell(8).setCellValue(totalCost.doubleValue());
         } else {
-            createCell(totalRow, 1, "合计", totalStyle);
-            createCellBigDecimal(totalRow, 7, totalConsumption, numberStyle, totalStyle);
-            createCellBigDecimal(totalRow, 9, totalCost, numberStyle, totalStyle);
+            totalRow.getCell(7).setCellValue(totalConsumption.doubleValue());
+            totalRow.getCell(9).setCellValue(totalCost.doubleValue());
         }
 
-        // ===== 设置列宽 =====
-        sheet.setColumnWidth(0, 2000);  // 序号
-        if (sheetType == 2) {
-            sheet.setColumnWidth(1, 5000);  // 位置
-            sheet.setColumnWidth(2, 5000);  // 表号
-            sheet.setColumnWidth(3, 2500);  // 倍率
-            sheet.setColumnWidth(4, 4000);  // 上月表底
-            sheet.setColumnWidth(5, 4000);  // 表底
-            sheet.setColumnWidth(6, 4000);  // 实际消耗
-            sheet.setColumnWidth(7, 3000);  // 单价
-            sheet.setColumnWidth(8, 4000);  // 合计
-            sheet.setColumnWidth(9, 3000);  // 签字
-        } else {
-            sheet.setColumnWidth(1, 5500);  // 受电配电箱编号
-            sheet.setColumnWidth(2, 4500);  // 电表安装位置
-            sheet.setColumnWidth(3, 5000);  // 表号
-            sheet.setColumnWidth(4, 2500);  // 倍率
-            sheet.setColumnWidth(5, 4000);  // 上月表底
-            sheet.setColumnWidth(6, 4000);  // 表底
-            sheet.setColumnWidth(7, 4000);  // 实际消耗
-            sheet.setColumnWidth(8, 3000);  // 单价
-            sheet.setColumnWidth(9, 4000);  // 合计
+        // ===== 列宽（与模板逐列一致，单位为 Excel 字符宽度） =====
+        for (int c = 0; c < columnWidths.length; c++) {
+            sheet.setColumnWidth(c, (int) Math.round(columnWidths[c] * 256));
         }
+    }
+
+    /**
+     * 设置四周细边框
+     */
+    private void setThinBorder(CellStyle style) {
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+    }
+
+    /**
+     * 返回第一个非空字符串
+     */
+    private String firstNonBlank(String first, String second) {
+        if (first != null && !first.trim().isEmpty()) {
+            return first;
+        }
+        return second != null ? second : "";
     }
 
     /**
@@ -551,59 +588,72 @@ public class IotDevicePropertyController {
     }
 
     /**
-     * 解析设备名称，提取位置、倍率、表号
+     * 表号匹配：连续 6 位及以上的数字（电表号一般约 12 位；倍率一般 1-3 位，不会被误匹配）
+     */
+    private static final Pattern METER_NO_PATTERN = Pattern.compile("\\d{6,}");
+    /**
+     * 倍率匹配：紧跟"倍率"之后的数字，允许下划线/空格分隔
+     * 兼容：倍率30 / 倍率_80 / 倍率 40
+     */
+    private static final Pattern RATIO_PATTERN = Pattern.compile("倍率[_\\s]*(\\d+)");
+
+    /**
+     * 解析设备名称，提取位置、倍率、表号（表号统一为纯数字，与模板保持一致）
      *
-     * 设备名称格式：
-     * - 含倍率：B1_01B_倍率30_922101010083 → 位置=B1_01B, 倍率=30, 表号=922101010083
-     * - 不含倍率：B1_01B_922101010083 → 位置=B1_01B, 倍率=1, 表号=922101010083
+     * 兼容多种命名格式，例如：
+     * - B1_01B_倍率30_922101010083   → 位置=B1_01B,   倍率=30, 表号=922101010083
+     * - L3_办公室_倍率_80_190712010005 → 位置=L3_办公室, 倍率=80, 表号=190712010005
+     * - L1_17_210803000058_倍率20     → 位置=L1_17,    倍率=20, 表号=210803000058
+     * - B1_01B_922101010083          → 位置=B1_01B,   倍率=1,  表号=922101010083
      */
     private void parseDeviceName(IotDeviceEnergyCostRespVO respVO, String deviceName) {
-        if (deviceName == null || deviceName.isEmpty()) {
-            respVO.setRatio(BigDecimal.ONE);
+        respVO.setRatio(BigDecimal.ONE);
+        if (deviceName == null || deviceName.trim().isEmpty()) {
             return;
         }
+        String remaining = deviceName;
 
-        int ratioIdx = deviceName.indexOf("倍率");
-        if (ratioIdx >= 0) {
-            // 包含"倍率"：位置 = 倍率前面的部分（去掉末尾下划线）
-            String beforeRatio = deviceName.substring(0, ratioIdx);
-            if (beforeRatio.endsWith("_")) {
-                beforeRatio = beforeRatio.substring(0, beforeRatio.length() - 1);
-            }
-            respVO.setLocation(beforeRatio);
-
-            // "倍率"后面的内容
-            String afterRatio = deviceName.substring(ratioIdx + 2); // 跳过"倍率"两个字
-            // 找到下一个下划线分隔符，前面是倍率数字，后面是表号
-            int sepIdx = afterRatio.indexOf("_");
-            if (sepIdx >= 0) {
-                String ratioStr = afterRatio.substring(0, sepIdx);
-                String meterNo = afterRatio.substring(sepIdx + 1);
-                try {
-                    respVO.setRatio(new BigDecimal(ratioStr));
-                } catch (NumberFormatException e) {
-                    respVO.setRatio(BigDecimal.ONE);
+        // 1. 解析倍率：取"倍率"后的数字（兼容 倍率30 / 倍率_80 / 倍率 40），并从名称中移除该片段
+        Matcher ratioMatcher = RATIO_PATTERN.matcher(remaining);
+        if (ratioMatcher.find()) {
+            try {
+                BigDecimal ratio = new BigDecimal(ratioMatcher.group(1));
+                if (ratio.compareTo(BigDecimal.ZERO) > 0) {
+                    respVO.setRatio(ratio);
                 }
-                respVO.setMeterNo(meterNo);
-            } else {
-                // 倍率后面没有下划线，整段当作倍率值
-                try {
-                    respVO.setRatio(new BigDecimal(afterRatio));
-                } catch (NumberFormatException e) {
-                    respVO.setRatio(BigDecimal.ONE);
-                }
+            } catch (NumberFormatException ignored) {
+                // 保持默认倍率 1
             }
-        } else {
-            // 不含"倍率"：最后一个下划线后是表号，前面是位置
-            int lastSep = deviceName.lastIndexOf("_");
-            if (lastSep >= 0) {
-                respVO.setLocation(deviceName.substring(0, lastSep));
-                respVO.setMeterNo(deviceName.substring(lastSep + 1));
-            } else {
-                respVO.setLocation(deviceName);
-            }
-            respVO.setRatio(BigDecimal.ONE);
+            remaining = remaining.substring(0, ratioMatcher.start()) + "_" + remaining.substring(ratioMatcher.end());
         }
+
+        // 2. 解析表号：取最后一段 6 位及以上的连续数字（去除倍率/空格等前后缀污染）
+        Matcher meterMatcher = METER_NO_PATTERN.matcher(remaining);
+        int meterStart = -1;
+        int meterEnd = -1;
+        while (meterMatcher.find()) {
+            meterStart = meterMatcher.start();
+            meterEnd = meterMatcher.end();
+        }
+        if (meterStart >= 0) {
+            respVO.setMeterNo(remaining.substring(meterStart, meterEnd));
+            remaining = remaining.substring(0, meterStart) + "_" + remaining.substring(meterEnd);
+        }
+
+        // 3. 位置：剩余部分，折叠多余下划线/空格，去除首尾下划线
+        respVO.setLocation(cleanLocation(remaining));
+    }
+
+    /**
+     * 清理位置字符串：折叠连续下划线/空格为单个下划线，并去除首尾下划线与空白
+     */
+    private String cleanLocation(String value) {
+        if (value == null) {
+            return null;
+        }
+        String cleaned = value.replaceAll("[_\\s]+", "_");
+        cleaned = cleaned.replaceAll("^_+", "").replaceAll("_+$", "");
+        return cleaned.trim();
     }
 
     /**

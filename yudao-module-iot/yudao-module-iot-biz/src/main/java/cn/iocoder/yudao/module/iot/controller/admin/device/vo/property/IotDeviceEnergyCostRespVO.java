@@ -55,4 +55,10 @@ public class IotDeviceEnergyCostRespVO {
     @Schema(description = "电费（元）", example = "212.64")
     private BigDecimal cost;
 
+    @Schema(description = "数据是否疑似冻结：1=冻结（能耗值长时间未变化），0=正常", example = "0")
+    private Integer stale;
+
+    @Schema(description = "能耗值最后变化时间（冻结起点）")
+    private LocalDateTime changeTime;
+
 }

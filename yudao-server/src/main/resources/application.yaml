@@ -249,6 +249,15 @@ yudao:
   iot:
     message-bus:
       type: redis # 消息总线的类型
+    property-freeze:
+      # 数据冻结检测：检测"设备通信正常、但属性值长时间未变化"的场景
+      enabled: true # 全局开关，默认启用
+      threshold: 30m # 全局冻结阈值，值持续未变化超过该时长则标记为冻结（支持 30m / 1h / 2h 等）
+      # 属性级冻结开关：以下属性禁用检测（适用于设定值、额定值、开关量等天生不变的属性，避免误报）
+      disabled-identifiers: []
+      # 属性级阈值覆盖：按属性标识符单独配置阈值，覆盖全局 threshold
+      identifier-thresholds: {}
+#        Energy: 2h
     bacnet:
       # 启用BACnet协议
       enabled: true

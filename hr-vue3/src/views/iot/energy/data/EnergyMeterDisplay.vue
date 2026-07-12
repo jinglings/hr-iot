@@ -55,10 +55,18 @@
           v-for="device in list"
           :key="device.id"
           class="meter-unit"
-          :class="{ 'is-offline': device.state !== 1 }"
+          :class="{ 'is-offline': device.state !== 1, 'is-frozen': device.stale === 1 }"
         >
           <!-- 电表外壳 -->
           <div class="meter-housing">
+            <!-- 数据冻结角标 -->
+            <el-tooltip
+              v-if="device.stale === 1"
+              :content="`数据已冻结，自 ${device.changeTime ? formatDate(device.changeTime) : '-'} 起未更新`"
+              placement="top"
+            >
+              <div class="frozen-badge">数据冻结</div>
+            </el-tooltip>
             <!-- 顶部螺丝装饰 -->
             <div class="screw-row top">
               <div class="screw"></div>
@@ -110,6 +118,12 @@
                 <div class="lcd-row">
                   <span class="lcd-label">更新</span>
                   <span class="lcd-value">{{ formatUpdateTime(device.energyUpdateTime) }}</span>
+                </div>
+                <div class="lcd-row">
+                  <span class="lcd-label">数据</span>
+                  <span class="lcd-value" :class="device.stale === 1 ? 'offline' : 'online'">
+                    {{ device.stale === 1 ? '冻结' : '正常' }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -310,6 +324,29 @@ $led-off: #4a4a4a;
       background: linear-gradient(180deg, #d8d8d8 0%, #c8c8c8 50%, #b8b8b8 100%);
     }
   }
+
+  &.is-frozen .meter-housing {
+    border-color: #e6a23c;
+    box-shadow:
+      0 0 0 2px rgba(230, 162, 60, 0.6),
+      0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* 数据冻结角标 */
+.frozen-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: #e6a23c;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: default;
 }
 
 .meter-housing {
